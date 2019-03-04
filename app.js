@@ -28,6 +28,18 @@ db.getAsync = function (sql) {
 	});
 }
 
+db.allAsync = function (sql) {
+	return new Promise((resolve, reject) => {
+		this.all(sql, (err, row) => {
+			if (err) {
+				reject(err);
+			} else {
+				resolve(row);
+			}
+		});
+	});
+}
+
 // async/await for statement calls, maybe?
 const getAsync = function (stmt) {
 	return new Promise((resolve, reject) => {
@@ -36,23 +48,31 @@ const getAsync = function (stmt) {
 		});
 	});
 }
+const allAsync = function (stmt) {
+	return new Promise((resolve, reject) => {
+		stmt.all((err, row) => {
+			err ? reject(err) : resolve(row);
+		})
+	})
+}
 
 app.get('/', function (req, res) {
 	res.send('hello world');
 })
 
-app.get('/query/:query', function (req, res) {
+app.get('/query/:query', async function (req, res) {
 	const query_text = decode(req.params.query);
 	const query = psentence.parse(query_text);
 	const query_sql = psherlock.build_sql(query);
-	res.send(query_sql);
+	const results = await db.allAsync(query_sql);
+	res.send(results);
 })
 
 app.get('/language/:language', async function (req, res) {
-	const stmt = db.prepare('SELECT * FROM languages WHERE id = $id', {$id: req.params.language});
+	const stmt = db.prepare(psherlock.inventory_sql, {$id: req.params.language});
 	
-	const language = await getAsync(stmt);
-	if (language) {
+	const language = await allAsync(stmt);
+	if (language != false) { // sic
 		res.send(language);
 	} else {
 		res.send({err: 'No such language'});

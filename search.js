@@ -29,6 +29,14 @@ exports.build_sql = function (qtree) {
         ;`;
 }
 
+exports.inventory_sql = `
+    SELECT segments.*
+    FROM languages 
+    JOIN language_phonemes ON languages.id = language_phonemes.language_id
+    JOIN phonemes ON language_phonemes.phoneme_id = phonemes.id
+    JOIN segments ON phonemes.phoneme = segments.segment
+    WHERE languages.id = $id;`;
+
 function build_phoneme_conditions(qtree) {
     var query_stack = [];
     var contains_queries = [];
