@@ -30,13 +30,13 @@ module.exports = function (segments) {
         }
     });
     return { // TODO: to_json()
-        'consonants': new PhonemeMatrix(consonants, 'consonant').to_html(),
-        'clicks': new PhonemeMatrix(clicks, 'click').to_html(),
-        'syllabic_consonants': new PhonemeArray(syllabic_consonants).to_html(),
-        'vowels': new PhonemeMatrix(vowels, 'vowel').to_html(),
-        'diphthongs': new PhonemeMatrix(diphthongs, 'vowel').to_html(),
-        'tones': new PhonemeArray(tones).to_html(),
-        'unknowns': new PhonemeArray(unknowns).to_html()
+        'consonants': new PhonemeMatrix(consonants, 'consonant').to_json(),
+        'clicks': new PhonemeMatrix(clicks, 'click').to_json(),
+        'syllabic_consonants': new PhonemeArray(syllabic_consonants).to_json(),
+        'vowels': new PhonemeMatrix(vowels, 'vowel').to_json(),
+        'diphthongs': new PhonemeMatrix(diphthongs, 'vowel').to_json(),
+        'tones': new PhonemeArray(tones).to_json(),
+        'unknowns': new PhonemeArray(unknowns).to_json()
     }
 }
 
@@ -138,9 +138,24 @@ PhonemeMatrix.prototype.merge_x = function (from, into) {
         x.set(into, x.get(into).concat(x.get(from)));
         x.delete(from);
     } 
+    this.x_headers.splice(this.x_headers.indexOf(from));
 }
 PhonemeMatrix.prototype.size = function () { // Seems easier than tracking a size attr in PhonemeArray
     return this._size;
+}
+PhonemeMatrix.prototype.to_json = function () {
+    var tmp = [];
+    for (let y of this.y_headers) {
+        var row = [];
+        for (let x of this.x_headers) {
+            row.push(this.get(y, x).map(i => i.phoneme));
+        }
+        tmp.push(row);
+    }
+    return {
+        'size': this._size
+    ,   'contents': tmp
+    }
 }
 PhonemeMatrix.prototype.to_html = function () {
     var res = '<table class=\'inventory\'>';
@@ -192,6 +207,9 @@ function PhonemeArray (phonemes) {
 }
 PhonemeArray.prototype.to_html = function () {
     return `<span>${this.phonemes.map(x => x.phoneme).sort().join(' ')}</span>`;
+}
+PhonemeArray.prototype.to_json = function () {
+    return this.phonemes;
 }
 PhonemeArray.prototype.size = function () {
     return this.phonemes.length;
