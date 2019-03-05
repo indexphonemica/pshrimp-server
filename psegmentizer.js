@@ -145,10 +145,12 @@ PhonemeMatrix.prototype.size = function () { // Seems easier than tracking a siz
 }
 PhonemeMatrix.prototype.to_json = function () {
     var tmp = [];
-    for (let y of this.y_headers) {
+    for (let y of this.map.entries()) {
+        var [y_header, y_contents] = y;
         var row = [];
-        for (let x of this.x_headers) {
-            row.push(this.get(y, x).map(i => i.phoneme));
+        for (let x of y_contents.entries()) {
+            var [x_header, x_contents] = x;
+            row.push(x_contents.sort(this.order.bind(this)).map(i => i.phoneme));
         }
         tmp.push(row);
     }
