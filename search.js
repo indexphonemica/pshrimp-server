@@ -110,7 +110,6 @@ function does_not_contain_query(term) {
 }
 
 function prop_query(term) {
-    console.log(term)
     return `
         languages.id ${term.contains ? '' : 'NOT'} IN (
             SELECT languages.id 
