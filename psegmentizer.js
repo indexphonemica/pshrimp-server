@@ -159,26 +159,6 @@ PhonemeMatrix.prototype.to_json = function () {
     ,   'contents': tmp
     }
 }
-PhonemeMatrix.prototype.to_html = function () {
-    var res = '<table class=\'inventory\'>';
-    
-    // need to build x headers first
-    // res += '<tr><th></th>';
-    // for (let x_header of this.x_headers) res += `<th>${x_header}</th>`;
-
-    for (let y of this.map.entries()) {
-        var [y_header, y_contents] = y;
-        res += '<tr>'
-        // res += `<th>${y_header}</th>`;
-        for (let x of y_contents.entries()) {
-            var [x_header, x_contents] = x;
-            res += `<td>${x_contents.sort(this.order.bind(this)).map(i => i.phoneme).join(' ')}</td>`;
-        }
-        res += '</tr>';
-    }
-    res += '</table>';
-    return res;
-}
 PhonemeMatrix.prototype.get_y_x = function (p) {
     // Get whatever features are used for the y and x axes on this grid.
     if (this.phoneme_klass === 'consonant' || this.phoneme_klass === 'click') return [p.manner, p.place];
@@ -206,9 +186,6 @@ PhonemeMatrix.prototype.order = function (a, b) {
 // We want tones to also have a to_html, so we'll make a one-dimensional array too. TODO test this
 function PhonemeArray (phonemes) {
     this.phonemes = phonemes;
-}
-PhonemeArray.prototype.to_html = function () {
-    return `<span>${this.phonemes.map(x => x.phoneme).sort().join(' ')}</span>`;
 }
 PhonemeArray.prototype.to_json = function () {
     return this.phonemes;
