@@ -29,7 +29,7 @@ module.exports = function (segments) {
             unknowns.push(x);
         }
     });
-    return { // TODO: to_json()
+    return { 
         'consonants': new PhonemeMatrix(consonants, 'consonant').to_json(),
         'clicks': new PhonemeMatrix(clicks, 'click').to_json(),
         'syllabic_consonants': new PhonemeArray(syllabic_consonants).to_json(),
@@ -188,7 +188,7 @@ function PhonemeArray (phonemes) {
     this.phonemes = phonemes;
 }
 PhonemeArray.prototype.to_json = function () {
-    return {'size': this.phonemes.length, 'contents': this.phonemes}
+    return {'size': this.phonemes.length, 'contents': this.phonemes.map(i => i.phoneme).sort(lexicographic_order)}
 }
 PhonemeArray.prototype.size = function () {
     return this.phonemes.length;
