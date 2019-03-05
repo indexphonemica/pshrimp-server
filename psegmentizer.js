@@ -188,7 +188,7 @@ function PhonemeArray (phonemes) {
     this.phonemes = phonemes;
 }
 PhonemeArray.prototype.to_json = function () {
-    return this.phonemes;
+    return {'size': this.phonemes.length, 'contents': this.phonemes}
 }
 PhonemeArray.prototype.size = function () {
     return this.phonemes.length;
