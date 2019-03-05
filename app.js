@@ -16,6 +16,10 @@ const psentence = require('./parse');
 const psherlock = require('./search');
 const psegmentize = require('./psegmentizer');
 
+// TODO TODO TODO TODO: can't pass %
+// also need to figure out how to handle promise rejections ._.
+
+
 // async stuff for DB - https://gist.github.com/yizhang82/26101c92faeea19568e48224b09e2d1c
 db.getAsync = function (sql) {
 	return new Promise((resolve, reject) => {
