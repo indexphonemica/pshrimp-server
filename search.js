@@ -19,11 +19,11 @@ exports.build_sql = function (qtree) {
     if (is_negative(qtree)) do_phonemes = false;
 
     return `
-        SELECT languages.id, languages.language_name, languages.language_code${do_phonemes ? ', ' + do_phonemes : ''}
+        SELECT languages.id, languages.language_name, languages.source, languages.language_code${do_phonemes ? ', ' + do_phonemes : ''}
         FROM languages
-        JOIN language_phonemes ON languages.id = language_phonemes.language_id
+        ${do_phonemes ? `JOIN language_phonemes ON languages.id = language_phonemes.language_id
         JOIN phonemes ON language_phonemes.phoneme_id = phonemes.id
-        JOIN segments ON phonemes.phoneme = segments.segment
+        JOIN segments ON phonemes.phoneme = segments.segment` : ''}
         WHERE ${get_sql(qtree)} ${phoneme_conditions && do_phonemes ? 'AND (' + phoneme_conditions + ')' : ''}
         ORDER BY languages.id
         ;`;
