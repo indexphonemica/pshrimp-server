@@ -37,6 +37,11 @@ exports.inventory_sql = `
     JOIN segments ON phonemes.phoneme = segments.segment
     WHERE languages.id = $id;`;
 
+exports.language_sql = `
+    SELECT languages.*
+    FROM languages
+    WHERE languages.id = $id;`;
+
 function build_phoneme_conditions(qtree) {
     var query_stack = [];
     var contains_queries = [];

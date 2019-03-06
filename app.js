@@ -98,11 +98,14 @@ app.get('/query/:query', async function (req, res) {
 })
 
 app.get('/language/:language', async function (req, res) {
-	const stmt = db.prepare(psherlock.inventory_sql, {$id: req.params.language});
-	
-	const language = await allAsync(stmt);
-	if (language != false) { // sic
-		res.send(psegmentize(language));
+	const seg_stmt = db.prepare(psherlock.inventory_sql, {$id: req.params.language});
+	const lang_stmt = db.prepare(psherlock.language_sql, {$id: req.params.language});
+
+	const segments = await allAsync(seg_stmt);
+	const language_data = await getAsync(lang_stmt);
+	if (segments != false && language_data != false) { // sic
+		let segcharts = psegmentize(segments);
+		res.send(Object.assign(segcharts, language_data));
 	} else {
 		res.send({err: 'No such language'});
 	}
