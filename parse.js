@@ -94,6 +94,16 @@ function is_conjunction(s) {
 	return false;
 }
 
+// sanitization stuff - hopefully this works. also replace IPA lookalikes so you can search for /g/ instead of the ridiculous one-story ɡ
+const not_a_phoneme = /[^A-Za-zÀ-ÖØ-öø-ÿ\u0100-\u02FF\u03B0-\u03FF\u1D00-\u1DBF\uA270-\uA2FF\u2C60-\u2C7F\u0300-\u03FF\u207F\u2193]/g;
+const not_a_property = /[^A-Za-z_]/g
+function sanitize_property(s) {
+	return s.replace(not_a_property, '');
+}
+function fix_ipa_lookalikes(s) {
+	return s.replace(/g/g,'ɡ').replace(/\!/g,'\u01C3').replace(/\|/g,'\u01c0').replace(/\'/g,'\u02BC').replace(/:/g,'\u02d0');
+}
+
 function parse_qualifier(s) {
 	if (s === 'no') return [null, 0];
 	if (s === 'any') return ['>', 0];
@@ -106,7 +116,7 @@ function parse_qualifier(s) {
 	return [gtlt, num]
 }
 function parse_phoneme(s) {
-	return s.replace(/\//g, '').replace(/g/g,'ɡ');
+	return fix_ipa_lookalikes(s.replace(/\//g, '')).replace(not_a_phoneme, '');
 }
 function parse_qualificand(s) {
 	s.replace(/,/g, '');
@@ -129,7 +139,7 @@ function parse_property(s) {
 			contains = false;
 			arr[0] = arr[0].slice(1);
 		}
-		return [arr[0], arr[1].replace(/_/g,' '), contains]
+		return [sanitize_property(arr[0]), sanitize_property(arr[1]).replace(/_/g,' '), contains]
 	} else {
 		throw new ParserError(`Invalid property ${s}`);
 	}
