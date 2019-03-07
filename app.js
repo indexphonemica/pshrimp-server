@@ -72,29 +72,33 @@ app.use(function(req, res, next) {
 });
 
 app.get('/query/:query', async function (req, res) {
-	const query_text = decode(req.params.query);
-	const query = psentence.parse(query_text);
-	const query_sql = psherlock.build_sql(query);
-	const results = await db.allAsync(query_sql);
+	try {
+		const query_text = decode(req.params.query);
+		const query = psentence.parse(query_text);
+		const query_sql = psherlock.build_sql(query);
+		const results = await db.allAsync(query_sql);
 
-	// SQL will return one row per phoneme.
-	// Aggregate these so there's a phonemes value with an array.
-	// This relies on language rows always being contiguous!
-	var new_results = [];
-	var processed = new Set();
-	for (let i of results) {
-		if (!processed.has(i.id)) {
-			if (lang) new_results.push(lang);
+		// SQL will return one row per phoneme.
+		// Aggregate these so there's a phonemes value with an array.
+		// This relies on language rows always being contiguous!
+		var new_results = [];
+		var processed = new Set();
+		for (let i of results) {
+			if (!processed.has(i.id)) {
+				if (lang) new_results.push(lang);
 
-			var {phoneme, ...lang} = i; // really weird destructuring syntax - `lang` ends up with all the row props except `phoneme` 
-			processed.add(i.id);
-			if (i.phoneme) lang.phonemes = [];
+				var {phoneme, ...lang} = i; // really weird destructuring syntax - `lang` ends up with all the row props except `phoneme` 
+				processed.add(i.id);
+				if (i.phoneme) lang.phonemes = [];
+			}
+			if (i.phoneme) lang.phonemes.push(i.phoneme);
 		}
-		if (i.phoneme) lang.phonemes.push(i.phoneme);
-	}
-	new_results.push(lang);
+		new_results.push(lang);
 
-	res.send(new_results);
+		res.json(new_results);
+	} catch (err) {
+		res.status(500).json({"error": err.toString()})
+	}
 })
 
 app.get('/language/:language', async function (req, res) {
@@ -107,7 +111,7 @@ app.get('/language/:language', async function (req, res) {
 		let segcharts = psegmentize(segments);
 		res.send(Object.assign(segcharts, language_data));
 	} else {
-		res.send({err: 'No such language'});
+		res.send({"error": 'No such language'});
 	}
 })
 
