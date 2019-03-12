@@ -2,68 +2,15 @@ const express = require('express');
 const app = express();
 const port = 1337;
 
-const sqlite3 = require('sqlite3');
-const dbFilePath = './phoible.sqlite'
-const db = new sqlite3.Database(dbFilePath, err => {
-	if (err) {
-		console.log(err);
-	} else {
-		console.log('Connected to database');
-	}
-});
+const { Client } = require('pg');
+const client = new Client();
+client.connect();
 
 const psentence = require('./parse');
 const psherlock = require('./search');
 const psegmentize = require('./psegmentizer');
 
-// TODO TODO TODO TODO: can't pass %
-// also need to figure out how to handle promise rejections ._.
-
-
-// async stuff for DB - https://gist.github.com/yizhang82/26101c92faeea19568e48224b09e2d1c
-db.getAsync = function (sql) {
-	return new Promise((resolve, reject) => {
-		this.get(sql, (err, row) => {
-			if (err) {
-				reject(err);
-			} else {
-				resolve(row);
-			}
-		});
-	});
-}
-
-db.allAsync = function (sql) {
-	return new Promise((resolve, reject) => {
-		this.all(sql, (err, row) => {
-			if (err) {
-				reject(err);
-			} else {
-				resolve(row);
-			}
-		});
-	});
-}
-
-// async/await for statement calls, maybe?
-const getAsync = function (stmt) {
-	return new Promise((resolve, reject) => {
-		stmt.get((err, row) => {
-			err ? reject(err) : resolve(row);
-		});
-	});
-}
-const allAsync = function (stmt) {
-	return new Promise((resolve, reject) => {
-		stmt.all((err, row) => {
-			err ? reject(err) : resolve(row);
-		})
-	})
-}
-
-app.get('/', function (req, res) {
-	res.send('hello world');
-})
+// TODO: promise rejection?
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -73,17 +20,17 @@ app.use(function(req, res, next) {
 
 app.get('/query/:query', async function (req, res) {
 	try {
-		const query_text = decode(req.params.query);
+		const query_text = decode(req.params.query).replace(/lateralis/g, 'lateral'); // Postgres reserved keyword workaround
 		const query = psentence.parse(query_text);
 		const query_sql = psherlock.build_sql(query);
-		const results = await db.allAsync(query_sql);
+		const results = await client.query(query_sql);
 
 		// SQL will return one row per phoneme.
 		// Aggregate these so there's a phonemes value with an array.
 		// This relies on language rows always being contiguous!
 		var new_results = [];
 		var processed = new Set();
-		for (let i of results) {
+		for (let i of results.rows) {
 			if (!processed.has(i.id)) {
 				if (lang) new_results.push(lang);
 
@@ -102,14 +49,11 @@ app.get('/query/:query', async function (req, res) {
 })
 
 app.get('/language/:language', async function (req, res) {
-	const seg_stmt = db.prepare(psherlock.inventory_sql, {$id: req.params.language});
-	const lang_stmt = db.prepare(psherlock.language_sql, {$id: req.params.language});
-
-	const segments = await allAsync(seg_stmt);
-	const language_data = await getAsync(lang_stmt);
+	const segments = await client.query(psherlock.inventory_sql, [req.params.language]);
+	const language_data = await client.query(psherlock.language_sql, [req.params.language]);
 	if (segments != false && language_data != false) { // sic
-		let segcharts = psegmentize(segments);
-		res.send(Object.assign(segcharts, language_data));
+		let segcharts = psegmentize(segments.rows);
+		res.send(Object.assign(segcharts, language_data.rows[0]));
 	} else {
 		res.send({"error": 'No such language'});
 	}
@@ -120,3 +64,5 @@ function decode(thing) {
 }
 
 app.listen(port, () => console.log(`The great Pshrimp awaketh on port ${port}!`));
+
+process.on('exit', client.end);

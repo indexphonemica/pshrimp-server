@@ -1,5 +1,7 @@
 var features = [];
 
+// Note 'lateralis' instead of 'lateral' - 'lateral' is reserved in Postgres.
+
 features.unknown = {
     meta: {
         name: 'undefined', // eh, why not
@@ -592,7 +594,7 @@ features.pharyngeal_configuration = [
 features.manner = [ // TODO: any more prenasalized consonants need fixed?
     { // need to move this up here for dl
         meta: {
-            name: 'lateral affricate',
+            name: 'lateralis affricate',
             order: 2.5
         }, features: [{
             'consonantal':     '+'
@@ -603,7 +605,7 @@ features.manner = [ // TODO: any more prenasalized consonants need fixed?
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '-'
-        ,   'lateral':         '+'
+        ,   'lateralis':         '+'
         }, { // n̤d̤ɮ̤
             'consonantal':     '+'
         ,   'sonorant':        '+,-'
@@ -613,7 +615,7 @@ features.manner = [ // TODO: any more prenasalized consonants need fixed?
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '+,-'
-        ,   'lateral':         '+'
+        ,   'lateralis':         '+'
         }, { // dl
             'consonantal':     '+'
         ,   'sonorant':        '-,+'
@@ -623,7 +625,7 @@ features.manner = [ // TODO: any more prenasalized consonants need fixed?
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '-'
-        ,   'lateral':         '-,+'
+        ,   'lateralis':         '-,+'
         }]
     }, {
         meta: {
@@ -638,7 +640,7 @@ features.manner = [ // TODO: any more prenasalized consonants need fixed?
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '-'
-        ,   'lateral':         '-'
+        ,   'lateralis':         '-'
         }, { // Prenasalized stops
             'consonantal':     '+'
         ,   'sonorant':        '+,-'
@@ -648,7 +650,7 @@ features.manner = [ // TODO: any more prenasalized consonants need fixed?
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '+,-'
-        ,   'lateral':         '-'
+        ,   'lateralis':         '-'
         }]
     }, {
         meta: {
@@ -663,7 +665,7 @@ features.manner = [ // TODO: any more prenasalized consonants need fixed?
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '+'
-        ,   'lateral':         '-'
+        ,   'lateralis':         '-'
         }]
     }, {
         meta: {
@@ -678,7 +680,7 @@ features.manner = [ // TODO: any more prenasalized consonants need fixed?
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '-'
-        ,   'lateral':         '-'
+        ,   'lateralis':         '-'
         }, { // prenasalized affricates
             'consonantal':     '+'
         ,   'sonorant':        '+,-'
@@ -688,7 +690,7 @@ features.manner = [ // TODO: any more prenasalized consonants need fixed?
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '+,-'
-        ,   'lateral':         '-'
+        ,   'lateralis':         '-'
         }]
     }, {
         meta: {
@@ -703,7 +705,7 @@ features.manner = [ // TODO: any more prenasalized consonants need fixed?
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '+'
-        ,   'lateral':         '-'
+        ,   'lateralis':         '-'
         }]
     }, {
         meta: {
@@ -718,7 +720,7 @@ features.manner = [ // TODO: any more prenasalized consonants need fixed?
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '-'
-        ,   'lateral':         '-'
+        ,   'lateralis':         '-'
         }, { // prenasalized fricatives
             'consonantal':     '+'
         ,   'sonorant':        '+,-'
@@ -728,7 +730,7 @@ features.manner = [ // TODO: any more prenasalized consonants need fixed?
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '-'
-        ,   'lateral':         '-'
+        ,   'lateralis':         '-'
         }]
     }, {
         meta: {
@@ -743,7 +745,7 @@ features.manner = [ // TODO: any more prenasalized consonants need fixed?
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '+'
-        ,   'lateral':         '-'
+        ,   'lateralis':         '-'
         }]
     }, {
         meta: {
@@ -757,7 +759,7 @@ features.manner = [ // TODO: any more prenasalized consonants need fixed?
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '+'
-        ,   'lateral':         '-'
+        ,   'lateralis':         '-'
         }]
     }, {
         meta: {
@@ -771,7 +773,7 @@ features.manner = [ // TODO: any more prenasalized consonants need fixed?
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '-'
-        ,   'lateral':         '-'
+        ,   'lateralis':         '-'
         }, {
             'consonantal':     '+' // r\`
         ,   'sonorant':        '+'
@@ -780,7 +782,7 @@ features.manner = [ // TODO: any more prenasalized consonants need fixed?
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '-'
-        ,   'lateral':         '-'
+        ,   'lateralis':         '-'
         }, {
             'consonantal':     '-'
         ,   'sonorant':        '-'
@@ -790,7 +792,7 @@ features.manner = [ // TODO: any more prenasalized consonants need fixed?
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '-'
-        ,   'lateral':         '-'
+        ,   'lateralis':         '-'
         }]
     }, {
         meta: {
@@ -804,7 +806,7 @@ features.manner = [ // TODO: any more prenasalized consonants need fixed?
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '+'
-        ,   'lateral':         '-'
+        ,   'lateralis':         '-'
         }]
     }, {
         meta: {
@@ -818,7 +820,7 @@ features.manner = [ // TODO: any more prenasalized consonants need fixed?
         ,   'tap':             '+'
         ,   'trill':           '-'
         ,   'nasal':           '-'
-        ,   'lateral':         '-'
+        ,   'lateralis':         '-'
         }]
     }, {
         meta: {
@@ -832,7 +834,7 @@ features.manner = [ // TODO: any more prenasalized consonants need fixed?
         ,   'tap':             '+'
         ,   'trill':           '-'
         ,   'nasal':           '+'
-        ,   'lateral':         '-'
+        ,   'lateralis':         '-'
         }]
     }, {
         meta: { 
@@ -847,7 +849,7 @@ features.manner = [ // TODO: any more prenasalized consonants need fixed?
         ,   'tap':             '+'
         ,   'trill':           '-'
         ,   'nasal':           '-'
-        ,   'lateral':         '-'
+        ,   'lateralis':         '-'
         }]
     }, {
         meta: {
@@ -861,7 +863,7 @@ features.manner = [ // TODO: any more prenasalized consonants need fixed?
         ,   'tap':             '-'
         ,   'trill':           '+'
         ,   'nasal':           '-'
-        ,   'lateral':         '-'
+        ,   'lateralis':         '-'
         }]
     }, {
         meta: {
@@ -875,7 +877,7 @@ features.manner = [ // TODO: any more prenasalized consonants need fixed?
         ,   'tap':             '-'
         ,   'trill':           '+'
         ,   'nasal':           '+'
-        ,   'lateral':         '-'
+        ,   'lateralis':         '-'
         }]
     }, {
         meta: { 
@@ -889,11 +891,11 @@ features.manner = [ // TODO: any more prenasalized consonants need fixed?
         ,   'tap':             '-'
         ,   'trill':           '+'
         ,   'nasal':           '-'
-        ,   'lateral':         '-'
+        ,   'lateralis':         '-'
         }]
     }, {
         meta: {
-            name: 'lateral resonant',
+            name: 'lateralis resonant',
             order: 7.5
         }, features: [{
             'consonantal':     '+'
@@ -903,11 +905,11 @@ features.manner = [ // TODO: any more prenasalized consonants need fixed?
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '-'
-        ,   'lateral':         '+'
+        ,   'lateralis':         '+'
         }]
     }, {
         meta: {
-            name: 'nasalized lateral resonant',
+            name: 'nasalized lateralis resonant',
             order: 7.7
         }, features: [{
             'consonantal':     '+'
@@ -918,11 +920,11 @@ features.manner = [ // TODO: any more prenasalized consonants need fixed?
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '+'
-        ,   'lateral':         '+'
+        ,   'lateralis':         '+'
         }]
     }, {
         meta: {
-            name: 'lateral fricative',
+            name: 'lateralis fricative',
             order: 4.5
         }, features: [{
             'consonantal':     '+'
@@ -933,11 +935,11 @@ features.manner = [ // TODO: any more prenasalized consonants need fixed?
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '-'
-        ,   'lateral':         '+'
+        ,   'lateralis':         '+'
         }]
     }, {
         meta: {
-            name: 'lateral tap',
+            name: 'lateralis tap',
             order: 9.5
         }, features: [{
             'consonantal':     '+'
@@ -947,7 +949,7 @@ features.manner = [ // TODO: any more prenasalized consonants need fixed?
         ,   'tap':             '+'
         ,   'trill':           '-'
         ,   'nasal':           '-'
-        ,   'lateral':         '+'
+        ,   'lateralis':         '+'
         }]
     }
 ];

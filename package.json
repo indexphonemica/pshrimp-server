@@ -18,6 +18,10 @@
   "homepage": "https://github.com/defseg/pshrimp#readme",
   "dependencies": {
     "express": "^4.16.4",
+    "pg": "^7.8.2",
     "sqlite3": "^4.0.6"
+  },
+  "engines": {
+    "node": "10.15.0"
   }
 }
