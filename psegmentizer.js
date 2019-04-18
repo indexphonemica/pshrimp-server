@@ -207,11 +207,11 @@ function segment_info(segment) {
         return vowel_info(segment);
     }
     // fricated vowels
-    if (segment.syllabic === '+' && segment.consonantal === '+' && segment.segment.indexOf('\u0353') > -1) return vowel_info(segment);
+    if (segment.syllabic === '+' && segment.consonantal === '+' && segment.phoneme.indexOf('\u0353') > -1) return vowel_info(segment);
     // erroneous diphthongs (aj, aw, etc.)
     if (segment.syllabic && segment.syllabic.indexOf(',') > -1) return vowel_info(segment, true);
     // Weird notation for fricated vowels in SPA inventories
-    if (segment.syllabic === '+' && segment.segment.indexOf('z̞̩') > -1) return vowel_info(segment);
+    if (segment.syllabic === '+' && segment.phoneme.indexOf('z̞̩') > -1) return vowel_info(segment);
     // syllabic consonants
     if (segment.syllabic === '+' && segment.consonantal === '+') return consonant_info(segment, true);
 
@@ -245,7 +245,7 @@ function vowel_info(segment, is_diphthong = false) {
     let roundness = get('roundness', segment);
 
     // Errata
-    const seg = segment.segment;
+    const seg = segment.phoneme;
     if (seg.indexOf('ɯ̞') > -1) height = get_by_name('height', 'high-mid');
     if (seg.indexOf('z̞̩') > -1) { // treat 'apical vowels' as high central
         height = get_by_name('height', 'high');
@@ -258,7 +258,7 @@ function vowel_info(segment, is_diphthong = false) {
     // TODO more features? (phonation, etc.)
 
     return {
-        phoneme: segment.segment
+        phoneme: segment.phoneme
     ,   klass: is_diphthong ? 'diphthong' : 'vowel'
     ,   height: height
     ,   frontness: frontness
@@ -270,14 +270,14 @@ function vowel_info(segment, is_diphthong = false) {
 
 function tone_info(segment) {
     return {
-        phoneme: segment.segment
+        phoneme: segment.phoneme
     ,   klass: 'tone'
     }
 }
 
 function consonant_info(segment, is_syllabic = false) {
     return {
-        phoneme: segment.segment
+        phoneme: segment.phoneme
     ,   klass: is_syllabic ? 'syllabic_consonant' : 'consonant'
     ,   place: get_place_and_secondary_articulation(segment)
     ,   pharyngeal_configuration: get('pharyngeal_configuration', segment)
@@ -335,7 +335,7 @@ function click_info(segment) {
     if (precomponents === undefined) precomponents = compute_precomponents();
     if (effluxes === undefined) effluxes = compute_effluxes();
 
-    var seg = segment.segment.replace(/ǃǃ/,'‼'); // Make this a single character so the regex is simpler.
+    var seg = segment.phoneme.replace(/ǃǃ/,'‼'); // Make this a single character so the regex is simpler.
     seg = seg.replace(/ǃ̠/,'‼'); // This looks like a POA.
     seg = seg.replace(/[\u0353]/,''); // Discard frication diacritic - it's not contrastive, and this simplifies things.
     seg = seg.replace('ǂˡ','ǁ') // Alternate notation for the lateral click in !Xu.
@@ -348,7 +348,7 @@ function click_info(segment) {
     var manner_order = precomponent_order * 100 + efflux_order;
 
     var res = {
-        phoneme: segment.segment
+        phoneme: segment.phoneme
     ,   klass: 'click'
     ,   place: places[influx]
     ,   manner: {name: manner_order, order: manner_order}
@@ -361,7 +361,7 @@ function click_info(segment) {
 // ----------------------
 
 function get_place_and_secondary_articulation(segment) {
-    var seg = segment.segment;
+    var seg = segment.phoneme;
 
     // Glottals are hard
     if (seg[0] === 'h' || seg[0] === 'ʔ' || seg[0] === 'ɦ') return get_by_name('place_and_secondary_articulation', 'glottal');
