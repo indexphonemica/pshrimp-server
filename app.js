@@ -2,9 +2,7 @@ const express = require('express');
 const app = express();
 const port = 1337;
 
-const { Client } = require('pg');
-const client = new Client();
-client.connect();
+const client = require('./db_client');
 
 const psentence = require('./parse');
 const psherlock = require('./search');
@@ -19,38 +17,45 @@ app.use(function(req, res, next) {
 });
 
 app.get('/query/:query', async function (req, res) {
+	const query_text = decode(req.params.query).replace(/lateralis/g, 'lateral'); // Postgres reserved keyword workaround
+	const query = psentence.parse(query_text);
+	const query_sql = psherlock.build_sql(query);
 	try {
-		const query_text = decode(req.params.query).replace(/lateralis/g, 'lateral'); // Postgres reserved keyword workaround
-		const query = psentence.parse(query_text);
-		const query_sql = psherlock.build_sql(query);
 		const results = await client.query(query_sql);
-
-		// SQL will return one row per phoneme.
-		// Aggregate these so there's a phonemes value with an array.
-		// This relies on language rows always being contiguous!
-		var new_results = [];
-		var processed = new Set();
-		for (let i of results.rows) {
-			if (!processed.has(i.id)) {
-				if (lang) new_results.push(lang);
-
-				var {phoneme, ...lang} = i; // really weird destructuring syntax - `lang` ends up with all the row props except `phoneme` 
-				processed.add(i.id);
-				if (i.phoneme) lang.phonemes = [];
-			}
-			if (i.phoneme) lang.phonemes.push(i.phoneme);
-		}
-		new_results.push(lang);
-
-		res.json(new_results);
 	} catch (err) {
-		res.status(500).json({"error": err.toString()})
+		res.status(500).json({"error": err.toString()});
+		return;
 	}
+
+	// SQL will return one row per phoneme.
+	// Aggregate these so there's a phonemes value with an array.
+	// This relies on language rows always being contiguous!
+	var new_results = [];
+	var processed = new Set();
+	for (let i of results.rows) {
+		if (!processed.has(i.id)) {
+			if (lang) new_results.push(lang);
+
+			var {phoneme, ...lang} = i; // really weird destructuring syntax - `lang` ends up with all the row props except `phoneme` 
+			processed.add(i.id);
+			if (i.phoneme) lang.phonemes = [];
+		}
+		if (i.phoneme) lang.phonemes.push(i.phoneme);
+	}
+	new_results.push(lang);
+
+	res.json(new_results);
+
 })
 
 app.get('/language/:language', async function (req, res) {
-	const segments = await client.query(psherlock.inventory_sql, [req.params.language]);
-	const language_data = await client.query(psherlock.language_sql, [req.params.language]);
+	try {
+		const segments = await client.query(psherlock.inventory_sql, [req.params.language]);
+		const language_data = await client.query(psherlock.language_sql, [req.params.language]);
+	} catch (err) {
+		res.status(500).json({"error": err.toString()});
+		return;
+	}
 	if (segments != false && language_data != false) { // sic
 		let segcharts = psegmentize(segments.rows);
 		res.send(Object.assign(segcharts, language_data.rows[0]));

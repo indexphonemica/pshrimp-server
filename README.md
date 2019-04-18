@@ -1,1 +1,1 @@
-Don't use this yet. None of the SQL is sanitized.
+This is the backend for [Pshrimp](https://github.com/defseg/pshrimp-client).

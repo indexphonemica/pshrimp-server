@@ -1,0 +1,1 @@
+For now, these tests are all about handling the release of PHOIBLE 2.0.
