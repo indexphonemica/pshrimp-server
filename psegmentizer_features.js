@@ -3,10 +3,8 @@ var features = [];
 // Note 'lateralis' instead of 'lateral' - 'lateral' is reserved in Postgres.
 
 features.unknown = {
-    meta: {
-        name: 'undefined', // eh, why not
-        order: 99999
-    }, features: [{'syllabic': 'you should never see this'}]
+    name: 'undefined', // eh, why not
+    order: 99999
 }
 
 features.place_and_secondary_articulation = [
@@ -31,7 +29,7 @@ features.place_and_secondary_articulation = [
             ,   'labiodental': '-'
             ,   'dorsal':      '+'
             ,   'front':       '+'
-            ,   'back':        '+' 
+            ,   'back':        '-' // changed in 2.0 
             }]
     }, {
         meta: {
@@ -62,7 +60,7 @@ features.place_and_secondary_articulation = [
         ,   'labiodental': '+'
         ,   'dorsal':      '+'
         ,   'front':       '+'
-        ,   'back':        '+'
+        ,   'back':        '-' // changed in 2.0
         }]
     }, {
         meta: {
@@ -106,7 +104,7 @@ features.place_and_secondary_articulation = [
         ,   'distributed': '+'
         ,   'dorsal':      '+'
         ,   'front':       '+'
-        ,   'back':        '+'
+        ,   'back':        '-' // changed in 2.0
         }]
     }, {
         meta: {
@@ -134,14 +132,13 @@ features.place_and_secondary_articulation = [
         }]
     }, {
         meta: {
-            name: 'rounded alveolar',
+            name: 'rounded alveolar', // changed in 2.0? don't check for 'distributed'
             order: 12
         }, features: [{
             'labial':      '+'
         ,   'round':       '+'
         ,   'coronal':     '+'
         ,   'anterior':    '+'
-        ,   'distributed': '-'
         ,   'dorsal':      '-'
         }]
     }, {
@@ -155,7 +152,7 @@ features.place_and_secondary_articulation = [
         ,   'distributed': '-'
         ,   'dorsal':      '+'
         ,   'front':       '+'
-        ,   'back':        '+'
+        ,   'back':        '-' // changed in 2.0
         }]
     }, {
         meta: {
@@ -169,7 +166,7 @@ features.place_and_secondary_articulation = [
         ,   'distributed': '-'
         ,   'dorsal':      '+'
         ,   'front':       '+'
-        ,   'back':        '+'
+        ,   'back':        '-' // changed in 2.0
         }]
     }, {
         meta: {
@@ -182,7 +179,7 @@ features.place_and_secondary_articulation = [
         ,   'distributed': '-'
         ,   'dorsal':      '+'
         ,   'front':       '-'
-        ,   'back':        '+'
+        ,   'back':        '-' // changed in 2.0
         }]
     }, {
         meta: {
@@ -218,7 +215,7 @@ features.place_and_secondary_articulation = [
         ,   'distributed': '-'
         ,   'dorsal':      '+'
         ,   'front':       '+'
-        ,   'back':        '+'
+        ,   'back':        '-' // changed in 2.0
         }] // no velarized or labiopalatalized retroflexes in PHOIBLE?
     }, {
         meta: {
@@ -254,7 +251,7 @@ features.place_and_secondary_articulation = [
         ,   'distributed': '+'
         ,   'dorsal':      '+'
         ,   'front':       '+'
-        ,   'back':        '+'
+        ,   'back':        '-' // changed in 2.0
         }]
     },  {
         meta: {
@@ -315,7 +312,7 @@ features.place_and_secondary_articulation = [
         ,   'distributed': '+'
         ,   'dorsal':      '+'
         ,   'front':       '+'
-        ,   'back':        '+'
+        ,   'back':        '-' // changed in 2.0
         }]
     }, {
         meta: {
@@ -571,7 +568,10 @@ features.pharyngeal_configuration = [
         }, features: [{
             'advanced_tongue_root': '-', 
             'retracted_tongue_root': '-'
-        }]
+        }, {
+            'advanced_tongue_root': null, // changed in 2.0
+            'retracted_tongue_root': null
+        }]      
     }, {
         meta: {
             name: 'pharyngealized',
@@ -1078,6 +1078,8 @@ features.strength = [
             order: 0
         }, features: [{
             'fortis': '-'
+        }, {
+            'fortis': null // changed in 2.0
         }]
     }, {
         meta: {
@@ -1118,9 +1120,15 @@ features.click_precomponent = [
         meta: {
             name: 'voiceless nasal'
         ,   order: 4
-        ,   string: 'ŋ̥'
+        ,   string: 'ŋ̊'
         }, features: []
     }, {
+        meta: {
+            name: 'voiceless nasal 2' // sigh. changed in 2.0. TODO should just normalize these.
+        ,   order: 4.5
+        ,   string: 'ŋ̥'
+        }, features: []
+    },{
         meta: {
             name: 'breathy-voiced'
         ,   order: 5
@@ -1168,10 +1176,16 @@ features.click_precomponent = [
         ,   order: 8.5
         ,   string: 'ʼŋ'
         }, features: []
-    }, 
+    }, {
+        meta: {
+            name: 'glottalized nasal 2' // new in 2.0. should also be normalized. TODO
+        ,   order: 8.6
+        ,   string: 'ʔŋ'
+        }, features: []
+    } 
 ];
 
-// These were all automatically generated, so there are no names for now. (TODO?)
+// These were all automatically generated.
 // The diacritic   (COMBINING X BELOW), which marks frication, has been removed.
 // No PHOIBLE doculect contrasts fricated and non-fricated clicks at the same POA.
 features.click_efflux = [ 
@@ -1183,182 +1197,176 @@ features.click_efflux = [
         }, features: {}
     }, {
         meta: {
-            name: ''
+            name: 'aspirated'
         ,   order: 2
         ,   string: "ʰ"
         }, features: {}
     }, {
         meta: {
-            name: ''
-        ,   order: 4
+            name: 'aspirated 2' // sigh, TODO
+        ,   order: 2.5
+        ,   string: "h"
+        }, features: {}
+    }, {
+        meta: {
+            name: 'breathy-voiced'
+        ,   order: 2.7
+        ,   string: 'ʱ'
+        }, features: {}
+    }, {
+        meta: {
+            name: 'retracted'
+        ,   order: 3
         ,   string: "̠"
         }, features: {}
     }, {
         meta: {
-            name: ''
-        ,   order: 5
+            name: 'ejective'
+        ,   order: 4
         ,   string: "ʼ"
         }, features: {}
     }, {
         meta: {
-            name: ''
-        ,   order: 6
+            name: 'glottalized'
+        ,   order: 5
         ,   string: "ˀ"
         }, features: {}
     }, {
         meta: {
-            name: ''
-        ,   order: 7
-        ,   string: "ʰ"
-        }, features: {}
+            name: 'glottalized 2' // sigh, also TODO
+        ,   order: 5.5
+        ,   string: "ʔ"
+        }
     }, {
         meta: {
-            name: ''
-        ,   order: 8
+            name: 'with velar fricative release'
+        ,   order: 6
         ,   string: "x"
         }, features: {}
     }, {
         meta: {
-            name: ''
-        ,   order: 9
+            name: 'retracted aspirated'
+        ,   order: 7
         ,   string: "̠ʰ"
         }, features: {}
     }, {
         meta: {
-            name: ''
-        ,   order: 10
+            name: 'retracted aspirated'
+        ,   order: 8
         ,   string: "̠ˀ"
         }, features: {}
     }, {
         meta: {
-            name: ''
-        ,   order: 11
-        ,   string: "ˀ"
-        }, features: {}
-    }, {
-        meta: {
-            name: ''
-        ,   order: 12
+            name: 'ejective with velar fricative release'
+        ,   order: 9
         ,   string: "xʼ"
         }, features: {}
     }, {
         meta: {
-            name: ''
-        ,   order: 13
+            name: 'glottalized with velar fricative release'
+        ,   order: 10
         ,   string: "xˀ"
         }, features: {}
     }, {
         meta: {
-            name: ''
-        ,   order: 14
+            name: 'glottalized velarized'
+        ,   order: 11
         ,   string: "ˠˀ"
         }, features: {}
     }, {
         meta: {
-            name: ''
-        ,   order: 15
-        ,   string: "x"
-        }, features: {}
-    }, {
-        meta: {
-            name: ''
-        ,   order: 16
+            name: 'lateral'
+        ,   order: 12
         ,   string: "ˡ"
         }, features: {}
     }, {
         meta: {
-            name: ''
-        ,   order: 17
-        ,   string: "xˀ"
-        }, features: {}
-    }, {
-        meta: {
-            name: ''
-        ,   order: 18
+            name: 'aspirated lateral'
+        ,   order: 13
         ,   string: "ˡʰ"
         }, features: {}
     }, {
         meta: {
-            name: ''
-        ,   order: 19
+            name: 'lateral with velar aspirate release'
+        ,   order: 14
         ,   string: "ˡx"
         }, features: {}
     }, {
         meta: {
-            name: ''
-        ,   order: 20
+            name: 'ejective lateral with velar aspirate release'
+        ,   order: 15
         ,   string: "ˡxˀ"
         }, features: {}
     }, {
         meta: {
-            name: ''
-        ,   order: 21
+            name: 'glottalized lateral'
+        ,   order: 16
         ,   string: "ˡˀ"
         }, features: {}
     }, {
         meta: {
-            name: ''
-        ,   order: 22
+            name: 'aspirated with velar fricative release'
+        ,   order: 17
         ,   string: "xʰ"
         }, features: {}
     }, {
         meta: {
-            name: ''
-        ,   order: 23
+            name: 'velarized glottalized'
+        ,   order: 18
         ,   string: "ˠʰ"
         }, features: {}
     }, {
         meta: {
-            name: ''
-        ,   order: 24
+            name: 'retracted aspirated with velar fricative release'
+        ,   order: 19
         ,   string: "̠xʰ"
         }, features: {}
     }, {
         meta: {
-            name: ''
-        ,   order: 25
-        ,   string: "xʰ"
-        }, features: {}
-    }, {
-        meta: {
-            name: ''
-        ,   order: 26
+            name: 'dental'
+        ,   order: 20
         ,   string: "̪"
         }, features: {}
     }, {
         meta: {
-            name: ''
-        ,   order: 27
+            name: 'rounded'
+        ,   order: 21
         ,   string: "ʷ"
         }, features: {}
     }, {
         meta: {
-            name: ''
-        ,   order: 28
-        ,   string: "ʰʷ"
+            name: 'rounded aspirated'
+        ,   order: 22
+        ,   string: "ʷʰ"
         }, features: {}
     }, {
         meta: {
-            name: ''
-        ,   order: 29
+            name: 'with velar aspirate release'
+        ,   order: 22.5
+        ,   string: 'kʰ'
+        }
+    }, {
+        meta: {
+            name: 'aspirated with uvular plosive release'
+        ,   order: 23
         ,   string: "qʰ"
         }, features: {}
     }, {
         meta: {
-            name: ''
-        ,   order: 30
+            name: 'with velar ejective release'
+        ,   order: 24
         ,   string: "kxʼ"
         }, features: {}
     }, {
         meta: {
-            name: ''
-        ,   order: 31
+            name: 'glottalized aspirated' // wha?
+        ,   order: 25
         ,   string: "ʼʰ"
         }, features: {}
     }, {
         meta: {
-            name: ''
-        ,   order: 32
+            name: 'aspirated glottalized' // sigh
+        ,   order: 26
         ,   string: "ʰʼ"
         }, features: {}
     }
@@ -1386,6 +1394,10 @@ features.height = [
             'high':  '-'
         ,   'low':   '-'
         ,   'tense': '+'
+        }, {
+            'high':  '-'
+        ,   'low':   '-'
+        ,   'tense': null // new in 2.0. TODO should this be folded into mid?
         }]
     }, {
         meta: {name: 'low-mid', order: 3}, features: [{
@@ -1411,6 +1423,12 @@ features.frontness = [
         meta: {name: 'central', order: 1}, features: [{
             'front': '-'
         ,   'back':  '-'
+        }, {
+            'front': null // this and the next one are new in 2.0. TODO should these be split out?
+        ,   'back':  '-'
+        }, {
+            'front': '-'
+        ,   'back':  null
         }]
     }, {
         meta: {name: 'back', order: 2}, features: [{

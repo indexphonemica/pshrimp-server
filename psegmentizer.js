@@ -6,10 +6,10 @@ module.exports = function (segments) {
 
     var consonants = [];
     var clicks = []; // Yes, these are consonants, but they need a separate table. Like lanthanides and actinides.
-    var syllabic_consonants = [];
     var vowels = [];
-    var diphthongs = [];
     var tones = [];
+    var syllabic_consonants = [];
+    var diphthongs = [];
     var unknowns = [];
 
     mapped.forEach(x => {
@@ -17,14 +17,14 @@ module.exports = function (segments) {
             consonants.push(x)
         } else if (x && x.klass === 'click') {
             clicks.push(x)
-        } else if (x && x.klass === 'syllabic_consonant') {
-            syllabic_consonants.push(x);
         } else if (x && x.klass === 'vowel') {
             vowels.push(x)
-        } else if (x && x.klass === 'diphthong') {
-            diphthongs.push(x);
         } else if (x && x.klass === 'tone') {
             tones.push(x);
+        } else if (x && x.klass === 'syllabic_consonant') {
+            syllabic_consonants.push(x);
+        } else if (x && x.klass === 'diphthong') {
+            diphthongs.push(x);
         } else {
             unknowns.push(x);
         }
@@ -219,7 +219,21 @@ function segment_info(segment) {
     if (segment.tone === '+') return tone_info(segment);
 
     // click consonants
-    if (segment.click === '+') return click_info(segment);
+    if (segment.click && segment.click.indexOf('+') > -1) return click_info(segment);
+            
+    // errata that can't be handled anywhere else yet - eventually should use segment_class instead of guessing from features. TODO
+    // these are apical vowels
+    if (segment.phoneme === 'ɹ̪̹̩' || segment.phoneme === 'ɻ̹̩') {
+        return {
+            phoneme: segment.phoneme
+        ,   klass: 'vowel'
+        ,   height: get_by_name('height', 'high')
+        ,   frontness: get_by_name('frontness', 'central')
+        ,   roundness: get_by_name('roundness', 'unrounded')
+        ,   length: get_by_name('duration', 'normal')
+        ,   nasality: get_by_name('nasality', 'oral')
+        }    
+    }
 
     // if it's not a vowel or a tone, it's a consonant
     return consonant_info(segment);
@@ -385,6 +399,7 @@ function test(segment, foo_oa) {
     // Compares the beginning - beware time-variant features.
     for (let feature_bundle of foo_oa.features) {
         var matches = Object.keys(feature_bundle).every(function (x) {
+            if (segment[x] === null && feature_bundle[x] === null) return true; // enable explicit checking for null features
             return !(segment[x] === undefined) && !(segment[x] === null) &&
                     segment[x].indexOf(feature_bundle[x]) === 0;
         });
