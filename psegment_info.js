@@ -33,7 +33,7 @@ function PhonemeMatrix(phonemes, phoneme_klass) {
     for (let y of ys) {
         this.map.set(y, new Map());
         for (let x of xs) {
-            this.map.get(y).set(x, []); // TODO: should this be a set? Then we'd just sort them later.
+            this.map.get(y).set(x, []); 
         }
     }
 
@@ -143,7 +143,7 @@ PhonemeMatrix.prototype.order = function (a, b) {
     }
 }
 
-// We want tones to also have a to_html, so we'll make a one-dimensional array too. TODO test this
+// We want tones to also have a to_html, so we'll make a one-dimensional array too.
 function PhonemeArray (phonemes) {
     this.phonemes = phonemes;
 }
@@ -255,7 +255,6 @@ function consonant_info(segment, is_syllabic = false) {
 
 // Don't waste time recomputing these, but also don't compute them on load.
 // If you compute them on load, the order of your script tags matters, and that'll be confusing!
-// TODO this is really dumb.
 var places = undefined;
 var precomponents = undefined;
 var effluxes = undefined;

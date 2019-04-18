@@ -596,7 +596,7 @@ features.pharyngeal_configuration = [
     }
 ];
 
-features.manner = [ // TODO: any more prenasalized consonants need fixed?
+features.manner = [
     { // need to move this up here for dl
         meta: {
             name: 'lateralis affricate',
