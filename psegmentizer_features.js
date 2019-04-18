@@ -129,7 +129,7 @@ features.place = [
         ,   'anterior':    '+'
         ,   'distributed': '-'
         ,   'dorsal':      '-'
-        }, {
+        }, { // fixes 11 segments
             'labial':      '-'
         ,   'coronal':     '+'
         ,   'anterior':    '+'
@@ -295,15 +295,6 @@ features.place = [
         ,   'anterior':    '+'
         ,   'distributed': '+'
         ,   'dorsal':      '-'
-        }, { // ...except for tɕʷ! what in tarnation?!
-            'labial':      '+'
-        ,   'round':       '+'
-        ,   'coronal':     '+'
-        ,   'anterior':    '+'
-        ,   'distributed': '+'
-        ,   'dorsal':      '+'
-        ,   'front':       '+'
-        ,   'back':        '-'
         }]
     }, {
         meta: {
@@ -339,6 +330,8 @@ features.place = [
              // French will display as having no velars but /N/, but that's on them, not me.
              // There's also EWONDO (UPSID) i͓ if you search under +consonantal, 
              // but that's a fricated vowel, I think.
+             //
+             // That's about 1.0. Now it's 48 segments! What changed? TODO
             'labial':      '-' 
         ,   'coronal':     '-'
         ,   'dorsal':      '+'
@@ -362,7 +355,7 @@ features.place = [
         ,   'low':         '-'
         ,   'front':       '+'
         ,   'back':        '-'
-        }, { // ɥ
+        }, { //  21 segments
             'labial':      '+'
         ,   'round':       '+'
         ,   'coronal':     '-'
@@ -419,7 +412,7 @@ features.place = [
             name: 'velar',
             order: 29
         }, features: [{
-            'labial':      '-' // all velars except ɰ
+            'labial':      '-' 
         ,   'coronal':     '-'
         ,   'dorsal':      '+'
         ,   'high':        '+'
@@ -427,7 +420,7 @@ features.place = [
         ,   'front':       '-'
         ,   'back':        '-'
         }, { 
-            'labial':      '-' // ɰ
+            'labial':      '-' // ɰ and 3 other segments
         ,   'coronal':     '-'
         ,   'dorsal':      '+'
         ,   'high':        '+'
@@ -448,21 +441,10 @@ features.place = [
         ,   'low':         '-'
         ,   'front':       '-'
         ,   'back':        '-'
-        }, {
-            'labial':      '+' // w
+        }, { 
+            'labial':      '+' // 23 segments
         ,   'round':       '+'
         ,   'coronal':     '-'
-        ,   'dorsal':      '+'
-        ,   'high':        '+'
-        ,   'low':         '-'
-        ,   'front':       '-'
-        ,   'back':        '+'
-        }, {
-            'labial':      '+' // w˞ 
-        ,   'round':       '+'
-        ,   'coronal':     '+'
-        ,   'anterior':    '+'
-        ,   'distributed': '+'
         ,   'dorsal':      '+'
         ,   'high':        '+'
         ,   'low':         '-'
@@ -611,17 +593,7 @@ features.manner = [ // TODO: any more prenasalized consonants need fixed?
         ,   'trill':           '-'
         ,   'nasal':           '-'
         ,   'lateralis':         '+'
-        }, { // n̤d̤ɮ̤
-            'consonantal':     '+'
-        ,   'sonorant':        '+,-'
-        ,   'continuant':      '-'
-        ,   'delayed_release': '+'
-        ,   'approximant':     '-'
-        ,   'tap':             '-'
-        ,   'trill':           '-'
-        ,   'nasal':           '+,-'
-        ,   'lateralis':         '+'
-        }, { // dl
+        }, { // dl - TODO: move this out, we're not special-casing stuff anymore
             'consonantal':     '+'
         ,   'sonorant':        '-,+'
         ,   'continuant':      '-,+'
@@ -631,16 +603,6 @@ features.manner = [ // TODO: any more prenasalized consonants need fixed?
         ,   'trill':           '-'
         ,   'nasal':           '-'
         ,   'lateralis':         '-,+'
-        }, { // ɡˡ
-            'consonantal':     '+'
-        ,   'sonorant':        '-'
-        ,   'continuant':      '-'
-        ,   'delayed_release': '-'
-        ,   'approximant':     '-'
-        ,   'tap':             '-'
-        ,   'trill':           '-'
-        ,   'nasal':           '-'
-        ,   'lateralis':       '+'
         }]
     }, {
         meta: {
@@ -789,7 +751,7 @@ features.manner = [ // TODO: any more prenasalized consonants need fixed?
         ,   'nasal':           '-'
         ,   'lateralis':         '-'
         }, {
-            'consonantal':     '+' // r\`
+            'consonantal':     '+' // 8 segments, including r\``
         ,   'sonorant':        '+'
         ,   'continuant':      '+'
         ,   'approximant':     '+'
@@ -798,7 +760,7 @@ features.manner = [ // TODO: any more prenasalized consonants need fixed?
         ,   'nasal':           '-'
         ,   'lateralis':         '-'
         }, {
-            'consonantal':     '-'
+            'consonantal':     '-' // 22 segments
         ,   'sonorant':        '-'
         ,   'continuant':      '+'
         ,   'delayed_release': '+'
@@ -1400,7 +1362,7 @@ features.height = [
             'high':  '+'
         ,   'low':   '-'
         ,   'tense': '-'
-        }, {
+        }, { // 26 segments
             'high':  '+'
         ,   'low':   '-'
         ,   'tense': null
@@ -1410,11 +1372,11 @@ features.height = [
             'high':  '-'
         ,   'low':   '-'
         ,   'tense': '+'
-        }, {
+        }, { // a *lot* of segments
             'high':  '-'
         ,   'low':   '-'
-        ,   'tense': null // new in 2.0. TODO should this be folded into mid?
-        }, {
+        ,   'tense': null 
+        }, { // 3 segments - TODO delete this and special-case them
             'high':  null
         ,   'low':   '-'
         ,   'tense': '+'
@@ -1429,7 +1391,7 @@ features.height = [
         meta: {name: 'low', order: 4}, features: [{
             'high':  '-'
         ,   'low':   '+'
-        }, { // This is new in 2.0 and won't give great results for some of these, but that's low priority. TODO fix later
+        }, { // 14 segments, but some of them this might not give great results for. TODO fix later
             'high':  '-'
         ,   'low':   null
         }]
@@ -1446,8 +1408,8 @@ features.frontness = [
         meta: {name: 'central', order: 1}, features: [{
             'front': '-'
         ,   'back':  '-'
-        }, {
-            'front': null // this and the next one are new in 2.0. TODO should these be split out?
+        }, { 
+            'front': null // This and the next one are pretty common. Why? 
         ,   'back':  '-'
         }, {
             'front': '-'
