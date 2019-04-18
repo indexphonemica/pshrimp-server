@@ -625,6 +625,16 @@ features.manner = [ // TODO: any more prenasalized consonants need fixed?
         ,   'trill':           '-'
         ,   'nasal':           '-'
         ,   'lateralis':         '-,+'
+        }, { // ɡˡ
+            'consonantal':     '+'
+        ,   'sonorant':        '-'
+        ,   'continuant':      '-'
+        ,   'delayed_release': '-'
+        ,   'approximant':     '-'
+        ,   'tap':             '-'
+        ,   'trill':           '-'
+        ,   'nasal':           '-'
+        ,   'lateralis':       '+'
         }]
     }, {
         meta: {
