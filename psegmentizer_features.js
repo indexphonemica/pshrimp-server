@@ -132,11 +132,10 @@ features.place_and_secondary_articulation = [
         }]
     }, {
         meta: {
-            name: 'rounded alveolar', // changed in 2.0? don't check for 'distributed'
+            name: 'rounded alveolar', // changed in 2.0? don't check for 'distributed'. or 'labial', because tɬʷʰ
             order: 12
         }, features: [{
-            'labial':      '+'
-        ,   'round':       '+'
+            'round':       '+'
         ,   'coronal':     '+'
         ,   'anterior':    '+'
         ,   'dorsal':      '-'
