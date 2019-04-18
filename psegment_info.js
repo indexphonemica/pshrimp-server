@@ -239,7 +239,7 @@ function consonant_info(segment, is_syllabic = false) {
     return {
         phoneme: segment.phoneme
     ,   klass: is_syllabic ? 'syllabic_consonant' : 'consonant'
-    ,   place: get_place_and_secondary_articulation(segment)
+    ,   place: get_place(segment)
     ,   pharyngeal_configuration: get('pharyngeal_configuration', segment)
     ,   manner: get('manner', segment)
     ,   voicing: get('voicing', segment)
@@ -264,12 +264,12 @@ var click_characters = 'ǃǀǁǂ‼ʘ';
 var split_regex = new RegExp(`([^${click_characters}]*)([${click_characters}])([^${click_characters}]*)`)
 function compute_places() {
     return {
-        'ǃ': get_by_name('place_and_secondary_articulation', 'alveolar')
-    ,   'ǀ': get_by_name('place_and_secondary_articulation', 'dental')
-    ,   'ǁ': get_by_name('place_and_secondary_articulation', 'alveolopalatal') // cheap hack - these are lateral, but the ordering works out
-    ,   'ǂ': get_by_name('place_and_secondary_articulation', 'palatal')
-    ,   '‼': get_by_name('place_and_secondary_articulation', 'retroflex')
-    ,   'ʘ': get_by_name('place_and_secondary_articulation', 'labial')
+        'ǃ': get_by_name('place', 'alveolar')
+    ,   'ǀ': get_by_name('place', 'dental')
+    ,   'ǁ': get_by_name('place', 'alveolopalatal') // cheap hack - these are lateral, but the ordering works out
+    ,   'ǂ': get_by_name('place', 'palatal')
+    ,   '‼': get_by_name('place', 'retroflex')
+    ,   'ʘ': get_by_name('place', 'labial')
     }
 }
 function compute_precomponents() {
@@ -320,28 +320,28 @@ function click_info(segment) {
 // -- Helper functions --
 // ----------------------
 
-function get_place_and_secondary_articulation(segment) {
+function get_place(segment) {
     var seg = segment.phoneme;
 
     // Glottals are hard
-    if (seg[0] === 'h' || seg[0] === 'ʔ' || seg[0] === 'ɦ') return get_by_name('place_and_secondary_articulation', 'glottal');
+    if (seg[0] === 'h' || seg[0] === 'ʔ' || seg[0] === 'ɦ') return get_by_name('place', 'glottal');
 
     // Errata
-    if (seg === 'ŋm') return get_by_name('place_and_secondary_articulation', 'labial-velar'); // given as -,+labial - this should be +labial
-    if (seg === 'ɠɓ') return get_by_name('place_and_secondary_articulation', 'labial-velar');
-    if (seg === 'ɡbʲ' || seg === 'kpʲ' || seg === 'ŋmʲ') return get_by_name('place_and_secondary_articulation', 'palatalized labial-velar');
-    if (seg === 'ɡbʷ' || seg === 'kpʷ' || seg === 'ŋmʷ') return get_by_name('place_and_secondary_articulation', 'rounded labial-velar');
-    if (seg === 'nɡ') return get_by_name('place_and_secondary_articulation', 'velar');
-    if (seg === 'nɟ' || seg === 'ɟʲ' || seg === 'ɲcʲ') return get_by_name('place_and_secondary_articulation', 'palatal');
-    if (seg === 'ndzʲ') return get_by_name('place_and_secondary_articulation', 'palatalized alveolar'); // should be +back but isn't
-    if (seg === 'ɹ' || seg === 'ɹ' || seg === 'ɹˤ' || seg === 'ɹ̰ˤ' || seg === 'ɹ̝') return get_by_name('place_and_secondary_articulation', 'alveolar') // given as alveolopalatal
-    if (seg === 'ŋmkpɾ') return get_by_name('place_and_secondary_articulation', 'labial-velar');
-    if (seg === 'nɡɾ') return get_by_name('place_and_secondary_articulation', 'velar');
+    if (seg === 'ŋm') return get_by_name('place', 'labial-velar'); // given as -,+labial - this should be +labial
+    if (seg === 'ɠɓ') return get_by_name('place', 'labial-velar');
+    if (seg === 'ɡbʲ' || seg === 'kpʲ' || seg === 'ŋmʲ') return get_by_name('place', 'palatalized labial-velar');
+    if (seg === 'ɡbʷ' || seg === 'kpʷ' || seg === 'ŋmʷ') return get_by_name('place', 'rounded labial-velar');
+    if (seg === 'nɡ') return get_by_name('place', 'velar');
+    if (seg === 'nɟ' || seg === 'ɟʲ' || seg === 'ɲcʲ') return get_by_name('place', 'palatal');
+    if (seg === 'ndzʲ') return get_by_name('place', 'palatalized alveolar'); // should be +back but isn't
+    if (seg === 'ɹ' || seg === 'ɹ' || seg === 'ɹˤ' || seg === 'ɹ̰ˤ' || seg === 'ɹ̝') return get_by_name('place', 'alveolar') // given as alveolopalatal
+    if (seg === 'ŋmkpɾ') return get_by_name('place', 'labial-velar');
+    if (seg === 'nɡɾ') return get_by_name('place', 'velar');
 
     // you know, I don't think Irish has labial-velars
-    if (seg.indexOf('ʷˠ') > -1) return get_by_name('place_and_secondary_articulation', 'rounded labial');
+    if (seg.indexOf('ʷˠ') > -1) return get_by_name('place', 'rounded labial');
 
-    return get('place_and_secondary_articulation', segment)
+    return get('place', segment)
 }
 
 function get(form, segment) {

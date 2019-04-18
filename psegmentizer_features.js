@@ -7,7 +7,7 @@ features.unknown = {
     order: 99999
 }
 
-features.place_and_secondary_articulation = [
+features.place = [
     {
         meta: {
             name: 'labial',
@@ -24,13 +24,13 @@ features.place_and_secondary_articulation = [
             name: 'palatalized labial',
             order: 1
         }, features: [{
-                'labial':      '+'
-            ,   'round':       '-'
-            ,   'labiodental': '-'
-            ,   'dorsal':      '+'
-            ,   'front':       '+'
-            ,   'back':        '-' // changed in 2.0 
-            }]
+            'labial':      '+'
+        ,   'round':       '-'
+        ,   'labiodental': '-'
+        ,   'dorsal':      '+'
+        ,   'front':       '+'
+        ,   'back':        '-' // changed in 2.0 
+        }]
     }, {
         meta: {
             name: 'rounded labial',
@@ -1206,43 +1206,43 @@ features.click_efflux = [
             name: ''
         ,   order: 1
         ,   string: ""
-        }, features: {}
+        }, features: []
     }, {
         meta: {
             name: 'aspirated'
         ,   order: 2
         ,   string: "ʰ"
-        }, features: {}
+        }, features: []
     }, {
         meta: {
             name: 'aspirated 2' // sigh, TODO
         ,   order: 2.5
         ,   string: "h"
-        }, features: {}
+        }, features: []
     }, {
         meta: {
             name: 'breathy-voiced'
         ,   order: 2.7
         ,   string: 'ʱ'
-        }, features: {}
+        }, features: []
     }, {
         meta: {
             name: 'retracted'
         ,   order: 3
         ,   string: "̠"
-        }, features: {}
+        }, features: []
     }, {
         meta: {
             name: 'ejective'
         ,   order: 4
         ,   string: "ʼ"
-        }, features: {}
+        }, features: []
     }, {
         meta: {
             name: 'glottalized'
         ,   order: 5
         ,   string: "ˀ"
-        }, features: {}
+        }, features: []
     }, {
         meta: {
             name: 'glottalized 2' // sigh, also TODO
@@ -1254,103 +1254,103 @@ features.click_efflux = [
             name: 'with velar fricative release'
         ,   order: 6
         ,   string: "x"
-        }, features: {}
+        }, features: []
     }, {
         meta: {
             name: 'retracted aspirated'
         ,   order: 7
         ,   string: "̠ʰ"
-        }, features: {}
+        }, features: []
     }, {
         meta: {
             name: 'retracted aspirated'
         ,   order: 8
         ,   string: "̠ˀ"
-        }, features: {}
+        }, features: []
     }, {
         meta: {
             name: 'ejective with velar fricative release'
         ,   order: 9
         ,   string: "xʼ"
-        }, features: {}
+        }, features: []
     }, {
         meta: {
             name: 'glottalized with velar fricative release'
         ,   order: 10
         ,   string: "xˀ"
-        }, features: {}
+        }, features: []
     }, {
         meta: {
             name: 'glottalized velarized'
         ,   order: 11
         ,   string: "ˠˀ"
-        }, features: {}
+        }, features: []
     }, {
         meta: {
             name: 'lateral'
         ,   order: 12
         ,   string: "ˡ"
-        }, features: {}
+        }, features: []
     }, {
         meta: {
             name: 'aspirated lateral'
         ,   order: 13
         ,   string: "ˡʰ"
-        }, features: {}
+        }, features: []
     }, {
         meta: {
             name: 'lateral with velar aspirate release'
         ,   order: 14
         ,   string: "ˡx"
-        }, features: {}
+        }, features: []
     }, {
         meta: {
             name: 'ejective lateral with velar aspirate release'
         ,   order: 15
         ,   string: "ˡxˀ"
-        }, features: {}
+        }, features: []
     }, {
         meta: {
             name: 'glottalized lateral'
         ,   order: 16
         ,   string: "ˡˀ"
-        }, features: {}
+        }, features: []
     }, {
         meta: {
             name: 'aspirated with velar fricative release'
         ,   order: 17
         ,   string: "xʰ"
-        }, features: {}
+        }, features: []
     }, {
         meta: {
             name: 'velarized glottalized'
         ,   order: 18
         ,   string: "ˠʰ"
-        }, features: {}
+        }, features: []
     }, {
         meta: {
             name: 'retracted aspirated with velar fricative release'
         ,   order: 19
         ,   string: "̠xʰ"
-        }, features: {}
+        }, features: []
     }, {
         meta: {
             name: 'dental'
         ,   order: 20
         ,   string: "̪"
-        }, features: {}
+        }, features: []
     }, {
         meta: {
             name: 'rounded'
         ,   order: 21
         ,   string: "ʷ"
-        }, features: {}
+        }, features: []
     }, {
         meta: {
             name: 'rounded aspirated'
         ,   order: 22
         ,   string: "ʷʰ"
-        }, features: {}
+        }, features: []
     }, {
         meta: {
             name: 'with velar aspirate release'
@@ -1362,25 +1362,25 @@ features.click_efflux = [
             name: 'aspirated with uvular plosive release'
         ,   order: 23
         ,   string: "qʰ"
-        }, features: {}
+        }, features: []
     }, {
         meta: {
             name: 'with velar ejective release'
         ,   order: 24
         ,   string: "kxʼ"
-        }, features: {}
+        }, features: []
     }, {
         meta: {
             name: 'glottalized aspirated' // wha?
         ,   order: 25
         ,   string: "ʼʰ"
-        }, features: {}
+        }, features: []
     }, {
         meta: {
             name: 'aspirated glottalized' // sigh
         ,   order: 26
         ,   string: "ʰʼ"
-        }, features: {}
+        }, features: []
     }
 ]
 
@@ -1414,6 +1414,10 @@ features.height = [
             'high':  '-'
         ,   'low':   '-'
         ,   'tense': null // new in 2.0. TODO should this be folded into mid?
+        }, {
+            'high':  null
+        ,   'low':   '-'
+        ,   'tense': '+'
         }]
     }, {
         meta: {name: 'low-mid', order: 3}, features: [{
