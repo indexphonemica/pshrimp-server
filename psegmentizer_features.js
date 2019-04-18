@@ -640,7 +640,7 @@ features.manner = [ // TODO: any more prenasalized consonants need fixed?
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '-'
-        ,   'lateralis':         '-'
+        ,   'lateralis':       '-'
         }, { // Prenasalized stops
             'consonantal':     '+'
         ,   'sonorant':        '+,-'
@@ -650,7 +650,7 @@ features.manner = [ // TODO: any more prenasalized consonants need fixed?
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '+,-'
-        ,   'lateralis':         '-'
+        ,   'lateralis':       '-'
         }]
     }, {
         meta: {
@@ -1409,6 +1409,9 @@ features.height = [
         meta: {name: 'low', order: 4}, features: [{
             'high':  '-'
         ,   'low':   '+'
+        }, { // This is new in 2.0 and won't give great results for some of these, but that's low priority. TODO fix later
+            'high':  '-'
+        ,   'low':   null
         }]
     }
 ]

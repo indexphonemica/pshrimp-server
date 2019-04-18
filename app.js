@@ -8,8 +8,6 @@ const psentence = require('./parse');
 const psherlock = require('./search');
 const psegmentize = require('./psegmentizer');
 
-// TODO: promise rejection?
-
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -68,6 +66,9 @@ function decode(thing) {
 	return decodeURIComponent(thing.replace(/\\e/g,'=').replace(/\\\+/g,'&').replace(/\\\\/g,'\\'));
 }
 
-app.listen(port, () => console.log(`The great Pshrimp awaketh on port ${port}!`));
+client.connect()
+ 	.then(() => app.listen(port, () => console.log(`The great Pshrimp awaketh on port ${port}!`)),
+ 		  (e) => console.log(e));
+
 
 process.on('exit', client.end);
