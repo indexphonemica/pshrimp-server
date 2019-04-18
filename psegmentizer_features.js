@@ -737,8 +737,7 @@ features.manner = [ // TODO: any more prenasalized consonants need fixed?
             name: 'nasalized fricative',
             order: 5
         }, features: [{
-            'consonantal':     '+'
-        ,   'sonorant':        '-'
+            'sonorant':        '-'
         ,   'continuant':      '+'
         ,   'delayed_release': '+'
         ,   'approximant':     '-'
