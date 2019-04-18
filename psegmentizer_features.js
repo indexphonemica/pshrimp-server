@@ -264,7 +264,7 @@ features.place_and_secondary_articulation = [
         ,   'distributed': '+'
         ,   'dorsal':      '+'
         ,   'front':       '-'
-        ,   'back':        '+'
+        ,   'back':        '-'
         }]
     },  {
         meta: {
