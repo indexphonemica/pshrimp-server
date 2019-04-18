@@ -1386,6 +1386,10 @@ features.height = [
             'high':  '+'
         ,   'low':   '-'
         ,   'tense': '-'
+        }, {
+            'high':  '+'
+        ,   'low':   '-'
+        ,   'tense': null
         }]
     }, {
         meta: {name: 'mid', order: 2}, features: [{
