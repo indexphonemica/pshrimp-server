@@ -913,8 +913,6 @@ features.manner = [ // TODO: any more prenasalized consonants need fixed?
             'consonantal':     '+'
         ,   'sonorant':        '+'
         ,   'continuant':      '+'
-        ,   'delayed_release': '+'
-        ,   'approximant':     '-'
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '+'
