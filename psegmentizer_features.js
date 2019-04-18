@@ -129,6 +129,12 @@ features.place_and_secondary_articulation = [
         ,   'anterior':    '+'
         ,   'distributed': '-'
         ,   'dorsal':      '-'
+        }, {
+            'labial':      '-'
+        ,   'coronal':     '+'
+        ,   'anterior':    '+'
+        ,   'distributed': null
+        ,   'dorsal':      '-'
         }]
     }, {
         meta: {
