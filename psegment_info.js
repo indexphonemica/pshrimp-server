@@ -320,23 +320,70 @@ function click_info(segment) {
 // -- Helper functions --
 // ----------------------
 
+const PLACE_ERRATA = {
+    'p̪':   'labiodental'
+,   'm̪':   'labiodental'
+,   'p̼':   'labiodental'
+,   'b̪':   'labiodental'
+,   'm̼':   'labiodental'
+,   'ˀt̪ɬ': 'dental'
+,   'ɹ':   'alveolar'
+,   'ɹ':   'alveolar'
+,   'ɹˤ':  'alveolar'
+,   'ɹ̰ˤ':  'alveolar'
+,   'ɹ̝':   'alveolar'
+,   'ɹ̥':   'alveolar'
+,   'tˠʰ': 'alveolar'
+,   'dzʲ': 'palatalized alveolar'
+,   'ndzʲ':'palatalized alveolar'
+,   'rˠ':  'velarized alveolar'
+,   'ʷʰʂʰ':'rounded retroflex'
+,   'ʷʰʈ': 'rounded retroflex'
+,   'ʰtɕ': 'palatoalveolar'
+,   'ⁿtɕʰ':'palatoalveolar'
+,   'ʱdʑ': 'palatoalveolar'
+,   'ⁿdʑ': 'palatoalveolar'
+,   'ʷʰɕʰ':'rounded palatoalveolar'
+,   'ʷʰtɕ':'rounded palatoalveolar'
+,   'ʰtɕʰ':'rounded palatoalveolar'
+,   'nɟ':  'palatal'
+,   'ɟʲ':  'palatal'
+,   'ɲcʲ': 'palatal'
+,   'j̟':   'palatal'
+,   'ẅ':   'rounded palatal'
+,   'w̜ʲ':  'rounded palatal' // sigh... should handle this manually so it appears with w. TODO
+,   'nɡ':  'velar'
+,   'w̜':   'rounded velar' // only appears in Khalkha, and it sounds rounded to me
+,   'w˞':   'rounded velar'
+,   'ʷʰk': 'rounded velar'
+,   'ŋm':  'labial-velar'
+,   'ɠɓ':  'labial-velar'
+,   'ŋmkpɾ': 'labial-velar'
+,   'ɡbr': 'labial-velar'
+,   'kpr': 'labial-velar'
+,   'kpʲ': 'palatalized labial-velar'
+,   'ɡbʲ': 'palatalized labial-velar'
+,   'ŋmʲ': 'palatalized labial-velar'
+,   'kpʷ': 'rounded labial-velar'
+,   'ɡbʷ': 'rounded labial-velar'
+,   'ŋmʷ': 'rounded labial-velar'
+,   'N':   'glottal'
+
+,   'p̻':   'labial' // I have no idea what these are. TODO?
+,   'b̻':   'labial' 
+,   'j̻':   'palatal'
+,   'k̻':   'velar'  
+
+}
+
 function get_place(segment) {
     var seg = segment.phoneme;
 
     // Glottals are hard
     if (seg[0] === 'h' || seg[0] === 'ʔ' || seg[0] === 'ɦ') return get_by_name('place', 'glottal');
 
-    // Errata
-    if (seg === 'ŋm') return get_by_name('place', 'labial-velar'); // given as -,+labial - this should be +labial
-    if (seg === 'ɠɓ') return get_by_name('place', 'labial-velar');
-    if (seg === 'ɡbʲ' || seg === 'kpʲ' || seg === 'ŋmʲ') return get_by_name('place', 'palatalized labial-velar');
-    if (seg === 'ɡbʷ' || seg === 'kpʷ' || seg === 'ŋmʷ') return get_by_name('place', 'rounded labial-velar');
-    if (seg === 'nɡ') return get_by_name('place', 'velar');
-    if (seg === 'nɟ' || seg === 'ɟʲ' || seg === 'ɲcʲ') return get_by_name('place', 'palatal');
-    if (seg === 'ndzʲ') return get_by_name('place', 'palatalized alveolar'); // should be +back but isn't
-    if (seg === 'ɹ' || seg === 'ɹ' || seg === 'ɹˤ' || seg === 'ɹ̰ˤ' || seg === 'ɹ̝') return get_by_name('place', 'alveolar') // given as alveolopalatal
-    if (seg === 'ŋmkpɾ') return get_by_name('place', 'labial-velar');
-    if (seg === 'nɡɾ') return get_by_name('place', 'velar');
+    // Handle errata
+    if (PLACE_ERRATA[seg]) return get_by_name('place', PLACE_ERRATA[seg]);
 
     // you know, I don't think Irish has labial-velars
     if (seg.indexOf('ʷˠ') > -1) return get_by_name('place', 'rounded labial');

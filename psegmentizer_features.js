@@ -44,6 +44,18 @@ features.place = [
         }]
     }, {
         meta: {
+            name: 'rhotacized labial',
+            order: 2.5
+        }, features: [{
+            'labial':      '+'
+        ,   'round':       '-'
+        ,   'coronal':     '+'
+        ,   'anterior':    '+'
+        ,   'distributed': '+'
+        ,   'dorsal':      '+'
+        }]
+    }, {
+        meta: {
             name: 'labiodental',
             order: 3
         }, features: [{
@@ -194,6 +206,12 @@ features.place = [
             'labial':      '-'
         ,   'coronal':     '+'
         ,   'anterior':    '-'
+        ,   'distributed': '-'
+        ,   'dorsal':      '-'
+        }, { // fronted retroflexes? e.g. ɳ̟
+            'labial':      '-'
+        ,   'coronal':     '+'
+        ,   'anterior':    null
         ,   'distributed': '-'
         ,   'dorsal':      '-'
         }]
