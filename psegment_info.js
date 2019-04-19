@@ -158,7 +158,7 @@ PhonemeArray.prototype.size = function () {
 // -- Segment information --
 // -------------------------
 
-const SYLLABIC_CONSONANTS = new Set(['ɹ̩', 'ʋ̩', 'ɹ̪̰̩'])
+const SYLLABIC_CONSONANTS = new Set(['ɹ̩', 'ʋ̩', 'ɹ̪̰̩', 'ɹ̪̩'])
 
 module.exports = function segment_info(segment) {
     // vowels
@@ -377,6 +377,8 @@ const ERRATA = {
     ,   'b̻':   'labial' 
     ,   'j̻':   'palatal'
     ,   'k̻':   'velar'  
+
+    ,   'l̠˞':   'retroflex' // absolutely no clue what this is - apparently in Tamil and Malayalam, where it contrasts with /l`/?!
     },
     'manner': {
         't̠ʃɾ': 'plosive'
@@ -407,6 +409,25 @@ const ERRATA = {
     ,   'R̥':   'trill'
     ,   'R̪':   'trill'
     ,   'R̰':   'trill'
+    },
+    'height': {
+        'ɯ̽': 'high'     // Tuvan /1/
+    ,   'ɯ̰̽ː':'high'
+    ,   'ɪ̞': 'high-mid'
+    ,   'i̽': 'high-mid' // Kumzari /I/
+    ,   'ʊ̽': 'high-mid'
+    ,   'ʊ̞': 'high-mid'
+    ,   'ɯ̽ː':'high-mid'
+    ,   'ɪ̞̈': 'high-mid'
+    ,   'ʊ̞̈': 'high-mid'
+    }, 
+    'roundness': { // what in tarnation?
+        'i̜': 'unrounded'
+    ,   'ɨ̜': 'unrounded'
+    },
+    'voicing': {
+        'ⁿtɕʰ': 'unvoiced'
+    ,   'ⁿʈɽʰ': 'unvoiced'
     }
 }
 

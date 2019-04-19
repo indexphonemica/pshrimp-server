@@ -1450,6 +1450,9 @@ features.roundness = [
         meta: {name: 'rounded', order: 1}, features: [{
             'labial': '+'
         ,   'round':  '+'
+        }, { // rounded vowel + less rounded diacritic - I assume if they were *un*rounded they'd just use the unrounded letters
+            'labial': '+'
+        ,   'round':  null 
         }]
     }
 ]
