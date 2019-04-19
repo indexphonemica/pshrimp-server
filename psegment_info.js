@@ -158,11 +158,15 @@ PhonemeArray.prototype.size = function () {
 // -- Segment information --
 // -------------------------
 
+const SYLLABIC_CONSONANTS = new Set(['ɹ̩', 'ʋ̩', 'ɹ̪̰̩'])
+
 module.exports = function segment_info(segment) {
     // vowels
     if (segment.syllabic !== '-' && segment.consonantal === '-') {
         // diphthongs
         if ([segment.front, segment.back, segment.high, segment.low, segment.tense].some(x => x && x.indexOf(',') > -1)) return vowel_info(segment, true); 
+        // syllabic consonants that aren't +consonantal
+        if (SYLLABIC_CONSONANTS.has(segment.phoneme)) return consonant_info(segment, true);
         // monophthongs
         return vowel_info(segment);
     }
@@ -170,7 +174,7 @@ module.exports = function segment_info(segment) {
     if (segment.syllabic === '+' && segment.consonantal === '+' && segment.phoneme.indexOf('\u0353') > -1) return vowel_info(segment);
     // erroneous diphthongs (aj, aw, etc.)
     if (segment.syllabic && segment.syllabic.indexOf(',') > -1) return vowel_info(segment, true);
-    // Weird notation for fricated vowels in SPA inventories
+    // weird notation for fricated vowels in SPA inventories
     if (segment.syllabic === '+' && segment.phoneme.indexOf('z̞̩') > -1) return vowel_info(segment);
     // syllabic consonants
     if (segment.syllabic === '+' && segment.consonantal === '+') return consonant_info(segment, true);
