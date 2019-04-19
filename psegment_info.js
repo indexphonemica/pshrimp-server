@@ -319,60 +319,91 @@ function click_info(segment) {
 // -- Helper functions --
 // ----------------------
 
-const PLACE_ERRATA = {
-    'p̪':   'labiodental'
-,   'm̪':   'labiodental'
-,   'p̼':   'labiodental'
-,   'b̪':   'labiodental'
-,   'm̼':   'labiodental'
-,   'ˀt̪ɬ': 'dental'
-,   'ɹ':   'alveolar'
-,   'ɹ':   'alveolar'
-,   'ɹˤ':  'alveolar'
-,   'ɹ̰ˤ':  'alveolar'
-,   'ɹ̝':   'alveolar'
-,   'ɹ̥':   'alveolar'
-,   'tˠʰ': 'alveolar'
-,   'dzʲ': 'palatalized alveolar'
-,   'ndzʲ':'palatalized alveolar'
-,   'rˠ':  'velarized alveolar'
-,   'ʷʰʂʰ':'rounded retroflex'
-,   'ʷʰʈ': 'rounded retroflex'
-,   'ʰtɕ': 'palatoalveolar'
-,   'ⁿtɕʰ':'palatoalveolar'
-,   'ʱdʑ': 'palatoalveolar'
-,   'ⁿdʑ': 'palatoalveolar'
-,   'ʷʰɕʰ':'rounded palatoalveolar'
-,   'ʷʰtɕ':'rounded palatoalveolar'
-,   'ʰtɕʰ':'rounded palatoalveolar'
-,   'nɟ':  'palatal'
-,   'ɟʲ':  'palatal'
-,   'ɲcʲ': 'palatal'
-,   'j̟':   'palatal'
-,   'ẅ':   'rounded palatal'
-,   'w̜ʲ':  'rounded palatal' // sigh... should handle this manually so it appears with w. TODO
-,   'nɡ':  'velar'
-,   'w̜':   'rounded velar' // only appears in Khalkha, and it sounds rounded to me
-,   'w˞':   'rounded velar'
-,   'ʷʰk': 'rounded velar'
-,   'ŋm':  'labial-velar'
-,   'ɠɓ':  'labial-velar'
-,   'ŋmkpɾ': 'labial-velar'
-,   'ɡbr': 'labial-velar'
-,   'kpr': 'labial-velar'
-,   'kpʲ': 'palatalized labial-velar'
-,   'ɡbʲ': 'palatalized labial-velar'
-,   'ŋmʲ': 'palatalized labial-velar'
-,   'kpʷ': 'rounded labial-velar'
-,   'ɡbʷ': 'rounded labial-velar'
-,   'ŋmʷ': 'rounded labial-velar'
-,   'N':   'glottal'
+const ERRATA = {
+    'place': {
+        'p̪':   'labiodental'
+    ,   'm̪':   'labiodental'
+    ,   'p̼':   'labiodental'
+    ,   'b̪':   'labiodental'
+    ,   'm̼':   'labiodental'
+    ,   'ˀt̪ɬ': 'dental'
+    ,   'ɹ':   'alveolar'
+    ,   'ɹ':   'alveolar'
+    ,   'ɹˤ':  'alveolar'
+    ,   'ɹ̰ˤ':  'alveolar'
+    ,   'ɹ̝':   'alveolar'
+    ,   'ɹ̥':   'alveolar'
+    ,   'tˠʰ': 'alveolar'
+    ,   'dzʲ': 'palatalized alveolar'
+    ,   'ndzʲ':'palatalized alveolar'
+    ,   'rˠ':  'velarized alveolar'
+    ,   'ʷʰʂʰ':'rounded retroflex'
+    ,   'ʷʰʈ': 'rounded retroflex'
+    ,   'ʰtɕ': 'palatoalveolar'
+    ,   'ⁿtɕʰ':'palatoalveolar'
+    ,   'ʱdʑ': 'palatoalveolar'
+    ,   'ⁿdʑ': 'palatoalveolar'
+    ,   'ʷʰɕʰ':'rounded palatoalveolar'
+    ,   'ʷʰtɕ':'rounded palatoalveolar'
+    ,   'ʰtɕʰ':'rounded palatoalveolar'
+    ,   'nɟ':  'palatal'
+    ,   'ɟʲ':  'palatal'
+    ,   'ɲcʲ': 'palatal'
+    ,   'j̟':   'palatal'
+    ,   'ẅ':   'rounded palatal'
+    ,   'w̜ʲ':  'rounded palatal' // sigh... should handle this manually so it appears with w. TODO
+    ,   'nɡ':  'velar'
+    ,   'w̜':   'rounded velar' // only appears in Khalkha, and it sounds rounded to me
+    ,   'w˞':   'rounded velar'
+    ,   'ʷʰk': 'rounded velar'
+    ,   'ŋm':  'labial-velar'
+    ,   'ɠɓ':  'labial-velar'
+    ,   'ŋmkpɾ': 'labial-velar'
+    ,   'ɡbr': 'labial-velar'
+    ,   'kpr': 'labial-velar'
+    ,   'kpʲ': 'palatalized labial-velar'
+    ,   'ɡbʲ': 'palatalized labial-velar'
+    ,   'ŋmʲ': 'palatalized labial-velar'
+    ,   'kpʷ': 'rounded labial-velar'
+    ,   'ɡbʷ': 'rounded labial-velar'
+    ,   'ŋmʷ': 'rounded labial-velar'
+    ,   'N':   'glottal'
 
-,   'p̻':   'labial' // I have no idea what these are. TODO?
-,   'b̻':   'labial' 
-,   'j̻':   'palatal'
-,   'k̻':   'velar'  
+    ,   'p̻':   'labial' // I have no idea what these are. TODO?
+    ,   'b̻':   'labial' 
+    ,   'j̻':   'palatal'
+    ,   'k̻':   'velar'  
+    },
+    'manner': {
+        't̠ʃɾ': 'plosive'
+    ,   'n̠t̠ʃɾ':'plosive'
+    ,   'd̠ʒɾ': 'plosive'
+    ,   'kpɾ': 'plosive'
+    ,   'kpr': 'plosive'
+    ,   'ɡbɾ': 'plosive'
+    ,   'ɡbr': 'plosive'
+    ,   'ⁿɖɽ': 'affricate' // Ersu subapical retroflex affricates with trilled release
+    ,   'ⁿʈɽʰ':'affricate'
+    ,   'ˀt̪ɬ': 'affricate'
+    ,   'ɡˡ':  'affricate'
+    ,   'ʰtɕ': 'affricate'
+    ,   'ⁿtɕʰ':'affricate'
+    ,   'ʷʰtɕ':'affricate'
+    ,   'ʰtɕʰ':'affricate'
+    ,   'ʱdʑ': 'affricate'
+    ,   'ⁿdʑ': 'affricate'
+    ,   'ɟʝ̞':  'affricate'
+    ,   'ʃ̞':   'fricative' // EE suggests from the textual description in the source that this is just sje
+    ,   'ʃ̞ʼ':  'fricative'
+    ,   'ɸ̞':   'resonant' // I guess? TODO
 
+    ,   'ɾ̞':   'tap' // for Aragonese - "frequently weakened"
+    ,   'R':   'trill' // assuming nothing with "/R/" also has an explicit tap or trill, tap and trill are equivalent here
+    ,   'Rʲ':  'trill'
+    ,   'R̥':   'trill'
+    ,   'R̪':   'trill'
+    ,   'R̰':   'trill'
+    }
 }
 
 function get_place(segment) {
@@ -382,7 +413,7 @@ function get_place(segment) {
     if (seg[0] === 'h' || seg[0] === 'ʔ' || seg[0] === 'ɦ') return get_by_name('place', 'glottal');
 
     // Handle errata
-    if (PLACE_ERRATA[seg]) return get_by_name('place', PLACE_ERRATA[seg]);
+    if (ERRATA.place[seg]) return get_by_name('place', ERRATA.place[seg]);
 
     // you know, I don't think Irish has labial-velars
     if (seg.indexOf('ʷˠ') > -1) return get_by_name('place', 'rounded labial');
@@ -391,6 +422,7 @@ function get_place(segment) {
 }
 
 function get(form, segment) {
+    if (ERRATA[form] && ERRATA[form][segment.phoneme]) return get_by_name(form, ERRATA[form][segment.phoneme])
     var res = features[form].find(x => test(segment, x));
     if (res === undefined) return features.unknown;
     return res.meta;
