@@ -1,8 +1,17 @@
 const express = require('express');
 const app = express();
-const port = 1337;
+const port = process.env.PORT || 1337;
 
+<<<<<<< HEAD
 const client = require('./db_client');
+=======
+const { Client } = require('pg');
+const client = new Client({
+	connectionString: process.env.DATABASE_URL,
+
+});
+client.connect();
+>>>>>>> 101d2f00617367d4f6640eeaa60132030089c6d2
 
 const psentence = require('./parse');
 const psherlock = require('./search');
@@ -54,12 +63,11 @@ app.get('/language/:language', async function (req, res) {
 		res.status(500).send({"error": err.toString()});
 	}
 
-
 	if (segments != false && language_data != false) { // sic
 		let segcharts = psegmentize(segments.rows);
 		res.send(Object.assign(segcharts, language_data.rows[0]));
 	} else {
-		res.send({"error": 'No such language'});
+		res.status(500).send({"error": 'No such language'});
 	}
 })
 

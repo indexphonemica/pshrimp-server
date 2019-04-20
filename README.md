@@ -1,1 +1,1 @@
-This is the backend for [Pshrimp](https://github.com/defseg/pshrimp-client).
+This is the backend for [Pshrimp](https://github.com/defseg/pshrimp-client), an under-development replacement for [Psmith](https://github.com/defseg/psmith).
