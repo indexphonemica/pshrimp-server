@@ -2,11 +2,11 @@ class SearchError extends Error {};
 
 exports.build_sql = function (qtree) {
     // We go through the query tree twice - first to pull all the contains queries
-    // so we can display the phonemes, and then to generate the actual SQL.
+    // so we can display the segments, and then to generate the actual SQL.
     // The actual SQL is generated in get_sql().
-    var phoneme_conditions = build_phoneme_conditions(qtree)
+    var segment_conditions = build_segment_conditions(qtree)
 
-    // Special case: don't return any phonemes if it's an entirely negative query
+    // Special case: don't return any segments if it's an entirely negative query
     // (because otherwise you're returning the entire inventory of the doculect)
     function is_negative(q) {
         if (q.kind === 'tree') {
@@ -15,35 +15,32 @@ exports.build_sql = function (qtree) {
             return !is_contains(q);
         }
     }
-    var do_phonemes = 'phonemes.phoneme';
-    if (is_negative(qtree)) do_phonemes = false;
+    var do_segments = 'segments.phoneme';
+    if (is_negative(qtree)) do_segments = false;
 
     return `
-        SELECT languages.id, languages.language_name, languages.source, languages.language_code${do_phonemes ? ', ' + do_phonemes : ''},
-            languages.latitude, languages.longitude
-        FROM languages
-        ${do_phonemes ? `JOIN language_phonemes ON languages.id = language_phonemes.language_id
-        JOIN phonemes ON language_phonemes.phoneme_id = phonemes.id
-        JOIN segments ON phonemes.phoneme = segments.segment` : ''}
-        WHERE ${get_sql(qtree)} ${phoneme_conditions && do_phonemes ? 'AND (' + phoneme_conditions + ')' : ''}
-        ORDER BY languages.id
+        SELECT doculects.id, doculects.language_name, doculects.source, doculects.glottocode${do_segments ? ', ' + do_segments : ''}
+        FROM doculects
+        ${do_segments ? `JOIN doculect_segments ON doculects.id = doculect_segments.doculect_id
+        JOIN segments ON doculect_segments.segment_id = segments.id` : ''}
+        WHERE ${get_sql(qtree)} ${segment_conditions && do_segments ? 'AND (' + segments_conditions + ')' : ''}
+        ORDER BY doculects.id
         ;`;
 }
 
 exports.inventory_sql = `
     SELECT segments.*
-    FROM languages 
-    JOIN language_phonemes ON languages.id = language_phonemes.language_id
-    JOIN phonemes ON language_phonemes.phoneme_id = phonemes.id
-    JOIN segments ON phonemes.phoneme = segments.segment
-    WHERE languages.id = $1;`;
+    FROM doculects 
+    JOIN doculect_segments ON doculects.id = doculect_segments.doculect_id
+    JOIN segments ON doculect_segments.segment_id = segments.id
+    WHERE doculects.id = $1;`;
 
 exports.language_sql = `
-    SELECT languages.*
-    FROM languages
-    WHERE languages.id = $1;`;
+    SELECT doculects.*
+    FROM doculects
+    WHERE doculects.id = $1;`;
 
-function build_phoneme_conditions(qtree) {
+function build_segment_conditions(qtree) {
     var query_stack = [];
     var contains_queries = [];
     function process_node(node) {
@@ -52,7 +49,7 @@ function build_phoneme_conditions(qtree) {
             query_stack.push(node.right);
         } else if (node.kind === 'query') {
             if (is_contains(node)) {
-                contains_queries.push(phoneme_condition(node.term));
+                contains_queries.push(segment_condition(node.term));
             }
         } else if (node.kind === 'propertyquery') {
             // do nothing
@@ -67,7 +64,7 @@ function build_phoneme_conditions(qtree) {
     return contains_queries.join(' OR ');
 }
 
-function phoneme_condition(term) {
+function segment_condition(term) {
     if (typeof(term) === 'object') {
         var arr = [];
         for (let k in term) {
@@ -75,51 +72,50 @@ function phoneme_condition(term) {
         }
         return arr.join(' AND ');
     } else if (typeof(term) === 'string') {
-        return `phonemes.phoneme LIKE '${term}'`;
+        return `segments.phoneme LIKE '${term}'`;
     } else {
-        throw new SearchError(`Bad phoneme condition ${term}`);
+        throw new SearchError(`Bad segment condition ${term}`);
     }
 }
 
 function contains_query(term, num=null, gtlt='=') {
-    var term_cond = phoneme_condition(term);
+    var term_cond = segment_condition(term);
     var num_cond = '';
 
     if (num !== null) {
         num_cond = `HAVING count(*) ${gtlt} ${num}`;
     }
 
-    return `languages.id IN (
-        SELECT languages.id
-        FROM languages
-            JOIN language_phonemes ON languages.id = language_phonemes.language_id
-            JOIN phonemes ON language_phonemes.phoneme_id = phonemes.id
-            JOIN segments ON phonemes.phoneme = segments.segment
+    return `doculects.id IN (
+        SELECT doculects.id
+        FROM doculects
+            JOIN doculect_segments ON doculects.id = doculect_segments.doculect_id
+            JOIN segments ON doculect_segments.segment_id = segments.id
             WHERE ${term_cond}
-            GROUP BY languages.id
+            GROUP BY doculects.id
             ${num_cond}
         )`;
 }
 
 function does_not_contain_query(term) {
-    var term_cond = phoneme_condition(term);
+    var term_cond = segment_condition(term);
     return `
-        languages.id NOT IN
-        (SELECT languages.id
-        FROM languages
-            JOIN language_phonemes ON languages.id = language_phonemes.language_id
-            JOIN phonemes ON language_phonemes.phoneme_id = phonemes.id
-            JOIN segments ON phonemes.phoneme = segments.segment
+        doculects.id NOT IN
+        (SELECT doculects.id
+        FROM doculects
+            JOIN doculect_segments ON doculects.id = doculect_segments.doculect_id
+            JOIN segments ON doculect_segments.segment_id = segments.id
         WHERE ${term_cond}
-        GROUP BY languages.id
+        GROUP BY doculects.id
         )`;
 }
 
 function prop_query(term) {
     return `
-        languages.id ${term.contains ? '' : 'NOT'} IN (
-            SELECT languages.id 
-            FROM languages 
+        doculects.id ${term.contains ? '' : 'NOT'} IN (
+            SELECT doculects.id 
+            FROM doculects
+            JOIN languages ON doculects.glottocode = languages.glottocode
             WHERE UPPER(${term.prop_name}) = UPPER('${term.prop_value}')
         )`;
 }

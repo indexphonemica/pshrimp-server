@@ -15,11 +15,11 @@ app.use(function(req, res, next) {
 });
 
 app.get('/query/:query', async function (req, res) {
-	const query_text = decode(req.params.query).replace(/lateralis/g, 'lateral'); // Postgres reserved keyword workaround
+	const query_text = decode(req.params.query).replace(/lateral/g, 'lateralis'); // Postgres reserved keyword workaround
 	const query = psentence.parse(query_text);
 	const query_sql = psherlock.build_sql(query);
 	try {
-		const results = await client.query(query_sql);
+		var results = await client.query(query_sql);
 	} catch (err) {
 		res.status(500).json({"error": err.toString()});
 		return;
@@ -48,12 +48,13 @@ app.get('/query/:query', async function (req, res) {
 
 app.get('/language/:language', async function (req, res) {
 	try {
-		const segments = await client.query(psherlock.inventory_sql, [req.params.language]);
-		const language_data = await client.query(psherlock.language_sql, [req.params.language]);
+		var segments = await client.query(psherlock.inventory_sql, [req.params.language]);
+		var language_data = await client.query(psherlock.language_sql, [req.params.language]);
 	} catch (err) {
-		res.status(500).json({"error": err.toString()});
-		return;
+		res.status(500).send({"error": err.toString()});
 	}
+
+
 	if (segments != false && language_data != false) { // sic
 		let segcharts = psegmentize(segments.rows);
 		res.send(Object.assign(segcharts, language_data.rows[0]));
@@ -67,8 +68,8 @@ function decode(thing) {
 }
 
 client.connect()
- 	.then(() => app.listen(port, () => console.log(`The great Pshrimp awaketh on port ${port}!`)),
- 		  (e) => console.log(e));
+ 	.then(() => app.listen(port, () => console.log(`The great Pshrimp awaketh on port ${port}!`)))
+ 	.catch(e => console.error('connection error', e.stack))
 
 
 process.on('exit', client.end);
