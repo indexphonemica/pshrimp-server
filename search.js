@@ -23,7 +23,7 @@ exports.build_sql = function (qtree) {
         FROM doculects
         ${do_segments ? `JOIN doculect_segments ON doculects.id = doculect_segments.doculect_id
         JOIN segments ON doculect_segments.segment_id = segments.id` : ''}
-        WHERE ${get_sql(qtree)} ${segment_conditions && do_segments ? 'AND (' + segments_conditions + ')' : ''}
+        WHERE ${get_sql(qtree)} ${segment_conditions && do_segments ? 'AND (' + segment_conditions + ')' : ''}
         ORDER BY doculects.id
         ;`;
 }
