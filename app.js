@@ -2,16 +2,7 @@ const express = require('express');
 const app = express();
 const port = process.env.PORT || 1337;
 
-<<<<<<< HEAD
 const client = require('./db_client');
-=======
-const { Client } = require('pg');
-const client = new Client({
-	connectionString: process.env.DATABASE_URL,
-
-});
-client.connect();
->>>>>>> 101d2f00617367d4f6640eeaa60132030089c6d2
 
 const psentence = require('./parse');
 const psherlock = require('./search');
