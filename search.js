@@ -19,10 +19,12 @@ exports.build_sql = function (qtree) {
     if (is_negative(qtree)) do_segments = false;
 
     return `
-        SELECT doculects.id, doculects.language_name, doculects.source, doculects.glottocode${do_segments ? ', ' + do_segments : ''}
+        SELECT doculects.id, doculects.language_name, doculects.source, doculects.glottocode${do_segments ? ', ' + do_segments : ''},
+        languages.latitude, languages.longitude
         FROM doculects
         ${do_segments ? `JOIN doculect_segments ON doculects.id = doculect_segments.doculect_id
         JOIN segments ON doculect_segments.segment_id = segments.id` : ''}
+        JOIN languages ON doculects.glottocode = languages.glottocode
         WHERE ${get_sql(qtree)} ${segment_conditions && do_segments ? 'AND (' + segment_conditions + ')' : ''}
         ORDER BY doculects.id
         ;`;
@@ -36,8 +38,9 @@ exports.inventory_sql = `
     WHERE doculects.id = $1;`;
 
 exports.language_sql = `
-    SELECT doculects.*
+    SELECT doculects.*, languages.*
     FROM doculects
+    JOIN languages ON doculects.glottocode = languages.glottocode
     WHERE doculects.id = $1;`;
 
 function build_segment_conditions(qtree) {
