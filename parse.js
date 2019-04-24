@@ -121,12 +121,11 @@ function parse_phoneme(s) {
 	return fix_ipa_lookalikes(s.replace(/\//g, '')).replace(not_a_phoneme, '');
 }
 function parse_qualificand(s) {
-	s.replace(/,/g, '');
 	var term = {};
 	var s_split = s.split(';');
 	for (let section_key in s_split) {
 		let section = s_split[section_key];
-		let feature_vals = section.replace(',','').match(/[+-]+/)[0];
+		let feature_vals = section.replace(/,/g,'').match(/[+-]+/)[0];
 		feature_vals = feature_vals.split('').join(',');
 		let feature = section.match(/[a-z_]+/)[0];
 		term[feature] = feature_vals;
