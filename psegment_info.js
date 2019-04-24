@@ -201,7 +201,7 @@ const ERRATA = {
     ,   'ɲcʲ': 'palatal'
     ,   'j̟':   'palatal'
     ,   'ẅ':   'rounded palatal'
-    ,   'w̜ʲ':  'rounded palatal' // sigh... should handle this manually so it appears with w. TODO
+    ,   'w̜ʲ':  'rounded palatalized velar'
     ,   'nɡ':  'velar'
     ,   'w̜':   'rounded velar' // only appears in Khalkha, and it sounds rounded to me
     ,   'w˞':   'rounded velar'
@@ -219,12 +219,15 @@ const ERRATA = {
     ,   'ŋmʷ': 'rounded labial-velar'
     ,   'N':   'glottal'
 
-    ,   'p̻':   'labial' // I have no idea what these are. TODO?
+    ,   'p̻':   'labial' // These and /d̻/ are "checked consonants" in Savara -
+                        // "such checked consonants appear at the end of a word and are almost inaudible"
     ,   'b̻':   'labial' 
     ,   'j̻':   'palatal'
     ,   'k̻':   'velar'  
 
-    ,   'l̠˞':   'retroflex' // absolutely no clue what this is - apparently in Tamil and Malayalam, where it contrasts with /l`/?!
+    ,   'l̠˞':   'retroflex' // Apparently a "Retroflex voiced fricationless lateral continuant" from RA,
+                           // contrasting with a "Retroflex voiced unaspirated lateral consonant".
+                           // Appears in Tamil (RA) and Malayalam (RA). Dunno.
     },
     'manner': {
         't̠ʃɾ': 'plosive'
