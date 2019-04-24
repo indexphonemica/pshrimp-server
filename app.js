@@ -14,7 +14,14 @@ app.use(function(req, res, next) {
   next();
 });
 
-app.get('/query/:query', async function (req, res) {
+// https://thecodebarbarian.com/80-20-guide-to-express-error-handling
+function wrapAsync(fn) {
+  return function(req, res, next) {
+    fn(req, res, next).catch(next);
+  };
+}
+
+app.get('/query/:query', wrapAsync(async function (req, res) {
 	const query_text = decode(req.params.query).replace(/lateral/g, 'lateralis'); // Postgres reserved keyword workaround
 	const query = psentence.parse(query_text);
 	const query_sql = psherlock.build_sql(query);
@@ -45,9 +52,9 @@ app.get('/query/:query', async function (req, res) {
 
 	res.json(new_results);
 
-})
+}))
 
-app.get('/language/:language', async function (req, res) {
+app.get('/language/:language', wrapAsync(async function (req, res) {
 	try {
 		var segments = await client.query(psherlock.inventory_sql, [req.params.language]);
 		var language_data = await client.query(psherlock.language_sql, [req.params.language]);
@@ -61,7 +68,7 @@ app.get('/language/:language', async function (req, res) {
 	} else {
 		res.status(500).send({"error": 'No such language'});
 	}
-})
+}))
 
 function decode(thing) {
 	return decodeURIComponent(thing.replace(/\\e/g,'=').replace(/\\\+/g,'&').replace(/\\\\/g,'\\'));
