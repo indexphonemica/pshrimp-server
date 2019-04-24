@@ -111,12 +111,15 @@ function does_not_contain_query(term) {
 }
 
 function prop_query(term) {
+    // TODO: this duplicates the `not_a_property` regex...
     return `
         doculects.id ${term.contains ? '' : 'NOT'} IN (
             SELECT doculects.id 
             FROM doculects
             JOIN languages ON doculects.glottocode = languages.glottocode
-            WHERE UPPER(${term.prop_name}) = UPPER('${term.prop_value}')
+            JOIN languages_countries ON languages.id = languages_countries.language_id
+            JOIN countries ON languages_countries.country_id = countries.id
+            WHERE UPPER(REGEXP_REPLACE(${term.table}.${term.column}, '[^A-Za-z_]', '', 'g')) = UPPER('${term.value}')
         )`;
 }
 

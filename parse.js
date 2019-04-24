@@ -1,4 +1,5 @@
 const query = require('./query');
+const props = require('./props');
 
 ParserError = class ParserError extends Error {}
 
@@ -38,8 +39,9 @@ exports.parse = function parse(s) {
 		} else if (is_property(tokens.peek())) {
 			var [prop_name, prop_value, contains] = parse_property(tokens.next());
 			query_stack.push(new query.PropertyQuery(
-				prop_name
+				props.column(prop_name)
 			,	prop_value
+			,	props.table(prop_name)
 			,	contains
 			));
 		} else {

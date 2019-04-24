@@ -13,10 +13,11 @@ exports.QueryTree = function (left, relation, right) {
     this.kind = 'tree';
 }
 
-exports.PropertyQuery = function(prop_name, prop_value, contains=true) {
+exports.PropertyQuery = function(prop_name, prop_value, table_name, contains=true) {
     // Queries on the table `languages` instead of `segments`.
-    this.prop_name = prop_name;
-    this.prop_value = prop_value;
+    this.column = prop_name;
+    this.value = prop_value;
+    this.table = table_name;
     this.contains = contains;
     this.kind = 'propertyquery';
 }
