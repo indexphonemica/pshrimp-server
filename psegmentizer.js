@@ -221,16 +221,18 @@ PhonemeMatrix.prototype.order = function (a, b) {
 }
 PhonemeMatrix.prototype.flatten = function () {
     var tmp = [];
-    for (let y of this.map.entries()) {
+    var map_entries = Array.from(this.map.entries()).reverse();
+
+    for (let y of map_entries) {
         var [y_header, y_contents] = y;
-        for (let x of y_contents.entries()) {
+
+        for (let x of y_contents) {
             var [x_header, x_contents] = x;
+
             tmp = tmp.concat(x_contents.sort(this.order.bind(this)).map(i => i.phoneme));
         }
     }
 
-    // consonants LTR TTB, but vowels LTR BBT
-    if (this.phoneme_klass === 'vowel') tmp = tmp.reverse();
     return tmp;
 }
 
@@ -255,7 +257,6 @@ function order_segments(a, b, feature_order) {
         if (a[f].order < b[f].order) return -1;
         if (a[f].order > b[f].order) return 1;
     }
-
     return lexicographic_order(a.phoneme, b.phoneme);
 }
 

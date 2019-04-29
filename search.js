@@ -18,11 +18,13 @@ exports.build_sql = function (qtree) {
             return !is_contains(q);
         }
     }
+
+    // This is a little lazy, but it means we have to make sure segments.id doesn't overlap with doculect.id.
     var do_segments = 'segments.*';
     if (is_negative(qtree)) do_segments = false;
 
     return `
-        SELECT doculects.id, doculects.language_name, doculects.source, doculects.glottocode${do_segments ? ', ' + do_segments : ''},
+        SELECT doculects.id AS doculect_id, doculects.language_name, doculects.source, doculects.glottocode${do_segments ? ', ' + do_segments : ''},
         languages.latitude, languages.longitude
         FROM doculects
         ${do_segments ? `JOIN doculect_segments ON doculects.id = doculect_segments.doculect_id
@@ -43,15 +45,22 @@ exports.build_sql = function (qtree) {
  *  Note that this relies on language results always being contiguous.
  */
 exports.process_results = function (results) {
-    // If we didn't fetch any segments from the DB, there's nothing we need to do here except extract the rows.
-    if (!results.rows[0].hasOwnProperty('phoneme')) return results.rows;
+    // If we didn't fetch any segments from the DB, there's nothing we need to do here except extract the rows
+    // and rename doculect_id to id.
+    if (!results.rows[0].hasOwnProperty('phoneme')) return results.rows.map(a => {
+        a.id = a.doculect_id;
+        delete a.doculect_id;
+        return a
+    });
 
     function destructure(row) {
         var segment = {};
         var lang = {};
         for (let i in row) {
-            if (db_info.columns.segments.has(i) && i !== 'id') {
+            if (db_info.columns.segments.has(i)) {
                 segment[i] = row[i];
+            } else if (i === 'doculect_id') {
+                lang['id'] = row[i];
             } else {
                 lang[i] = row[i];
             }
