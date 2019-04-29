@@ -3,7 +3,7 @@ const segment_info = require('./psegment_info');
 
 module.exports = function (segments) {
     var mapped = segments.map(x => segment_info(x));
-
+    
     var consonants = [];
     var clicks = []; // Yes, these are consonants, but they need a separate table. Like lanthanides and actinides.
     var vowels = [];
@@ -29,7 +29,7 @@ module.exports = function (segments) {
             unknowns.push(x);
         }
     });
-    return new SegmentInventory({
+    var res = new SegmentInventory({
         'consonants'         : consonants
     ,   'clicks'             : clicks
     ,   'syllabic_consonants': syllabic_consonants
@@ -38,6 +38,7 @@ module.exports = function (segments) {
     ,   'tones'              : tones
     ,   'unknowns'           : unknowns
     })
+    return res
 }
 
 // --------------------
@@ -65,6 +66,14 @@ class SegmentInventory {
         ,   'tones'              : this.tones.to_json()
         ,   'unknowns'           : this.unknowns.to_json()
         }
+    }
+
+    flatten () {
+        var tmp = [];
+        for (let i in this) {
+            tmp = tmp.concat(this[i].flatten());
+        }
+        return tmp;
     }
 }
 
@@ -210,16 +219,33 @@ PhonemeMatrix.prototype.order = function (a, b) {
             ]); // TODO   
     }
 }
+PhonemeMatrix.prototype.flatten = function () {
+    var tmp = [];
+    for (let y of this.map.entries()) {
+        var [y_header, y_contents] = y;
+        for (let x of y_contents.entries()) {
+            var [x_header, x_contents] = x;
+            tmp = tmp.concat(x_contents.sort(this.order.bind(this)).map(i => i.phoneme));
+        }
+    }
+
+    // consonants LTR TTB, but vowels LTR BBT
+    if (this.phoneme_klass === 'vowel') tmp = tmp.reverse();
+    return tmp;
+}
 
 // We want tones to also have a to_html, so we'll make a one-dimensional array too.
 function PhonemeArray (phonemes) {
     this.phonemes = phonemes;
 }
 PhonemeArray.prototype.to_json = function () {
-    return {'size': this.phonemes.length, 'contents': this.phonemes.map(i => i.phoneme).sort(lexicographic_order)}
+    return {'size': this.phonemes.length, 'contents': this.flatten()}
 }
 PhonemeArray.prototype.size = function () {
     return this.phonemes.length;
+}
+PhonemeArray.prototype.flatten = function () {
+    return this.phonemes.map(i => i.phoneme).sort(lexicographic_order);
 }
 
 function order_segments(a, b, feature_order) {

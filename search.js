@@ -1,4 +1,5 @@
-
+const psegmentize = require('./psegmentizer'); // for process_results()
+const db_info = require('./db_info');
 
 class SearchError extends Error {};
 
@@ -17,7 +18,7 @@ exports.build_sql = function (qtree) {
             return !is_contains(q);
         }
     }
-    var do_segments = 'segments.phoneme';
+    var do_segments = 'segments.*';
     if (is_negative(qtree)) do_segments = false;
 
     return `
@@ -34,33 +35,53 @@ exports.build_sql = function (qtree) {
 
 /** Processes raw SQL results into something suitable for returning.
  *  Specifically, it takes SQL results of the form
- *    language | language_prop | phoneme
- *    language | language_prop | phoneme ...
+ *    language | language_prop | segment | segment_prop
+ *    language | language_prop | segment | segment_prop ...
  *  and turns them into 
  *    language | language_prop | [phoneme, phoneme...]
  *  with one row per language.
  *  Note that this relies on language results always being contiguous.
  */
 exports.process_results = function (results) {
-    var new_results = [];
-    var processed = new Set();
+    // If we didn't fetch any segments from the DB, there's nothing we need to do here except extract the rows.
+    if (!results.rows[0].hasOwnProperty('phoneme')) return results.rows;
+
+    function destructure(row) {
+        var segment = {};
+        var lang = {};
+        for (let i in row) {
+            if (db_info.columns.segments.has(i) && i !== 'id') {
+                segment[i] = row[i];
+            } else {
+                lang[i] = row[i];
+            }
+        }
+        return [segment, lang];
+    }
 
     function add_to_new_results(lang) {
-        // later we'll sort the phonemes here
+        lang.phonemes = psegmentize(lang.segments).flatten();
+        delete lang.segments;
         new_results.push(lang);
     }
 
-    for (let i of results.rows) {
-        if (!processed.has(i.id)) {
-            if (lang) add_to_new_results(lang);
+    var new_results = [];
+    var processed = new Set();
+    var curr_lang = null;
 
-            var {phoneme, ...lang} = i; // really weird destructuring syntax - `lang` ends up with all the row props except `phoneme` 
-            processed.add(i.id);
-            if (i.phoneme) lang.phonemes = [];
+    for (let row of results.rows) {
+        var [segment, lang_props] = destructure(row);
+
+        if (!processed.has(lang_props.id)) {
+            if (curr_lang) add_to_new_results(curr_lang);
+            curr_lang = lang_props;
+            curr_lang.segments = [];
+            processed.add(lang_props.id);
         }
-        if (i.phoneme) lang.phonemes.push(i.phoneme);
+
+        curr_lang.segments.push(segment);
     }
-    add_to_new_results(lang)
+    add_to_new_results(curr_lang)
 
     return new_results;
 }
