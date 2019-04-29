@@ -29,14 +29,42 @@ module.exports = function (segments) {
             unknowns.push(x);
         }
     });
-    return { 
-        'consonants': new PhonemeMatrix(consonants, 'consonant').to_json(),
-        'clicks': new PhonemeMatrix(clicks, 'click').to_json(),
-        'syllabic_consonants': new PhonemeArray(syllabic_consonants).to_json(),
-        'vowels': new PhonemeMatrix(vowels, 'vowel').to_json(),
-        'diphthongs': new PhonemeMatrix(diphthongs, 'vowel').to_json(),
-        'tones': new PhonemeArray(tones).to_json(),
-        'unknowns': new PhonemeArray(unknowns).to_json()
+    return new SegmentInventory({
+        'consonants'         : consonants
+    ,   'clicks'             : clicks
+    ,   'syllabic_consonants': syllabic_consonants
+    ,   'vowels'             : vowels
+    ,   'diphthongs'         : diphthongs
+    ,   'tones'              : tones
+    ,   'unknowns'           : unknowns
+    })
+}
+
+// --------------------
+// -- Results object --
+// --------------------
+
+class SegmentInventory {
+    constructor (props) {
+        this.consonants          = new PhonemeMatrix(props.consonants, 'consonant');
+        this.clicks              = new PhonemeMatrix(props.clicks, 'click');
+        this.syllabic_consonants = new PhonemeArray(props.syllabic_consonants);
+        this.vowels              = new PhonemeMatrix(props.vowels, 'vowel');
+        this.diphthongs          = new PhonemeMatrix(props.diphthongs, 'vowel');
+        this.tones               = new PhonemeArray(props.tones);
+        this.unknowns            = new PhonemeArray(props.unknowns);
+    }
+
+    to_json () {
+        return {
+            'consonants'         : this.consonants.to_json()
+        ,   'clicks'             : this.clicks.to_json()
+        ,   'syllabic_consonants': this.syllabic_consonants.to_json()
+        ,   'vowels'             : this.vowels.to_json()
+        ,   'diphthongs'         : this.diphthongs.to_json()
+        ,   'tones'              : this.tones.to_json()
+        ,   'unknowns'           : this.unknowns.to_json()
+        }
     }
 }
 

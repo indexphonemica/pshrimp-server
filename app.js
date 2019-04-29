@@ -33,22 +33,7 @@ app.get('/query/:query', wrapAsync(async function (req, res) {
 		return;
 	}
 
-	// SQL will return one row per phoneme.
-	// Aggregate these so there's a phonemes value with an array.
-	// This relies on language rows always being contiguous!
-	var new_results = [];
-	var processed = new Set();
-	for (let i of results.rows) {
-		if (!processed.has(i.id)) {
-			if (lang) new_results.push(lang);
-
-			var {phoneme, ...lang} = i; // really weird destructuring syntax - `lang` ends up with all the row props except `phoneme` 
-			processed.add(i.id);
-			if (i.phoneme) lang.phonemes = [];
-		}
-		if (i.phoneme) lang.phonemes.push(i.phoneme);
-	}
-	new_results.push(lang);
+	const new_results = psherlock.process_results(results);
 
 	res.json(new_results);
 
@@ -63,7 +48,7 @@ app.get('/language/:language', wrapAsync(async function (req, res) {
 	}
 
 	if (segments != false && language_data != false) { // sic
-		let segcharts = psegmentize(segments.rows);
+		let segcharts = psegmentize(segments.rows).to_json();
 		res.send(Object.assign(segcharts, language_data.rows[0]));
 	} else {
 		res.status(500).send({"error": 'No such language'});

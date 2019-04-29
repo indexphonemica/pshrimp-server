@@ -1,3 +1,5 @@
+
+
 class SearchError extends Error {};
 
 exports.build_sql = function (qtree) {
@@ -28,6 +30,39 @@ exports.build_sql = function (qtree) {
         WHERE ${get_sql(qtree)} ${segment_conditions && do_segments ? 'AND (' + segment_conditions + ')' : ''}
         ORDER BY doculects.id
         ;`;
+}
+
+/** Processes raw SQL results into something suitable for returning.
+ *  Specifically, it takes SQL results of the form
+ *    language | language_prop | phoneme
+ *    language | language_prop | phoneme ...
+ *  and turns them into 
+ *    language | language_prop | [phoneme, phoneme...]
+ *  with one row per language.
+ *  Note that this relies on language results always being contiguous.
+ */
+exports.process_results = function (results) {
+    var new_results = [];
+    var processed = new Set();
+
+    function add_to_new_results(lang) {
+        // later we'll sort the phonemes here
+        new_results.push(lang);
+    }
+
+    for (let i of results.rows) {
+        if (!processed.has(i.id)) {
+            if (lang) add_to_new_results(lang);
+
+            var {phoneme, ...lang} = i; // really weird destructuring syntax - `lang` ends up with all the row props except `phoneme` 
+            processed.add(i.id);
+            if (i.phoneme) lang.phonemes = [];
+        }
+        if (i.phoneme) lang.phonemes.push(i.phoneme);
+    }
+    add_to_new_results(lang)
+
+    return new_results;
 }
 
 exports.inventory_sql = `
