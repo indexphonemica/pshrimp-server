@@ -187,6 +187,7 @@ const ERRATA = {
     ,   'dzʲ': 'palatalized alveolar'
     ,   'ndzʲ':'palatalized alveolar'
     ,   'rˠ':  'velarized alveolar'
+    ,   'ɫ':   'velarized alveolar'
     ,   'ʷʰʂʰ':'rounded retroflex'
     ,   'ʷʰʈ': 'rounded retroflex'
     ,   'ʰtɕ': 'palatoalveolar'
