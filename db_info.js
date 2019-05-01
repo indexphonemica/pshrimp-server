@@ -9,6 +9,8 @@
  *    It might also be reasonable to put configuration information here
  *  later - what's a feature query, what's a property query, etc.
  *  Especially now that property names are spread out across two tables...
+ *
+ *  See also: props.js
  */
 
 exports.columns = {

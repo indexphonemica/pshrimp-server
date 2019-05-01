@@ -1,4 +1,5 @@
 // This could stand to be automated.
+// See also: db_info.js
 
 // Structure: 'field_name': ['table', 'column'] if the column name isn't the field name
 //            'field_name': 'column' if the column name isn't the field name
