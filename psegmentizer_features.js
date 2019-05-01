@@ -599,7 +599,7 @@ features.pharyngeal_configuration = [
 features.manner = [
     { // need to move this up here for dl
         meta: {
-            name: 'lateralis affricate',
+            name: 'lateral affricate',
             order: 2.5
         }, features: [{
             'consonantal':     '+'

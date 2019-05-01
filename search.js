@@ -47,6 +47,7 @@ exports.build_sql = function (qtree) {
 exports.process_results = function (results) {
     // If we didn't fetch any segments from the DB, there's nothing we need to do here except extract the rows
     // and rename doculect_id to id.
+    if (results.rows.length === 0) return [];
     if (!results.rows[0].hasOwnProperty('phoneme')) return results.rows.map(a => {
         a.id = a.doculect_id;
         delete a.doculect_id;
