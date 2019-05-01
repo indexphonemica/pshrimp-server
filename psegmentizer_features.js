@@ -610,7 +610,17 @@ features.manner = [
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '-'
-        ,   'lateralis':         '-,+'
+        ,   'lateralis':       '-,+'
+        }, {
+            'consonantal':     '+'
+        ,   'sonorant':        '-'
+        ,   'continuant':      '-,+'
+        ,   'delayed_release': '-,+'
+        ,   'approximant':     '-'
+        ,   'tap':             '-'
+        ,   'trill':           '-'
+        ,   'nasal':           '-'
+        ,   'lateralis':       '-,+'
         }]
     }, {
         meta: {
