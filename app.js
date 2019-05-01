@@ -23,10 +23,10 @@ function wrapAsync(fn) {
 
 app.get('/query/:query', wrapAsync(async function (req, res) {
 	const query_text = decode(req.params.query).replace(/lateral/g, 'lateralis'); // Postgres reserved keyword workaround
-	const query = psentence.parse(query_text);
-	const query_sql = psherlock.build_sql(query);
 
 	try {
+		const query = psentence.parse(query_text);
+		const query_sql = psherlock.build_sql(query);
 		var results = await client.query(query_sql);
 	} catch (err) {
 		res.status(500).json({"error": err.toString()});
