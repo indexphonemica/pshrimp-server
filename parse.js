@@ -98,7 +98,7 @@ function is_conjunction(s) {
 
 // sanitization stuff - hopefully this works. also replace IPA lookalikes so you can search for /g/ instead of the ridiculous one-story ɡ
 const not_a_phoneme = /[^A-Za-zÀ-ÖØ-öø-ÿ\u0100-\u02FF\u03B0-\u03FF\u1D00-\u1DBF\uA270-\uA2FF\u2C60-\u2C7F\u0300-\u03FF\u207F\u2193]/g;
-const not_a_property = /[^A-Za-z_]/g
+const not_a_property = /[^A-Za-z0-9_]/g
 function sanitize_property(s) {
 	return s.replace(not_a_property, '');
 }
