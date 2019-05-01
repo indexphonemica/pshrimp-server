@@ -601,17 +601,7 @@ features.manner = [
         meta: {
             name: 'lateral affricate',
             order: 2.5
-        }, features: [{
-            'consonantal':     '+'
-        ,   'sonorant':        '-'
-        ,   'continuant':      '-'
-        ,   'delayed_release': '+'
-        ,   'approximant':     '-'
-        ,   'tap':             '-'
-        ,   'trill':           '-'
-        ,   'nasal':           '-'
-        ,   'lateralis':         '+'
-        }, { // dl - TODO: move this out, we're not special-casing stuff anymore
+        }, features: [{ // dl - TODO: move this out, we're not special-casing stuff anymore
             'consonantal':     '+'
         ,   'sonorant':        '-,+'
         ,   'continuant':      '-,+'
