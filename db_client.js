@@ -8,7 +8,7 @@ if (process.env.NODE_ENV === 'production') {
 	var client_props = {
 		user: 'postgres',
 		password: 'postgres',
-		database: 'pshrimp',
+		database: 'indexphonemica',
 	}
 }
 
