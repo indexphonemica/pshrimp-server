@@ -23,8 +23,14 @@ exports.build_sql = function (qtree) {
     var do_segments = 'segments.*';
     if (is_negative(qtree)) do_segments = false;
 
+
+    // For sources: for now, only pull author+title+year and bibkey + url + doi.
+    // TODO: we should figure out a good format for source citation.
     return `
-        SELECT doculects.id AS doculect_id, doculects.language_name, doculects.source, doculects.glottocode${do_segments ? ', ' + do_segments : ''},
+        SELECT doculects.id AS doculect_id, doculects.language_name, 
+        doculects.glottocode${do_segments ? ', ' + do_segments : ''},
+        doculects.source_bibkey, doculects.source_url, doculects.source_author,
+        doculects.source_title, doculects.source_year, doculects.source_doi,
         languages.latitude, languages.longitude
         FROM doculects
         ${do_segments ? `JOIN doculect_segments ON doculects.id = doculect_segments.doculect_id
