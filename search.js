@@ -27,7 +27,7 @@ exports.build_sql = function (qtree) {
     // For sources: for now, only pull author+title+year and bibkey + url + doi.
     // TODO: we should figure out a good format for source citation.
     return `
-        SELECT doculects.id AS doculect_id, doculects.language_name, 
+        SELECT doculects.id AS doculect_id, doculects.inventory_id, doculects.language_name, 
         doculects.glottocode${do_segments ? ', ' + do_segments : ''},
         doculects.source_bibkey, doculects.source_url, doculects.source_author,
         doculects.source_title, doculects.source_year, doculects.source_doi,
