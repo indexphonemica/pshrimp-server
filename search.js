@@ -107,13 +107,13 @@ exports.inventory_sql = `
     FROM doculects 
     JOIN doculect_segments ON doculects.id = doculect_segments.doculect_id
     JOIN segments ON doculect_segments.segment_id = segments.id
-    WHERE doculects.id = $1;`;
+    WHERE doculects.inventory_id = $1;`;
 
 exports.language_sql = `
     SELECT doculects.*, languages.*
     FROM doculects
     JOIN languages ON doculects.glottocode = languages.glottocode
-    WHERE doculects.id = $1;`;
+    WHERE doculects.inventory_id = $1;`;
 
 function build_segment_conditions(qtree) {
     var query_stack = [];
