@@ -43,18 +43,12 @@ app.get('/query/:query', wrapAsync(async function (req, res) {
 
 app.get('/language/:language', wrapAsync(async function (req, res) {
 	try {
-		var segments = await client.query(psherlock.inventory_sql, [req.params.language]);
-		var language_data = await client.query(psherlock.language_sql, [req.params.language]);
+		var doculect = await utils.get_doculect(client, psherlock, psegmentize, req.params.language);
 	} catch (err) {
 		res.status(500).send({"error": err.toString()});
 	}
 
-	if (segments != false && language_data != false) { // sic
-		let segcharts = psegmentize(segments.rows).to_json();
-		res.send(Object.assign(segcharts, language_data.rows[0]));
-	} else {
-		res.status(500).send({"error": 'No such language'});
-	}
+	res.send(doculect);
 }))
 
 function decode(thing) {

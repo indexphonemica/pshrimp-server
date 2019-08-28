@@ -11,6 +11,10 @@ router.get('/', function (req, res) {
 	res.render('index')
 })
 
+// ---------------
+// -- Languages --
+// ---------------
+
 router.get('/languages', wrapAsync(async function (req, res) {
 	try {
 		var results = await client.query('SELECT * FROM languages');
@@ -37,5 +41,9 @@ router.get('/languages/:glottocode', wrapAsync(async function (req, res) {
 	console.log(result.rows);
 	res.render('languages/show', {language: result.rows});
 }))
+
+// ---------------
+// -- Doculects --
+// ---------------
 
 module.exports = router;

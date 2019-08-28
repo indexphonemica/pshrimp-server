@@ -26,3 +26,24 @@ module.exports.build_indices = function build_indices (results) {
     }
     return indices;
 }
+
+// --------------------------------
+// -- Things we need imports for --
+// --------------------------------
+
+// TODO: no idea why I need to pass these in - figure out later
+module.exports.get_doculect = async function (client, psherlock, psegmentize, doculect_id) {
+    try {
+        var segments = await client.query(psherlock.inventory_sql, [doculect_id]);
+        var language_data = await client.query(psherlock.language_sql, [doculect_id]);
+    } catch (err) {
+        throw err; // rethrow and catch later
+    }
+
+    if (segments != false && language_data != false) { // sic - TODO: doesn't cover all cases
+        let segcharts = psegmentize(segments.rows).to_json();
+        return Object.assign(segcharts, language_data.rows[0]);
+    } else {
+        throw Exception('No such language'); // catch later
+    }
+}
