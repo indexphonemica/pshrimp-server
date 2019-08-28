@@ -9,7 +9,9 @@
 	<ul>
 		<% languages.forEach(function (language) { %>
 			<li>
-				<%= language.name %>
+				<a href="/w/languages/<%= language.glottocode %>">
+					<%= language.name %>
+				</a>
 			</li>
 		<% }) %>
 	</ul>

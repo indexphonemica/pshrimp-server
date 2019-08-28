@@ -35,13 +35,15 @@
 		</div>
 	<% } %>
 
-	<h4>Notes</h4>
-	<div>
-		<% doculect.notes.split('\n').forEach(function (note) { %>
-			<p>
-				<%= note %>
-			</p>
-		<% }) %>
-	</div>
+	<% if (doculect.notes) { %>
+		<h4>Notes</h4>
+		<div>
+			<% doculect.notes.split('\n').forEach(function (note) { %>
+				<p>
+					<%= note %>
+				</p>
+			<% }) %>
+		</div>
+	<% } %>
 </body>
 </html>
