@@ -8,6 +8,7 @@ const psherlock = require('./search');
 const psegmentize = require('./psegmentizer');
 
 // TODO: we should probably have an API for this stuff too
+// TODO: get helper funcs for routes to stuff so we don't have to hardcode the paths
 
 router.get('/', function (req, res) {
 	res.render('index')
@@ -47,6 +48,20 @@ router.get('/languages/:glottocode', wrapAsync(async function (req, res) {
 // -- Doculects --
 // ---------------
 
+router.get('/doculects', wrapAsync(async function (req, res){ 
+	try {
+		var result = await client.query(`
+			SELECT *
+			FROM languages
+			JOIN doculects ON languages.glottocode = doculects.glottocode`)
+	} catch (err) {
+		res.status(500).send(err.toString());
+		return;
+	}
+
+	res.render('doculects/index', {doculects: result.rows});
+}))
+
 // TODO: no time to go ecosystem diving right now but I wonder if it'd be possible to use JSX
 // as a server-side templating language - that way we don't have to duplicate any of this stuff
 // I don't really want the main site to use JS though - unnecessary JS is a little antisocial
@@ -57,7 +72,6 @@ router.get('/doculects/:glottocode', wrapAsync(async function (req, res) {
 		res.status(500).send(err.toString());
 		return;
 	}
-
 
 	res.render('doculects/show', {doculect: doculect});
 }));
