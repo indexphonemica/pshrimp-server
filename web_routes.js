@@ -4,6 +4,8 @@ const express = require('express'), router = express.Router();
 
 const client = require('./db_client');
 const utils = require('./utils'), wrapAsync = utils.wrapAsync;
+const psherlock = require('./search');
+const psegmentize = require('./psegmentizer');
 
 // TODO: we should probably have an API for this stuff too
 
@@ -35,15 +37,29 @@ router.get('/languages/:glottocode', wrapAsync(async function (req, res) {
 			 [req.params.glottocode]
 		);
 	} catch (err) {
-		res.status(500).render('Error'); // TODO better errors
+		res.status(500).send(err.toString()); // TODO better errors
 		return;
 	}
-	console.log(result.rows);
 	res.render('languages/show', {language: result.rows});
-}))
+}));
 
 // ---------------
 // -- Doculects --
 // ---------------
+
+// TODO: no time to go ecosystem diving right now but I wonder if it'd be possible to use JSX
+// as a server-side templating language - that way we don't have to duplicate any of this stuff
+// I don't really want the main site to use JS though - unnecessary JS is a little antisocial
+router.get('/doculects/:glottocode', wrapAsync(async function (req, res) {
+	try {
+		var doculect = await utils.get_doculect(client, psherlock, psegmentize, req.params.glottocode);
+	} catch (err) {
+		res.status(500).send(err.toString());
+		return;
+	}
+
+
+	res.render('doculects/show', {doculect: doculect});
+}));
 
 module.exports = router;
