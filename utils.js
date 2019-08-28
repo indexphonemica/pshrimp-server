@@ -1,3 +1,10 @@
+// https://thecodebarbarian.com/80-20-guide-to-express-error-handling
+module.exports.wrapAsync = function wrapAsync (fn) {
+  return function(req, res, next) {
+    fn(req, res, next).catch(next);
+  };
+}
+
 module.exports.indexify = function indexify (results) {
     var values = results.values;
     var indices = build_indices(results);

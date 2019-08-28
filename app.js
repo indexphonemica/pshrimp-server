@@ -8,18 +8,21 @@ const psentence = require('./parse');
 const psherlock = require('./search');
 const psegmentize = require('./psegmentizer');
 
+const web_routes = require('./web_routes');
+
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
 
-// https://thecodebarbarian.com/80-20-guide-to-express-error-handling
-function wrapAsync(fn) {
-  return function(req, res, next) {
-    fn(req, res, next).catch(next);
-  };
-}
+const utils = require('./utils');
+const wrapAsync = utils.wrapAsync;
+
+// Import web routes - TODO: put this stuff at / and move the api to api/
+app.set('view engine', 'ejs');
+app.use('/w', web_routes);
+
 
 app.get('/query/:query', wrapAsync(async function (req, res) {
 	const query_text = decode(req.params.query).replace(/lateral/g, 'lateralis'); // Postgres reserved keyword workaround
@@ -36,7 +39,6 @@ app.get('/query/:query', wrapAsync(async function (req, res) {
 	const new_results = psherlock.process_results(results);
 
 	res.json(new_results);
-
 }))
 
 app.get('/language/:language', wrapAsync(async function (req, res) {

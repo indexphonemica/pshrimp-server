@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Languages - Index Phonemica</title>
+	<%- include ../partials/head %>
+</head>
+<body>
+	<%- include ../partials/header %>
+	<ul>
+		<% languages.forEach(function (language) { %>
+			<li>
+				<%= language.name %>
+			</li>
+		<% }) %>
+	</ul>
+</body>
+</html>
