@@ -76,4 +76,49 @@ router.get('/doculects/:glottocode', wrapAsync(async function (req, res) {
 	res.render('doculects/show', {doculect: doculect});
 }));
 
+// --------------
+// -- Segments --
+// --------------
+
+router.get('/segments', wrapAsync(async function (req, res) {
+	try {
+		var result = await client.query(`
+			SELECT segments.phoneme AS segment, COUNT(doculects.id) AS frequency
+			FROM segments
+			JOIN doculect_segments ON doculect_segments.segment_id = segments.id 
+			JOIN doculects ON doculects.id = doculect_segments.doculect_id
+			GROUP BY segments.id
+			ORDER BY COUNT(doculects.id) DESC
+			`)
+	} catch (err) {
+		res.status(500).send(err.toString());
+		return;
+	}
+
+	res.render('segments/index', {segments: result.rows});
+}))
+
+router.get('/segments/:segment', wrapAsync(async function (req, res) {
+	try {
+		var result = await client.query(`
+			SELECT segments.phoneme AS segment, segments.*, doculects.inventory_id
+			FROM segments
+			JOIN doculect_segments ON doculect_segments.segment_id = segments.id
+			JOIN doculects ON doculects.id = doculect_segments.doculect_id
+			WHERE segments.phoneme = $1::text`, [req.params.segment]);
+	} catch (err) {
+		res.status(500).send(err.toString());
+		return;
+	}
+
+	// pull these out so we can display them without rooting around in listings
+	// ideally we'd filter for just the features (TODO...?)
+	const segment_props = result.rows[0]; 
+	res.render('segments/show', {
+		listings: result.rows, 
+		segment: req.params.segment, 
+		segment_props: segment_props
+	});
+}));
+
 module.exports = router;
