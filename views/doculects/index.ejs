@@ -31,17 +31,7 @@
 							</a>
 						</td>
 						<td>
-							<% if (doculect.source_url) { %>
-								<a href="<%= doculect.source_url %>">
-									<%= doculect.source_author %>.
-									<%= doculect.source_title  %>.
-									<%= doculect.source_year   %>.
-								</a>
-							<% } else { %>
-								<%= doculect.source_author %>.
-								<%= doculect.source_title  %>.
-								<%= doculect.source_year   %>.
-							<% } %>
+							<%- include('../partials/source', {doculect: doculect}) %>
 						</td>
 					</tr>
 				<% }) %>

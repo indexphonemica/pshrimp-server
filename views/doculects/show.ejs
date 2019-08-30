@@ -10,10 +10,7 @@
 
 	<div class='source'>
 		<p>
-			<%= doculect.source_author %>. <%= doculect.source_title %>. <%= doculect.source_year %>.
-			<a href="//glottolog.org/resource/reference/id/<%= doculect.source_bibkey %>">
-				<%= doculect.source_bibkey %>
-			</a>
+			<%- include('../partials/source', {doculect: doculect}) %>
 		</p>
 	</div>
 
