@@ -9,6 +9,9 @@ const psegmentize = require('./psegmentizer');
 
 // TODO: we should probably have an API for this stuff too
 // TODO: get helper funcs for routes to stuff so we don't have to hardcode the paths
+//   \_ I'm not sure if there's a good way to do this
+//      cermati/route-label hasn't been updated in three years
+//      alubbe/named-routes doesn't play nicely with separate routes files
 
 router.get('/', function (req, res) {
 	res.render('index')
