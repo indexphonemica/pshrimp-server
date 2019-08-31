@@ -25,6 +25,11 @@ app.set('view engine', 'ejs');
 app.use('/', web_routes);
 app.use('/api', api_routes);
 
+// 404
+app.use(function (req, res, next) {
+	res.status(404).render('404');
+})
+
 client.connect()
  	.then(() => app.listen(port, () => console.log(`The great Pshrimp awaketh on port ${port}!`)))
  	.catch(e => console.error('connection error', e.stack))

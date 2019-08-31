@@ -44,6 +44,11 @@ router.get('/languages/:glottocode', wrapAsync(async function (req, res) {
 		res.status(500).send(err.toString()); // TODO better errors
 		return;
 	}
+
+	if (result.rows.length === 0) { // TODO write a get_or_404
+		res.status(404).render('404');
+		return;
+	}
 	res.render('languages/show', {language: result.rows});
 }));
 
@@ -62,6 +67,11 @@ router.get('/doculects', wrapAsync(async function (req, res){
 		return;
 	}
 
+	if (result.rows.length === 0) {
+		res.status(404).render('404'); // TODO: write a get_or_404
+		return;
+	}
+
 	res.render('doculects/index', {doculects: result.rows});
 }))
 
@@ -72,6 +82,10 @@ router.get('/doculects/:glottocode', wrapAsync(async function (req, res) {
 	try {
 		var doculect = await utils.get_doculect(client, psherlock, psegmentize, req.params.glottocode);
 	} catch (err) {
+		if (err.message === 'No such language') { // TODO: this is bad
+			res.status(404).render('404');
+			return;
+		}
 		res.status(500).send(err.toString());
 		return;
 	}
@@ -111,6 +125,11 @@ router.get('/segments/:segment', wrapAsync(async function (req, res) {
 			WHERE segments.phoneme = $1::text`, [req.params.segment]);
 	} catch (err) {
 		res.status(500).send(err.toString());
+		return;
+	}
+
+	if (result.rows.length === 0) { // TODO: write a get_or_404
+		res.status(404).render('404');
 		return;
 	}
 

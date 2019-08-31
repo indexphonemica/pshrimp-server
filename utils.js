@@ -40,10 +40,10 @@ module.exports.get_doculect = async function (client, psherlock, psegmentize, do
         throw err; // rethrow and catch later
     }
 
-    if (segments != false && language_data != false) { // sic - TODO: doesn't cover all cases
+    if (segments.rows != false && language_data.rows != false) { // TODO why?
         let segcharts = psegmentize(segments.rows).to_json();
         return Object.assign(segcharts, language_data.rows[0]);
     } else {
-        throw Exception('No such language'); // catch later
+        throw Error('No such language'); // catch later
     }
 }
