@@ -36,6 +36,11 @@ router.get('/language/:language', wrapAsync(async function (req, res) {
 	res.send(doculect);
 }))
 
+router.use(function (req, res, next) {
+	res.status(404).send({"error": "404 Not Found"});
+	return;
+})
+
 function decode(thing) {
 	return decodeURIComponent(thing.replace(/\\e/g,'=').replace(/\\\+/g,'&').replace(/\\\\/g,'\\'));
 }
