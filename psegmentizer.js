@@ -1,4 +1,3 @@
-const utils = require('./utils');
 const segment_info = require('./psegment_info');
 
 module.exports = function (segments) {

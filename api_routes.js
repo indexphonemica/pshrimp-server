@@ -2,7 +2,6 @@ const client = require('./db_client');
 
 const psentence = require('./parse');
 const psherlock = require('./search');
-const psegmentize = require('./psegmentizer');
 
 const utils = require('./utils');
 const wrapAsync = utils.wrapAsync;
@@ -28,7 +27,7 @@ router.get('/query/:query', wrapAsync(async function (req, res) {
 
 router.get('/language/:language', wrapAsync(async function (req, res) {
 	try {
-		var doculect = await utils.get_doculect(client, psherlock, psegmentize, req.params.language);
+		var doculect = await utils.get_doculect(client, req.params.language);
 	} catch (err) {
 		res.status(500).send({"error": err.toString()});
 	}

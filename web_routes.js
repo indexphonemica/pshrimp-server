@@ -4,8 +4,6 @@ const express = require('express'), router = express.Router();
 
 const client = require('./db_client');
 const utils = require('./utils'), wrapAsync = utils.wrapAsync;
-const psherlock = require('./search');
-const psegmentize = require('./psegmentizer');
 
 // TODO: we should probably have an API for this stuff too
 // TODO: get helper funcs for routes to stuff so we don't have to hardcode the paths
@@ -80,7 +78,7 @@ router.get('/doculects', wrapAsync(async function (req, res){
 // I don't really want the main site to use JS though - unnecessary JS is a little antisocial
 router.get('/doculects/:glottocode', wrapAsync(async function (req, res) {
 	try {
-		var doculect = await utils.get_doculect(client, psherlock, psegmentize, req.params.glottocode);
+		var doculect = await utils.get_doculect(client, req.params.glottocode);
 	} catch (err) {
 		if (err.message === 'No such language') { // TODO: this is bad
 			res.status(404).render('404');

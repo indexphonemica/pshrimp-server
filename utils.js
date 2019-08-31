@@ -1,3 +1,6 @@
+const psegmentize = require('./psegmentizer');
+const psherlock   = require('./search');
+
 // https://thecodebarbarian.com/80-20-guide-to-express-error-handling
 module.exports.wrapAsync = function wrapAsync (fn) {
   return function(req, res, next) {
@@ -31,11 +34,11 @@ module.exports.build_indices = function build_indices (results) {
 // -- Things we need imports for --
 // --------------------------------
 
-// TODO: no idea why I need to pass these in - figure out later
-module.exports.get_doculect = async function (client, psherlock, psegmentize, doculect_id) {
+module.exports.get_doculect = async function (client, doculect_id) {
     try {
         var segments = await client.query(psherlock.inventory_sql, [doculect_id]);
         var language_data = await client.query(psherlock.language_sql, [doculect_id]);
+        var allophone_data = await client.query(psherlock.allophone_sql, [doculect_id]);
     } catch (err) {
         throw err; // rethrow and catch later
     }

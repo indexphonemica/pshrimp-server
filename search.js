@@ -115,6 +115,17 @@ exports.language_sql = `
     JOIN languages ON doculects.glottocode = languages.glottocode
     WHERE doculects.inventory_id = $1;`;
 
+exports.allophone_sql = `
+    SELECT allophones.variation, allophones.compound, allophones.environment, 
+        phonemes.phoneme AS phoneme, realizations.phoneme AS realization,
+        phonemes.*
+    FROM allophones
+    JOIN doculect_segments ON allophones.doculect_segment_id = doculect_segments.id
+    JOIN doculects ON doculect_segments.doculect_id = doculects.id
+    JOIN segments AS phonemes ON doculect_segments.segment_id = phonemes.id
+    JOIN segments AS realizations ON allophones.allophone_id = realizations.id
+    WHERE doculects.inventory_id = $1;`;
+
 function build_segment_conditions(qtree) {
     var query_stack = [];
     var contains_queries = [];
@@ -194,7 +205,8 @@ function prop_query(term) {
             JOIN languages ON doculects.glottocode = languages.glottocode
             JOIN languages_countries ON languages.id = languages_countries.language_id
             JOIN countries ON languages_countries.country_id = countries.id
-            WHERE UPPER(REGEXP_REPLACE(${term.table}.${term.column}, '[^A-Za-z_]', '', 'g')) = UPPER('${term.value}')
+            WHERE UPPER(REGEXP_REPLACE(${term.table}.${term.column}, '[^A-Za-z_]', '', 'g')) = 
+                UPPER(REGEXP_REPLACE('${term.value}', '[^A-Za-z_]', '', 'g'))
         )`;
 }
 
