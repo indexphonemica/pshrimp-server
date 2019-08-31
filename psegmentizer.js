@@ -220,7 +220,7 @@ PhonemeMatrix.prototype.order = function (a, b) {
 }
 PhonemeMatrix.prototype.flatten = function () {
     var tmp = [];
-    var map_entries = Array.from(this.map.entries()).reverse();
+    var map_entries = Array.from(this.map.entries());
 
     for (let y of map_entries) {
         var [y_header, y_contents] = y;
