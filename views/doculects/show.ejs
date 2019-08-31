@@ -10,7 +10,7 @@
 
 	<div class='source'>
 		<p>
-			<%- include('../partials/source', {doculect: doculect}) %>
+			<%- include('../partials/source', {doculect: doculect}) %> 
 		</p>
 	</div>
 
@@ -19,6 +19,9 @@
 	</div>
 	<div>
 		<%- include('phoneme_matrix', {name: 'Vowels', thing: doculect.vowels }) %>
+	</div>
+	<div>
+		<%- include('phoneme_matrix', {name: 'Diphthongs', thing: doculect.diphthongs }) %>
 	</div>
 	<!-- we're not targeting click languages so we can leave that part out -->
 	<% if (doculect.syllabic_consonants.size > 0) { %>
