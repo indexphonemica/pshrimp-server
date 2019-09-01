@@ -28,10 +28,10 @@ exports.build_sql = function (qtree) {
     // TODO: we should figure out a good format for source citation.
     return `
         SELECT doculects.id AS doculect_id, doculects.inventory_id, doculects.language_name, 
-        doculects.glottocode${do_segments ? ', ' + do_segments : ''},
+        languages.glottocode${do_segments ? ', ' + do_segments : ''},
         doculects.source_bibkey, doculects.source_url, doculects.source_author,
         doculects.source_title, doculects.source_year,
-        languages.latitude, languages.longitude
+        languages.name, languages.latitude, languages.longitude
         FROM doculects
         ${do_segments ? `JOIN doculect_segments ON doculects.id = doculect_segments.doculect_id
         JOIN segments ON doculect_segments.segment_id = segments.id` : ''}
