@@ -103,7 +103,7 @@ function sanitize_property(s) {
 	return s.replace(not_a_property, '');
 }
 function fix_ipa_lookalikes(s) {
-	return s.replace(/g/g,'ɡ').replace(/\!/g,'\u01C3').replace(/\|/g,'\u01c0').replace(/\'/g,'\u02BC').replace(/:/g,'\u02d0');
+	return s.replace(/\!/g,'\u01C3').replace(/\|/g,'\u01c0').replace(/\'/g,'\u02BC').replace(/:/g,'\u02d0');
 }
 
 function parse_qualifier(s) {
