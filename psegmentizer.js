@@ -222,6 +222,11 @@ PhonemeMatrix.prototype.flatten = function () {
     var tmp = [];
     var map_entries = Array.from(this.map.entries());
 
+    // This way we get 'a e o i u' instead of 'i u e o a'.
+    if (this.phoneme_klass === 'vowel' || this.phoneme_klass === 'diphthong') {
+        map_entries = map_entries.reverse();
+    }
+
     for (let y of map_entries) {
         var [y_header, y_contents] = y;
 
