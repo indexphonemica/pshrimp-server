@@ -20,7 +20,7 @@ app.use(function(req, res, next) {
 const utils = require('./utils');
 const wrapAsync = utils.wrapAsync;
 
-// Import web routes - TODO: put this stuff at / and move the api to api/
+// Import web routes
 app.set('view engine', 'ejs');
 app.use('/', web_routes);
 app.use('/api', api_routes);
