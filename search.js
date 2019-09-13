@@ -24,7 +24,7 @@ exports.build_sql = function (qtree) {
     if (is_negative(qtree)) do_segments = false;
 
     return `
-        SELECT doculects.id AS doculect_id, doculects.language_name, doculects.source, doculects.glottocode${do_segments ? ', ' + do_segments : ''},
+        SELECT doculects.id AS doculect_id, doculects.inventory_id, doculects.language_name, doculects.source, doculects.glottocode${do_segments ? ', ' + do_segments : ''},
         languages.latitude, languages.longitude
         FROM doculects
         ${do_segments ? `JOIN doculect_segments ON doculects.id = doculect_segments.doculect_id
