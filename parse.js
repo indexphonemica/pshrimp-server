@@ -105,7 +105,17 @@ function sanitize_property(s) {
 	return s.replace(not_a_property, '');
 }
 function fix_ipa_lookalikes(s) {
-	return s.replace(/\!/g,'\u01C3').replace(/\|/g,'\u01c0').replace(/\'/g,'\u02BC').replace(/:/g,'\u02d0');
+	// IPHON stores ASCII <g>; PHOIBLE uses the Unicode single-story ɡ.
+	// So we need to check which DB we're running on, to see if we need to replace ASCII <g> or not.
+	// Here we also replace ! | with their corresponding click letters,
+	// ' with MODIFIER LETTER APOSTROPHE (sometimes used for glottalization in PHOIBLE), 
+	// and : with the IPA length modifier
+	const res = s.replace(/\!/g,'\u01C3').replace(/\|/g,'\u01c0').replace(/\'/g,'\u02BC').replace(/:/g,'\u02d0');
+	if (process.env.IS_IPHON) {
+		return res
+	} else {
+		return res.replace(/g/g,'\u0261');
+	}
 }
 
 function parse_qualifier(s) {

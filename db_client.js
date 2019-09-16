@@ -7,8 +7,12 @@ if (process.env.NODE_ENV === 'production') {
 } else { // presumably it's dev
 	var client_props = {
 		user: 'postgres',
-		password: 'postgres',
-		database: 'indexphonemica',
+		password: 'postgres'
+	}
+	if (process.env.IS_IPHON) {
+		client_props.database = 'indexphonemica'
+	} else {
+		client_props.database = 'pshrimp'
 	}
 }
 

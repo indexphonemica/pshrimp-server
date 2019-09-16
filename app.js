@@ -22,7 +22,7 @@ const wrapAsync = utils.wrapAsync;
 
 // Import web routes
 app.set('view engine', 'ejs');
-app.use('/', web_routes);
+if (process.env.IS_IPHON) app.use('/', web_routes); // PHOIBLE has its own site
 app.use('/api', api_routes);
 
 // 404
