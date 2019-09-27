@@ -38,7 +38,7 @@ module.exports.get_doculect = async function (client, doculect_id) {
     try {
         var segments = await client.query(psherlock.inventory_sql, [doculect_id]);
         var language_data = await client.query(psherlock.language_sql, [doculect_id]);
-        if (process.env.IS_IPHON) {
+        if (!!(+process.env.IS_IPHON)) {
             var allophone_data = await client.query(psherlock.allophone_sql, [doculect_id]);
         }
     } catch (err) {
@@ -49,7 +49,7 @@ module.exports.get_doculect = async function (client, doculect_id) {
     if (segments.rows != false && language_data.rows != false) { // TODO why?
         let segcharts = psegmentize(segments.rows).to_json();
         let res = Object.assign(segcharts, language_data.rows[0]);
-        if (process.env.IS_IPHON) {
+        if (!!(+process.env.IS_IPHON)) {
             res['allophonic_rules'] = process_allophones(allophone_data.rows);
         }
         return res;

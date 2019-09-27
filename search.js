@@ -24,7 +24,7 @@ exports.build_sql = function (qtree) {
     if (is_negative(qtree)) do_segments = false;
 
     // IPHON and PHOIBLE store sources differently.
-    if (process.env.IS_IPHON) {
+    if (!!(+process.env.IS_IPHON)) {
         var sources = `doculects.source_bibkey, doculects.source_url, doculects.source_author,
                        doculects.source_title, doculects.source_year`;
         var name    = 'languages.name';
@@ -114,7 +114,7 @@ exports.process_results = function (results) {
 // For PHOIBLE we use the DB ID, for now.
 // TODO: unify on inventory_id
 
-if (process.env.IS_IPHON) {
+if (!!(+process.env.IS_IPHON)) {
     var id_col = 'doculects.inventory_id';
 } else {
     var id_col = 'doculects.id';
@@ -134,7 +134,7 @@ exports.language_sql = `
     WHERE ${id_col} = $1;`;
 
 // TODO: allophone search for PHOIBLE?
-if (process.env.IS_IPHON) {
+if (!!(+process.env.IS_IPHON)) {
     exports.allophone_sql = `
         SELECT allophones.variation, allophones.compound, allophones.environment, 
             phonemes.phoneme AS phoneme, realizations.phoneme AS realization,

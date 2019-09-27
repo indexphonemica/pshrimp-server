@@ -9,7 +9,7 @@ if (process.env.NODE_ENV === 'production') {
 		user: 'postgres',
 		password: 'postgres'
 	}
-	if (process.env.IS_IPHON) {
+	if (!!(+process.env.IS_IPHON)) {
 		client_props.database = 'indexphonemica'
 	} else {
 		client_props.database = 'pshrimp'

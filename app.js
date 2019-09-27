@@ -22,8 +22,12 @@ const wrapAsync = utils.wrapAsync;
 
 // Import web routes
 app.set('view engine', 'ejs');
-if (process.env.IS_IPHON) app.use('/', web_routes); // PHOIBLE has its own site
-app.use('/api', api_routes);
+if (!!(+process.env.IS_IPHON)) app.use('/', web_routes); // PHOIBLE has its own site
+if (!!(+process.env.IS_IPHON)) {
+	app.use('/api', api_routes);
+} else {
+	app.use('/', api_routes);
+}
 
 // 404
 app.use(function (req, res, next) {
@@ -31,7 +35,7 @@ app.use(function (req, res, next) {
 })
 
 client.connect()
- 	.then(() => app.listen(port, () => console.log(`The great Pshrimp awaketh on port ${port}!`)))
+ 	.then(() => app.listen(port, () => console.log(`The great Pshrimp awaketh on port ${port}! IPHON: ${!!(+process.env.IS_IPHON)}`)))
  	.catch(e => console.error('connection error', e.stack))
 
 
