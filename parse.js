@@ -97,13 +97,25 @@ function is_conjunction(s) {
 }
 
 // sanitization stuff - hopefully this works. also replace IPA lookalikes so you can search for /g/ instead of the ridiculous one-story ɡ
+// TODO: it would be ideal to split this out into a different file
+// since parse.js shouldn't vary between IPHON and PHOIBLE
 const not_a_phoneme = /[^A-Za-zÀ-ÖØ-öø-ÿ\u0100-\u02FF\u03B0-\u03FF\u1D00-\u1DBF\uA270-\uA2FF\u2C60-\u2C7F\u0300-\u03FF\u207F\u2193]/g;
 const not_a_property = /[^A-Za-z0-9_]/g
 function sanitize_property(s) {
 	return s.replace(not_a_property, '');
 }
 function fix_ipa_lookalikes(s) {
-	return s.replace(/g/g,'ɡ').replace(/\!/g,'\u01C3').replace(/\|/g,'\u01c0').replace(/\'/g,'\u02BC').replace(/:/g,'\u02d0');
+	// IPHON stores ASCII <g>; PHOIBLE uses the Unicode single-story ɡ.
+	// So we need to check which DB we're running on, to see if we need to replace ASCII <g> or not.
+	// Here we also replace ! | with their corresponding click letters,
+	// ' with MODIFIER LETTER APOSTROPHE (sometimes used for glottalization in PHOIBLE), 
+	// and : with the IPA length modifier
+	const res = s.replace(/\!/g,'\u01C3').replace(/\|/g,'\u01c0').replace(/\'/g,'\u02BC').replace(/:/g,'\u02d0');
+	if (process.env.IS_IPHON) {
+		return res
+	} else {
+		return res.replace(/g/g,'\u0261');
+	}
 }
 
 function parse_qualifier(s) {

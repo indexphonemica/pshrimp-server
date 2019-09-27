@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Languages - Index Phonemica</title>
+	<%- include ../partials/head %>
+</head>
+<body>
+	<%- include ../partials/header %>
+	<ul>
+		<% language.forEach(function (lang) { %>
+			<li>
+				<a href="/doculects/<%= lang.inventory_id %>">
+					<%= lang.inventory_id %>
+				</a>
+			</li>
+		<% }) %>
+	</ul>
+</body>
+</html>

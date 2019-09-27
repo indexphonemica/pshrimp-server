@@ -23,9 +23,23 @@ exports.build_sql = function (qtree) {
     var do_segments = 'segments.*';
     if (is_negative(qtree)) do_segments = false;
 
+    // IPHON and PHOIBLE store sources differently.
+    if (!!(+process.env.IS_IPHON)) {
+        var sources = `doculects.source_bibkey, doculects.source_url, doculects.source_author,
+                       doculects.source_title, doculects.source_year`;
+        var name    = 'languages.name';
+    } else {
+        var sources = 'doculects.source';
+        var name    = 'doculects.language_name';
+    }
+
+
+    // For sources: for now, only pull author+title+year and bibkey + url.
+    // TODO: we should figure out a good format for source citation.
     return `
-        SELECT doculects.id AS doculect_id, doculects.inventory_id, doculects.language_name, doculects.source, doculects.glottocode${do_segments ? ', ' + do_segments : ''},
-        languages.latitude, languages.longitude
+        SELECT doculects.id AS doculect_id, doculects.inventory_id, doculects.language_name, 
+        languages.glottocode${do_segments ? ', ' + do_segments : ''},
+        ${sources}, ${name}, languages.latitude, languages.longitude
         FROM doculects
         ${do_segments ? `JOIN doculect_segments ON doculects.id = doculect_segments.doculect_id
         JOIN segments ON doculect_segments.segment_id = segments.id` : ''}
@@ -96,18 +110,42 @@ exports.process_results = function (results) {
     return new_results;
 }
 
+// For IPHON we use the inventory_id for everything.
+// For PHOIBLE we use the DB ID, for now.
+// TODO: unify on inventory_id
+
+if (!!(+process.env.IS_IPHON)) {
+    var id_col = 'doculects.inventory_id';
+} else {
+    var id_col = 'doculects.id';
+}
+
 exports.inventory_sql = `
     SELECT segments.*
     FROM doculects 
     JOIN doculect_segments ON doculects.id = doculect_segments.doculect_id
     JOIN segments ON doculect_segments.segment_id = segments.id
-    WHERE doculects.id = $1;`;
+    WHERE ${id_col} = $1;`;
 
 exports.language_sql = `
     SELECT doculects.*, languages.*
     FROM doculects
     JOIN languages ON doculects.glottocode = languages.glottocode
-    WHERE doculects.id = $1;`;
+    WHERE ${id_col} = $1;`;
+
+// TODO: allophone search for PHOIBLE?
+if (!!(+process.env.IS_IPHON)) {
+    exports.allophone_sql = `
+        SELECT allophones.variation, allophones.compound, allophones.environment, 
+            phonemes.phoneme AS phoneme, realizations.phoneme AS realization,
+            phonemes.*
+        FROM allophones
+        JOIN doculect_segments ON allophones.doculect_segment_id = doculect_segments.id
+        JOIN doculects ON doculect_segments.doculect_id = doculects.id
+        JOIN segments AS phonemes ON doculect_segments.segment_id = phonemes.id
+        JOIN segments AS realizations ON allophones.allophone_id = realizations.id
+        WHERE doculects.inventory_id = $1;`;
+}
 
 function build_segment_conditions(qtree) {
     var query_stack = [];
@@ -188,7 +226,8 @@ function prop_query(term) {
             JOIN languages ON doculects.glottocode = languages.glottocode
             JOIN languages_countries ON languages.id = languages_countries.language_id
             JOIN countries ON languages_countries.country_id = countries.id
-            WHERE UPPER(REGEXP_REPLACE(${term.table}.${term.column}, '[^A-Za-z_]', '', 'g')) = UPPER('${term.value}')
+            WHERE UPPER(REGEXP_REPLACE(${term.table}.${term.column}, '[^A-Za-z_]', '', 'g')) = 
+                UPPER(REGEXP_REPLACE('${term.value}', '[^A-Za-z_]', '', 'g'))
         )`;
 }
 

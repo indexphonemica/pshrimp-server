@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title><%= doculect.language_name %> (<%= doculect.inventory_id %>) - Index Phonemica</title>
+	<%- include ../partials/head %>
+</head>
+<body>
+	<%- include ../partials/header %>
+	<h1><%= doculect.language_name %> (<%= doculect.inventory_id %>)</h1>
+
+	<div class='source'>
+		<p>
+			<%- include('../partials/source', {doculect: doculect}) %> 
+		</p>
+	</div>
+
+	<div>
+		<%- include('phoneme_matrix', {name: 'Consonants', thing: doculect.consonants}) %>  
+	</div>
+	<div>
+		<%- include('phoneme_matrix', {name: 'Vowels', thing: doculect.vowels }) %>
+	</div>
+	<div>
+		<%- include('phoneme_matrix', {name: 'Diphthongs', thing: doculect.diphthongs }) %>
+	</div>
+	<!-- we're not targeting click languages so we can leave that part out -->
+	<% if (doculect.syllabic_consonants.size > 0) { %>
+		<div>
+			<%- include('phoneme_array', {name: 'Syllabic consonants', thing: doculect.syllabic_consonants}) %>
+		</div>
+	<% } %>
+	<% if (doculect.tones.size > 0) { %>
+		<div>
+			<%- include('phoneme_array', {name: 'Tones', thing: doculect.tones}) %>
+		</div>
+	<% } %>
+
+	<% if (doculect.notes) { %>
+		<h4>Notes</h4>
+		<div>
+			<% doculect.notes.split('\n').forEach(function (note) { %>
+				<p>
+					<%= note %>
+				</p>
+			<% }) %>
+		</div>
+	<% } %>
+
+	<% if (doculect.allophonic_rules) { %>
+		<h4>Allophones</h4>
+		<ul class='allophonic-rules'>
+			<% doculect.allophonic_rules.forEach(function (rule) { %>
+				<li><%= rule.phonemes.join('·') %> &gt;<%= rule.variation ? '~' : '' %> 
+					<%= rule.realization %> <%= rule.environment ? '/ ' + rule.environment : '' %>
+				</li> 
+			<% }) %>
+		</ul>
+	<% } %>
+</body>
+</html>

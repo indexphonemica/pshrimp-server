@@ -114,9 +114,7 @@ features.place = [
         ,   'coronal':     '+'
         ,   'anterior':    '+'
         ,   'distributed': '+'
-        ,   'dorsal':      '+'
-        ,   'front':       '+'
-        ,   'back':        '-' // changed in 2.0
+        ,   'dorsal':      '-' // TODO ? 
         }]
     }, {
         meta: {
@@ -275,6 +273,7 @@ features.place = [
         ,   'dorsal':      '+'
         ,   'front':       '+'
         ,   'back':        '-' // changed in 2.0
+        ,   'strident':    '+' // so we don't also pick up palatals
         }]
     },  {
         meta: {

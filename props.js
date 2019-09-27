@@ -11,7 +11,7 @@ const PROP_COLUMNS = {
 ,   'language_name': 'doculects'
 ,   'family':        'languages'
 ,   'genus':         'languages'
-,   'area':          'languages'
+,   'macroarea':     'languages'
 ,   'country_id':    ['countries', 'id']
 ,   'country':       ['countries', 'name']
 }

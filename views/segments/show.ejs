@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title><%= segment %> - Index Phonemica</title>
+	<%- include ../partials/head %>
+</head>
+<body>
+	<%- include ../partials/header %>
+	<h1><%= segment %></h1>
+	<ul>
+		<% listings.forEach(function (listing) { %>
+			<li>
+				<a href="/doculects/<%= listing.inventory_id %>">
+					<%= listing.inventory_id %>
+				</a>
+			</li>
+		<% }) %>
+	</ul>
+</body>
+</html>
