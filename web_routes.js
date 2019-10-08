@@ -132,8 +132,12 @@ router.get('/segments/:segment', wrapAsync(async function (req, res) {
 	}
 
 	// pull these out so we can display them without rooting around in listings
-	// ideally we'd filter for just the features (TODO...?)
-	const segment_props = result.rows[0]; 
+
+	const segment_props = {...result.rows[0]}; 
+	delete segment_props.inventory_id;
+	delete segment_props.glyph_id;
+	delete segment_props.phoneme;
+
 	res.render('segments/show', {
 		listings: result.rows, 
 		segment: req.params.segment, 

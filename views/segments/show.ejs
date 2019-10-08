@@ -7,6 +7,16 @@
 <body>
 	<%- include ../partials/header %>
 	<h1><%= segment %></h1>
+	<h2>Features</h2>
+	<table>
+		<% Object.entries(segment_props).forEach(function (prop) { %>
+			<tr>
+				<th><%= prop[0] %></th>
+				<td><%= prop[1] %></td>
+			</tr>
+		<% }) %>
+	</table>
+	<h2>Appears in:</h2>
 	<ul>
 		<% listings.forEach(function (listing) { %>
 			<li>
