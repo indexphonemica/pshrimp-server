@@ -46,6 +46,7 @@ module.exports = function segment_info(segment) {
     }
 
     // if it's not a vowel or a tone, it's a consonant
+
     return consonant_info(segment);
 }
 

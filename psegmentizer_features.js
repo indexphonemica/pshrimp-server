@@ -635,9 +635,19 @@ features.manner = [
         ,   'trill':           '-'
         ,   'nasal':           '-'
         ,   'lateralis':       '-'
-        }, { // Prenasalized stops
+        }, { // Prenasalized stops (nd)
             'consonantal':     '+'
         ,   'sonorant':        '+,-'
+        ,   'continuant':      '-'
+        ,   'delayed_release': '-'
+        ,   'approximant':     '-'
+        ,   'tap':             '-'
+        ,   'trill':           '-'
+        ,   'nasal':           '+,-'
+        ,   'lateralis':       '-'
+        }, { // Prenasalized stops (ⁿd)
+            'consonantal':     '+' 
+        ,   'sonorant':        '-' 
         ,   'continuant':      '-'
         ,   'delayed_release': '-'
         ,   'approximant':     '-'
@@ -675,9 +685,19 @@ features.manner = [
         ,   'trill':           '-'
         ,   'nasal':           '-'
         ,   'lateralis':         '-'
-        }, { // prenasalized affricates
+        }, { // prenasalized affricates (ndz)
             'consonantal':     '+'
         ,   'sonorant':        '+,-'
+        ,   'continuant':      '-'
+        ,   'delayed_release': '+'
+        ,   'approximant':     '-'
+        ,   'tap':             '-'
+        ,   'trill':           '-'
+        ,   'nasal':           '+,-'
+        ,   'lateralis':         '-'
+        }, { // prenasalized affricates (ⁿdz)
+            'consonantal':     '+'
+        ,   'sonorant':        '-'
         ,   'continuant':      '-'
         ,   'delayed_release': '+'
         ,   'approximant':     '-'
@@ -715,7 +735,7 @@ features.manner = [
         ,   'trill':           '-'
         ,   'nasal':           '-'
         ,   'lateralis':         '-'
-        }, { // prenasalized fricatives
+        }, { // prenasalized fricatives (nz)
             'consonantal':     '+'
         ,   'sonorant':        '+,-'
         ,   'continuant':      '-,+'
@@ -725,6 +745,15 @@ features.manner = [
         ,   'trill':           '-'
         ,   'nasal':           '-'
         ,   'lateralis':         '-'
+        }, { // prenasalized fricatives (ⁿz)
+            'sonorant':        '-'
+        ,   'continuant':      '+'
+        ,   'delayed_release': '+'
+        ,   'approximant':     '-'
+        ,   'tap':             '-'
+        ,   'trill':           '-'
+        ,   'nasal':           '+,-'
+        ,   'lateralis':       '-'
         }]
     }, {
         meta: {
@@ -738,7 +767,7 @@ features.manner = [
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '+'
-        ,   'lateralis':         '-'
+        ,   'lateralis':       '-'
         }]
     }, {
         meta: {
@@ -752,7 +781,7 @@ features.manner = [
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '+'
-        ,   'lateralis':         '-'
+        ,   'lateralis':       '-'
         }]
     }, {
         meta: {
@@ -766,7 +795,7 @@ features.manner = [
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '-'
-        ,   'lateralis':         '-'
+        ,   'lateralis':       '-'
         }, {
             'consonantal':     '+' // 8 segments, including r\``
         ,   'sonorant':        '+'
