@@ -3,15 +3,19 @@
 <head>
 	<title>Doculects - Index Phonemica</title>
 	<%- include ../partials/head %>
+	<script src='https://cdn.jsdelivr.net/npm/sorttable@1.0.2/sorttable.min.js'></script>
 </head>
 <body>
 	<%- include ../partials/header %>
 	<ul>
-		<table>
+		<table class='sortable'>
 			<thead>
 				<tr>
 					<th>Doculect ID</th>
 					<th>Language</th>
+					<th>Consonants</th>
+					<th>Vowels</th>
+					<th>Tones</th>
 					<th>Source</th>
 					<!-- TODO: consonant/vowel/tone count? include syllabic consonants in vowels obv -->
 					<!-- we might want to precompute this in the import scripts -->
@@ -29,6 +33,15 @@
 							<a href="/languages/<%= doculect.glottocode %>">
 								<%= doculect.language_name %>
 							</a>
+						</td>
+						<td>
+							<%= doculect.consonants %>
+						</td>
+						<td>
+							<%= doculect.vowels %>
+						</td>
+						<td>
+							<%= doculect.tones %>
 						</td>
 						<td>
 							<%- include('../partials/source', {doculect: doculect}) %>

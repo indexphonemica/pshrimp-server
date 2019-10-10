@@ -57,11 +57,45 @@ router.get('/languages/:glottocode', wrapAsync(async function (req, res) {
 router.get('/doculects', wrapAsync(async function (req, res){ 
 	try {
 		var result = await client.query(`
-			SELECT *
+			SELECT languages.*, d.*,
+			  (
+			    SELECT 
+			      COUNT(segments.id) AS consonants
+			    FROM
+			      segments
+			      JOIN doculect_segments ON segments.id = doculect_segments.segment_id
+			      JOIN doculects ON doculect_segments.doculect_id = doculects.id
+			    WHERE
+			      doculects.id = d.id
+			      AND segments.segment_class = 'consonant'
+			  ),
+			  (
+			    SELECT 
+			      COUNT(segments.id) AS vowels
+			    FROM
+			      segments
+			      JOIN doculect_segments ON segments.id = doculect_segments.segment_id
+			      JOIN doculects ON doculect_segments.doculect_id = doculects.id
+			    WHERE
+			      doculects.id = d.id
+			      AND segments.segment_class = 'vowel'
+			  ),
+			  (
+			    SELECT 
+			      COUNT(segments.id) AS tones
+			    FROM
+			      segments
+			      JOIN doculect_segments ON segments.id = doculect_segments.segment_id
+			      JOIN doculects ON doculect_segments.doculect_id = doculects.id
+			    WHERE
+			      doculects.id = d.id
+			      AND segments.segment_class = 'tone'
+			  )
 			FROM languages
-			JOIN doculects ON languages.glottocode = doculects.glottocode`)
+			JOIN doculects AS d ON languages.glottocode = d.glottocode`)
 	} catch (err) {
 		res.status(500).send(err.toString());
+		console.error(err);
 		return;
 	}
 
