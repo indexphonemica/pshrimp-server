@@ -45,8 +45,9 @@ module.exports = function segment_info(segment) {
         }    
     }
 
-    // if it's not a vowel or a tone, it's a consonant
-
+    // if (consonant_info(segment).place.name === 'undefined') {
+    //     console.log(segment);
+    // }
     return consonant_info(segment);
 }
 

@@ -84,6 +84,18 @@ features.place = [
         }]
     }, {
         meta: {
+            name: 'linguolabial',
+            order: 4.5
+        }, features: [{
+            'labial':      '+'
+        ,   'round':       null
+        ,   'labiodental': null
+        ,   'coronal':     '+'
+        ,   'anterior':    '+'
+        ,   'distributed': '-'
+        }]
+    }, {
+        meta: {
             name: 'dental',
             order: 5
         }, features: [{
