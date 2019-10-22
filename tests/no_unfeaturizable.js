@@ -30,8 +30,9 @@ function filter_features(segment, feature_name) {
 }
 
 function get_segments(err, callback) {
+	// we don't care about segments that only appear as allophones yet
 	if (err) throw err;
-	client.query('SELECT * FROM segments', handle_segments);
+	client.query("SELECT DISTINCT(segments.*) FROM segments JOIN doculect_segments ON doculect_segments.segment_id = segments.id", handle_segments);
 }
 
 function handle_segments(err, segments) {
