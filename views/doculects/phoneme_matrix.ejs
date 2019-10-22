@@ -6,7 +6,9 @@
       <tr>
         <% y.map(function (x) { %>
           <td>
-            <%= x.join(' ') %>
+            <% x.map (function (seg) { %>
+              <a href="/segments/<%= seg %>"><%= seg %></a>
+            <% }) %>
           </td>
         <% }) %>
       </tr>
