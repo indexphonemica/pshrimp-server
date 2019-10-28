@@ -13,6 +13,7 @@
 				<tr>
 					<th>Doculect ID</th>
 					<th>Language</th>
+					<th>Dialect</th>
 					<th>Consonants</th>
 					<th>Vowels</th>
 					<th>Tones</th>
@@ -32,6 +33,11 @@
 						<td>
 							<a href="/languages/<%= doculect.glottocode %>">
 								<%= doculect.language_name %>
+							</a>
+						</td>
+						<td>
+							<a href="/doculects/<%= doculect.inventory_id %>">
+							   <%= doculect.dialect_name %>
 							</a>
 						</td>
 						<td>

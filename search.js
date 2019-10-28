@@ -3,11 +3,11 @@ const db_info = require('./db_info');
 
 class SearchError extends Error {};
 
-exports.build_sql = function (qtree) {
+exports.build_sql = function(qtree) {
     // We go through the query tree twice - first to pull all the contains queries
     // so we can display the segments, and then to generate the actual SQL.
     // The actual SQL is generated in get_sql().
-    var segment_conditions = build_segment_conditions(qtree)
+    var segment_conditions = build_segment_conditions(qtree);
 
     // Special case: don't return any segments if it's an entirely negative query
     // (because otherwise you're returning the entire inventory of the doculect)
@@ -37,7 +37,8 @@ exports.build_sql = function (qtree) {
     // For sources: for now, only pull author+title+year and bibkey + url.
     // TODO: we should figure out a good format for source citation.
     return `
-        SELECT doculects.id AS doculect_id, doculects.inventory_id, doculects.language_name, 
+        SELECT doculects.id AS doculect_id, doculects.dialect, doculects.inventory_id,
+        doculects.language_name, doculects.dialect_name,
         languages.glottocode${do_segments ? ', ' + do_segments : ''},
         ${sources}, ${name}, languages.latitude, languages.longitude
         FROM doculects
@@ -58,7 +59,7 @@ exports.build_sql = function (qtree) {
  *  with one row per language.
  *  Note that this relies on language results always being contiguous.
  */
-exports.process_results = function (results) {
+exports.process_results = function(results) {
     // If we didn't fetch any segments from the DB, there's nothing we need to do here except extract the rows
     // and rename doculect_id to id.
     if (results.rows.length === 0) return [];
@@ -150,6 +151,7 @@ if (!!(+process.env.IS_IPHON)) {
 function build_segment_conditions(qtree) {
     var query_stack = [];
     var contains_queries = [];
+
     function process_node(node) {
         if (node.kind === 'tree') {
             query_stack.push(node.left);
@@ -185,7 +187,7 @@ function segment_condition(term) {
     }
 }
 
-function contains_query(term, num=null, gtlt='=') {
+function contains_query(term, num = null, gtlt = '=') {
     var term_cond = segment_condition(term);
     var num_cond = '';
 
