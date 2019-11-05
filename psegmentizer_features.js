@@ -1421,7 +1421,15 @@ features.click_efflux = [
 
 features.height = [
     {
-        meta: {name: 'high', order: 0}, features: [{
+        meta: {name: 'super-high', order: 0}, features: [{
+            'high':            '+'
+        ,   'low':             '-'
+        ,   'tense':           '+'
+        ,   'delayed_release': '+' // my incredibly lame hack
+        }]
+    },
+    {
+        meta: {name: 'high', order: 0.5}, features: [{
             'high':  '+'
         ,   'low':   '-'
         ,   'tense': '+'
