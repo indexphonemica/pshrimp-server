@@ -36,11 +36,12 @@ features.place = [
             name: 'rounded labial',
             order: 2
         }, features: [{
-            'labial':      '+'
-        ,   'round':       '+'
-        ,   'labiodental': '-'
-        ,   'coronal':     '-'
-        ,   'dorsal':      '-'
+            'labial':              '+'
+        ,   'round':               '+'
+        ,   'labiodental':         '-'
+        ,   'coronal':             '-'
+        ,   'dorsal':              '-'
+        ,   'epilaryngeal_source': '-' // needed to distinguish rounded epiglottals
         }]
     }, {
         meta: {
@@ -564,7 +565,17 @@ features.place = [
             name: 'epiglottal',
             order: 39.5
         }, features: [{
-            'epilaryngeal_source': '+'
+            'labial':              '-'
+        ,   'epilaryngeal_source': '+'
+        }]
+    }, {
+        meta: {
+            name: 'rounded epiglottal',
+            order: 39.75
+        }, features: [{
+            'labial':              '+'
+        ,   'round':               '+'
+        ,   'epilaryngeal_source': '+'
         }]
     }, {
         meta: {
