@@ -864,6 +864,29 @@ features.manner = [
         ,   'lateralis':         '-'
         }]
     }, {
+        meta: { // put these above taps so retroflex trills work
+            name: 'trill',
+            order: 12
+        }, features: [{
+            'consonantal':     '+'
+        ,   'sonorant':        '+'
+        ,   'continuant':      '+'
+        ,   'approximant':     '+'
+        ,   'tap':             '-'
+        ,   'trill':           '+'
+        ,   'nasal':           '-'
+        ,   'lateralis':       '-'
+        }, { // retroflex trill ɽr - this should really be fixed in featuralization for IPHON tho
+            'consonantal':     '+'
+        ,   'sonorant':        '+'
+        ,   'continuant':      '+'
+        ,   'approximant':     '+'
+        ,   'tap':             '+,-'
+        ,   'trill':           '-,+'
+        ,   'nasal':           '-'
+        ,   'lateralis':       '-'
+        }]
+    }, {
         meta: {
             name: 'tap',
             order: 9
@@ -903,20 +926,6 @@ features.manner = [
         ,   'approximant':     '-'
         ,   'tap':             '+'
         ,   'trill':           '-'
-        ,   'nasal':           '-'
-        ,   'lateralis':         '-'
-        }]
-    }, {
-        meta: {
-            name: 'trill',
-            order: 12
-        }, features: [{
-            'consonantal':     '+'
-        ,   'sonorant':        '+'
-        ,   'continuant':      '+'
-        ,   'approximant':     '+'
-        ,   'tap':             '-'
-        ,   'trill':           '+'
         ,   'nasal':           '-'
         ,   'lateralis':         '-'
         }]
