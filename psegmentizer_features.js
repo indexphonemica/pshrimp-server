@@ -728,6 +728,16 @@ features.manner = [
         ,   'trill':           '-'
         ,   'nasal':           '+,-'
         ,   'lateralis':         '-'
+        }, { // ⁿɖɽ ⁿʈɽ̥ʰ; the other three are handled in string processing
+            'consonantal':     '+'
+        ,   'sonorant':        '0,-,+'
+        ,   'continuant':      '0,-,+'
+        ,   'delayed_release': '-'
+        ,   'approximant':     '0,-,+'
+        ,   'tap':             '0,-,+'
+        ,   'trill':           '-'
+        ,   'nasal':           '+,-,-'
+        ,   'lateralis':       '-'
         }]
     }, {
         meta: {

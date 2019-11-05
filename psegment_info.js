@@ -45,6 +45,12 @@ module.exports = function segment_info(segment) {
         }    
     }
 
+    if (segment.phoneme === 'ʈɽ̥' || segment.phoneme === 'ʈɽ̥ʰ' || segment.phoneme === 'ɖɽ') {
+        let tmp = consonant_info(segment);
+        tmp.manner = get_by_name('manner', 'affricate');
+        return tmp;
+    }
+
     // if (consonant_info(segment).place.name === 'undefined') {
     //     console.log(segment);
     // }
