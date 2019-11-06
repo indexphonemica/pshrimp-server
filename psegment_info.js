@@ -69,7 +69,6 @@ module.exports = function segment_info(segment) {
 
     // I have no idea, so let's just round off.
     if (segment.phoneme === 'ⁿtʑ') {
-        console.log('ahoy')
         return {
             phoneme: segment.phoneme
         ,   klass: 'consonant'

@@ -23,7 +23,8 @@ router.get('/languages', wrapAsync(async function (req, res) {
 	try {
 		var results = await client.query('SELECT * FROM languages');
 	} catch (err) {
-		res.status(500).render('Error'); // TODO better errors
+		res.status(500).render('Error');
+		console.error(err);
 		return;
 	}
 	res.render('languages/index', {languages: results.rows});
@@ -40,11 +41,13 @@ router.get('/languages/:glottocode', wrapAsync(async function (req, res) {
 		);
 	} catch (err) {
 		res.status(500).send(err.toString()); // TODO better errors
+		console.error(err);
 		return;
 	}
 
 	if (result.rows.length === 0) { // TODO write a get_or_404
 		res.status(404).render('404');
+		console.error(`404: /languages/${req.params.glottocode}`)
 		return;
 	}
 	res.render('languages/show', {language: result.rows});
@@ -101,6 +104,7 @@ router.get('/doculects', wrapAsync(async function (req, res){
 
 	if (result.rows.length === 0) {
 		res.status(404).render('404'); // TODO: write a get_or_404
+		console.error(`404: /doculects`)
 		return;
 	}
 
@@ -119,6 +123,7 @@ router.get('/doculects/:glottocode', wrapAsync(async function (req, res) {
 			return;
 		}
 		res.status(500).send(err.toString());
+		console.error(err);
 		return;
 	}
 
@@ -141,6 +146,7 @@ router.get('/segments', wrapAsync(async function (req, res) {
 			`)
 	} catch (err) {
 		res.status(500).send(err.toString());
+		console.error(err);
 		return;
 	}
 
@@ -157,11 +163,13 @@ router.get('/segments/:segment', wrapAsync(async function (req, res) {
 			WHERE segments.phoneme = $1::text`, [req.params.segment]);
 	} catch (err) {
 		res.status(500).send(err.toString());
+		console.error(err);
 		return;
 	}
 
 	if (result.rows.length === 0) { // TODO: write a get_or_404
 		res.status(404).render('404');
+		console.error(`404: /segments/${segment}`)
 		return;
 	}
 

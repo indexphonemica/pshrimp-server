@@ -17,6 +17,7 @@ router.get('/query/:query', wrapAsync(async function (req, res) {
 		var results = await client.query(query_sql);
 	} catch (err) {
 		res.status(500).json({"error": err.toString()});
+		console.error(err);
 		return;
 	}
 
@@ -30,6 +31,8 @@ router.get('/language/:language', wrapAsync(async function (req, res) {
 		var doculect = await utils.get_doculect(client, req.params.language);
 	} catch (err) {
 		res.status(500).send({"error": err.toString()});
+		console.error(err);
+		return;
 	}
 
 	res.send(doculect);
