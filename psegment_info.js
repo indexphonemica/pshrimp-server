@@ -331,7 +331,7 @@ function get_place(segment) {
     var seg = segment.phoneme;
 
     // Glottals are hard
-    if (seg[0] === 'h' || seg[0] === 'ʔ' || seg[0] === 'ɦ') return get_by_name('place', 'glottal');
+    if (seg[0] === 'h' || seg[0] === 'ʔ' || seg[0] === 'ɦ' || seg === 'ⁿʔ') return get_by_name('place', 'glottal');
 
     // Handle errata
     if (ERRATA.place[seg]) return get_by_name('place', ERRATA.place[seg]);
