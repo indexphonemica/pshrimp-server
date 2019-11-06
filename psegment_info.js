@@ -51,6 +51,22 @@ module.exports = function segment_info(segment) {
         return tmp;
     }
 
+    // For consistency, these should be treated as affricates, the way kˡ etc. are
+    // But it can wait until featuralization 2.0
+    // Currently I don't think they're distinguishable from velarized dentals!
+    if (segment.phoneme === 'kʵ' || segment.phoneme === 'kʵʰ' || segment.phoneme === 'xʵ') {
+        let tmp = consonant_info(segment);
+        tmp.place = get_by_name('place', 'velar');
+        return tmp;
+    }
+    // And for consistency...
+    if (segment.phoneme === 'pʵʰ' || segment.phoneme === 'pʵ' ||
+        segment.phoneme === 'm̥ʵ'  || segment.phoneme === 'mʵ') {
+        let tmp = consonant_info(segment);
+        tmp.place = get_by_name('place', 'labial');
+        return tmp;
+    }
+
     // if (consonant_info(segment).place.name === 'undefined') {
     //     console.log(segment);
     // }
