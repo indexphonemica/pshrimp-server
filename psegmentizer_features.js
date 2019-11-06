@@ -93,7 +93,7 @@ features.place = [
         ,   'labiodental': null
         ,   'coronal':     '+'
         ,   'anterior':    '+'
-        ,   'distributed': '-'
+        ,   'dorsal':      '-'
         }]
     }, {
         meta: {
