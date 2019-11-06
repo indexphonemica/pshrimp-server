@@ -302,6 +302,18 @@ features.place = [
         ,   'back':        '-'
         }]
     },  {
+        meta: { // l̠ᵝ (Yele)
+            name: 'labially compressed alveolopalatal',
+            order: 19.1
+        }, features: [{
+            'labial':      '+'
+        ,   'round':       '-'
+        ,   'coronal':     '+'
+        ,   'anterior':    '-'
+        ,   'distributed': '+'
+        ,   'dorsal':      '-'
+        }]
+    },  {
         meta: {
             name: 'palatoalveolar',
             order: 21
