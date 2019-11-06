@@ -693,6 +693,21 @@ features.manner = [
         }]
     }, {
         meta: {
+            name: 'laterally released plosive'
+        ,   order: 0.5
+        }, features: [{
+            'consonantal':     '+'
+        ,   'sonorant':        '-'
+        ,   'continuant':      '-'
+        ,   'delayed_release': '-'
+        ,   'approximant':     '-'
+        ,   'tap':             '-'
+        ,   'trill':           '-'
+        ,   'nasal':           '-'
+        ,   'lateralis':       '+'
+        }]
+    }, {
+        meta: {
             name: 'nasalized plosive',
             order: 1
         }, features: [{ // PHOIBLE is wrong. These aren't nasalized. They nasalize following V.
