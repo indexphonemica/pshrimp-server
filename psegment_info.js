@@ -67,6 +67,22 @@ module.exports = function segment_info(segment) {
         return tmp;
     }
 
+    // I have no idea, so let's just round off.
+    if (segment.phoneme === 'ⁿtʑ') {
+        console.log('ahoy')
+        return {
+            phoneme: segment.phoneme
+        ,   klass: 'consonant'
+        ,   place: get_by_name('place', 'palatoalveolar')
+        ,   pharyngeal_configuration: get_by_name('pharyngeal_configuration', 'plain')
+        ,   manner: get_by_name('manner', 'affricate')
+        ,   voicing: get_by_name('voicing', 'voiced')
+        ,   airstream_mechanism: get_by_name('airstream_mechanism', 'modal')
+        ,   duration: get_by_name('duration', 'normal')
+        ,   strength: get_by_name('strength', 'normal')
+        }
+    }
+
     // if (consonant_info(segment).place.name === 'undefined') {
     //     console.log(segment);
     // }
