@@ -542,6 +542,13 @@ features.place = [
         }]
     }, {
         meta: {
+            name: 'palatalized uvular',
+            order: 36.5
+        }, features: [{
+            'labial': 'mu' // fake feature - indistinguishable from palatals, so string processing
+        }]
+    }, {
+        meta: {
             name: 'rounded uvular',
             order: 37
         }, features: [{
