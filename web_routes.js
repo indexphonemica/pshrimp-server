@@ -120,6 +120,7 @@ router.get('/doculects/:glottocode', wrapAsync(async function (req, res) {
 	} catch (err) {
 		if (err.message === 'No such language') { // TODO: this is bad
 			res.status(404).render('404');
+			console.error(`404: /doculects/${req.params.glottocode}`)
 			return;
 		}
 		res.status(500).send(err.toString());
@@ -169,7 +170,7 @@ router.get('/segments/:segment', wrapAsync(async function (req, res) {
 
 	if (result.rows.length === 0) { // TODO: write a get_or_404
 		res.status(404).render('404');
-		console.error(`404: /segments/${segment}`)
+		console.error(`404: /segments/${req.params.segment}`)
 		return;
 	}
 
