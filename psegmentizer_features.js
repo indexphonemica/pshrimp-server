@@ -726,7 +726,7 @@ features.manner = [
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '+'
-        ,   'lateralis':         '-'
+        ,   'lateralis':       '-'
         }]
     }, {
         meta: {
@@ -741,7 +741,7 @@ features.manner = [
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '-'
-        ,   'lateralis':         '-'
+        ,   'lateralis':       '-'
         }, { // prenasalized affricates (ndz)
             'consonantal':     '+'
         ,   'sonorant':        '+,-'
@@ -751,7 +751,7 @@ features.manner = [
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '+,-'
-        ,   'lateralis':         '-'
+        ,   'lateralis':       '-'
         }, { // prenasalized affricates (ⁿdz)
             'consonantal':     '+'
         ,   'sonorant':        '-'
@@ -761,7 +761,7 @@ features.manner = [
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '+,-'
-        ,   'lateralis':         '-'
+        ,   'lateralis':       '-'
         }, { // ⁿɖɽ ⁿʈɽ̥ʰ; the other three are handled in string processing
             'consonantal':     '+'
         ,   'sonorant':        '0,-,+'
@@ -786,7 +786,7 @@ features.manner = [
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '+'
-        ,   'lateralis':         '-'
+        ,   'lateralis':       '-'
         }]
     }, {
         meta: {
@@ -801,7 +801,7 @@ features.manner = [
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '-'
-        ,   'lateralis':         '-'
+        ,   'lateralis':       '-'
         }, { // prenasalized fricatives (nz)
             'consonantal':     '+'
         ,   'sonorant':        '+,-'
@@ -811,7 +811,7 @@ features.manner = [
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '-'
-        ,   'lateralis':         '-'
+        ,   'lateralis':       '-'
         }, { // prenasalized fricatives (ⁿz)
             'sonorant':        '-'
         ,   'continuant':      '+'
@@ -880,7 +880,7 @@ features.manner = [
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '-'
-        ,   'lateralis':         '-'
+        ,   'lateralis':       '-'
         }, {
             'consonantal':     '-' // 22 segments
         ,   'sonorant':        '-'
@@ -890,7 +890,7 @@ features.manner = [
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '-'
-        ,   'lateralis':         '-'
+        ,   'lateralis':       '-'
         }]
     }, {
         meta: {
@@ -904,7 +904,7 @@ features.manner = [
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '+'
-        ,   'lateralis':         '-'
+        ,   'lateralis':       '-'
         }]
     }, {
         meta: { // put these above taps so retroflex trills work
@@ -941,7 +941,7 @@ features.manner = [
         ,   'tap':             '+'
         ,   'trill':           '-'
         ,   'nasal':           '-'
-        ,   'lateralis':         '-'
+        ,   'lateralis':       '-'
         }]
     }, {
         meta: {
@@ -955,7 +955,7 @@ features.manner = [
         ,   'tap':             '+'
         ,   'trill':           '-'
         ,   'nasal':           '+'
-        ,   'lateralis':         '-'
+        ,   'lateralis':       '-'
         }]
     }, {
         meta: { 
@@ -970,7 +970,7 @@ features.manner = [
         ,   'tap':             '+'
         ,   'trill':           '-'
         ,   'nasal':           '-'
-        ,   'lateralis':         '-'
+        ,   'lateralis':       '-'
         }]
     }, {
         meta: {
@@ -984,7 +984,7 @@ features.manner = [
         ,   'tap':             '-'
         ,   'trill':           '+'
         ,   'nasal':           '+'
-        ,   'lateralis':         '-'
+        ,   'lateralis':       '-'
         }]
     }, {
         meta: { 
@@ -998,7 +998,7 @@ features.manner = [
         ,   'tap':             '-'
         ,   'trill':           '+'
         ,   'nasal':           '-'
-        ,   'lateralis':         '-'
+        ,   'lateralis':       '-'
         }]
     }, {
         meta: {
@@ -1026,7 +1026,7 @@ features.manner = [
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '-'
-        ,   'lateralis':         '+'
+        ,   'lateralis':       '+'
         }]
     }, {
         meta: {
@@ -1039,7 +1039,7 @@ features.manner = [
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '+'
-        ,   'lateralis':         '+'
+        ,   'lateralis':       '+'
         }]
     }, {
         meta: {
@@ -1054,7 +1054,7 @@ features.manner = [
         ,   'tap':             '-'
         ,   'trill':           '-'
         ,   'nasal':           '-'
-        ,   'lateralis':         '+'
+        ,   'lateralis':       '+'
         }]
     }, {
         meta: {
@@ -1068,7 +1068,7 @@ features.manner = [
         ,   'tap':             '+'
         ,   'trill':           '-'
         ,   'nasal':           '-'
-        ,   'lateralis':         '+'
+        ,   'lateralis':       '+'
         }]
     }
 ];
