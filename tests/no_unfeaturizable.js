@@ -38,7 +38,8 @@ function get_segments(err, callback) {
 function handle_segments(err, segments) {
 	if (err) throw err;
 
-	var unfeaturizable = [];
+	var unfeaturizable = []; // all unfeaturizable seg/prop pairs
+	var unfeaturizable_segments = {}; // just the segments - useful for running through featuralization
 
 	for (let segment of segments.rows) {
 		try {
@@ -54,6 +55,9 @@ function handle_segments(err, segments) {
 			if (typeof info[prop] === 'object') {
 				if (info[prop].name === 'undefined' || info[prop].order === 99999) {
 					unfeaturizable.push([prop, filter_features(segment, prop)]);
+					if (!unfeaturizable_segments.hasOwnProperty(segment.phoneme)) {
+						unfeaturizable_segments[segment.phoneme] = true;
+					}
 				}
 			}
 		}
@@ -70,6 +74,13 @@ function handle_segments(err, segments) {
 		    console.log(`${unfeaturizable.length} unfeaturizable segment/property pairs`)
 		    console.log("Wrote results to unfeaturizable.txt");
 		});
+
+
+		fs.writeFile("unfeaturizable_segments.txt", JSON.stringify(Object.keys(unfeaturizable_segments), null, 2), function (err) {
+		    if(err) {
+		        return console.log(err);
+		    }		
+		})
 	}
 
 	client.end();
