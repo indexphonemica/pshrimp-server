@@ -849,6 +849,15 @@ features.manner = [
         ,   'trill':           '-'
         ,   'nasal':           '+'
         ,   'lateralis':       '-'
+        }, { // nasals with lateral release - I think they're fake but some sources have them
+            'consonantal':     '+'
+        ,   'sonorant':        '+'
+        ,   'continuant':      '-' // this should be enough to avoid grouping l̃ with nasals
+        ,   'approximant':     '-'
+        ,   'tap':             '-'
+        ,   'trill':           '-'
+        ,   'nasal':           '+'
+        ,   'lateralis':       '+'
         }]
     }, {
         meta: {
