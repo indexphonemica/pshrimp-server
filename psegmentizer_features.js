@@ -1002,6 +1002,20 @@ features.manner = [
         }]
     }, {
         meta: {
+            name: 'prenasalized trill/affricate', // doubt there's a difference, but we accept prenasalized fricatives so dunno
+            order: 15
+        }, features: [{
+            'consonantal':     '+'
+        ,   'sonorant':        '0,-,+' // I think PHOIBLE's scripts are supposed to simplify this sequence, but they don't, and I don't know R, so...
+        ,   'continuant':      '0,-,+'
+        ,   'delayed_release': '-'
+        ,   'approximant':     '0,-,+'
+        ,   'tap':             '-'
+        ,   'trill':           '0,-,+'
+        ,   'nasal':           '+,-,-'
+        }]
+    }, {
+        meta: {
             name: 'lateralis resonant',
             order: 7.5
         }, features: [{
@@ -1083,6 +1097,9 @@ features.voicing = [
         }, features: [{
             'periodic_glottal_source': '-'
         ,   'spread_glottis':          '+'
+        }, {
+            'periodic_glottal_source': '-'
+        ,   'spread_glottis':          '0,-,+'
         }]
     }, {
         meta: {
