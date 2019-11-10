@@ -1,6 +1,8 @@
 <!-- slightly messy port of the already slightly messy React logic -->
 <div>
-  <h4 class='language-segments'><%= name %> (<%= thing.size %>)</h4>
+  <% if (thing.contents && thing.contents.length > 0) { %>
+    <h4 class='language-segments'><%= name %> (<%= thing.size %>)</h4>
+  <% } %>
   <table class='inventory'><tbody>
     <% thing.contents.map(function (y) { %>
       <tr>
