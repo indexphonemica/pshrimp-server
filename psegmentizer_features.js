@@ -127,7 +127,11 @@ features.place = [
         ,   'coronal':     '+'
         ,   'anterior':    '+'
         ,   'distributed': '+'
-        ,   'dorsal':      '-' // TODO ? 
+        ,   'dorsal':      '+'
+        ,   'front':       '+'
+        ,   'back':        '-'
+        ,   'high':        '+'
+        ,   'low':         '-'
         }]
     }, {
         meta: {
