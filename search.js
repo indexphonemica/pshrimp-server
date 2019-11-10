@@ -32,13 +32,18 @@ exports.build_sql = function(qtree) {
         var sources = 'doculects.source';
         var name    = 'doculects.language_name';
     }
+    if (!!(+process.env.IS_IPHON)) {
+        var dialect = `doculects.dialect, doculects.dialect_name`;
+    } else {
+        var dialect = '';
+    }
 
 
     // For sources: for now, only pull author+title+year and bibkey + url.
     // TODO: we should figure out a good format for source citation.
     return `
-        SELECT doculects.id AS doculect_id, doculects.dialect, doculects.inventory_id,
-        doculects.language_name, doculects.dialect_name,
+        SELECT doculects.id AS doculect_id, doculects.inventory_id,
+        doculects.language_name, ${dialect}
         languages.glottocode${do_segments ? ', ' + do_segments : ''},
         ${sources}, ${name}, languages.latitude, languages.longitude
         FROM doculects
