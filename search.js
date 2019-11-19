@@ -33,7 +33,7 @@ exports.build_sql = function(qtree) {
         var name    = 'doculects.language_name';
     }
     if (!!(+process.env.IS_IPHON)) {
-        var dialect = `doculects.dialect, doculects.dialect_name`;
+        var dialect = `doculects.dialect, doculects.dialect_name,`;
     } else {
         var dialect = '';
     }

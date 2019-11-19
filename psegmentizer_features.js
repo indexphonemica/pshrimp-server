@@ -118,21 +118,21 @@ features.place = [
         ,   'distributed': '+'
         ,   'dorsal':      '-'    
         }]
-    }, {
-        meta: {
-            name: 'palatalized dental',
-            order: 6
-        }, features: [{
-            'labial':      '-'
-        ,   'coronal':     '+'
-        ,   'anterior':    '+'
-        ,   'distributed': '+'
-        ,   'dorsal':      '+'
-        ,   'front':       '+'
-        ,   'back':        '-'
-        ,   'high':        '+'
-        ,   'low':         '-'
-        }]
+    // }, { 
+    //     meta: {
+    //         name: 'palatalized dental',
+    //         order: 6
+    //     }, features: [{
+    //         'labial':      '-'
+    //     ,   'coronal':     '+'
+    //     ,   'anterior':    '+'
+    //     ,   'distributed': '+'
+    //     ,   'dorsal':      '+'
+    //     ,   'front':       '+'
+    //     ,   'back':        '-'
+    //     ,   'high':        '+'
+    //     ,   'low':         '-'
+    //     }]
     }, {
         meta: {
             name: 'velarized dental',
@@ -321,7 +321,7 @@ features.place = [
         meta: {
             name: 'palatoalveolar',
             order: 21
-        }, features: [{ // only diff btwn these and palatalized dentals is these are -back. yeah, sure.
+        }, features: [{ // why are these +anterior?
             'labial':      '-'
         ,   'coronal':     '+'
         ,   'anterior':    '+'
@@ -334,13 +334,13 @@ features.place = [
         meta: {
             name: 'rounded palatoalveolar',
             order: 24
-        }, features: [{ // and rounding makes palatoalveolars stop being +dorsal...
+        }, features: [{
             'labial':      '+'
         ,   'round':       '+'
         ,   'coronal':     '+'
         ,   'anterior':    '+'
         ,   'distributed': '+'
-        ,   'dorsal':      '-'
+        ,   'dorsal':      '+'
         }]
     }, {
         meta: {
@@ -377,7 +377,9 @@ features.place = [
              // There's also EWONDO (UPSID) i͓ if you search under +consonantal, 
              // but that's a fricated vowel, I think.
              //
-             // That's about 1.0. Now it's 48 segments! What changed? TODO
+             // That's about 1.0. Now it's 48 segments! What changed?
+             // Well, what changed is that palatalized velars used to be 
+             // +back, but aren't anymore. (No segments are +front;+back now.)
             'labial':      '-' 
         ,   'coronal':     '-'
         ,   'dorsal':      '+'
@@ -428,33 +430,6 @@ features.place = [
         }]
     }, {
         meta: {
-            name: 'palatalized velar',
-            order: 28.5,
-        }, features: [{
-            'labial':      '-'
-        ,   'coronal':     '-'
-        ,   'dorsal':      '+'
-        ,   'high':        '+'
-        ,   'low':         '-'
-        ,   'front':       '+'
-        ,   'back':        '+'
-        }]
-    }, {
-        meta: {
-            name: 'rounded palatalized velar',
-            order: 28.7
-        }, features: [{
-            'labial':      '+'
-        ,   'round':       '+'
-        ,   'coronal':     '-'
-        ,   'dorsal':      '+'
-        ,   'high':        '+'
-        ,   'low':         '-'
-        ,   'front':       '+'
-        ,   'back':        '+'
-        }]
-    }, {
-        meta: {
             name: 'velar',
             order: 29
         }, features: [{
@@ -488,7 +463,7 @@ features.place = [
         ,   'front':       '-'
         ,   'back':        '-'
         }, { 
-            'labial':      '+' // 23 segments
+            'labial':      '+' // various forms of w
         ,   'round':       '+'
         ,   'coronal':     '-'
         ,   'dorsal':      '+'
@@ -640,7 +615,7 @@ features.pharyngeal_configuration = [
         }]
     }
 ];
-
+// checked comments against 2.0 down to here
 features.manner = [
     { // need to move this up here for dl
         meta: {
