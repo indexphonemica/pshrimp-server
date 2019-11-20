@@ -1,6 +1,6 @@
 <div>
-	<h4 className='language-segments'><%= name %> (<%= thing.size %>)</h4>
-	<span><% thing.contents.forEach (function (thing) { %>
+	<h4 class='language-segments'><%= name %> (<%= thing.size %>)</h4>
+	<span class='inventory'><% thing.contents.forEach (function (thing) { %>
 		<%- include('segment', {segment: thing}) %>
 	<% }) %></span>
 </div>
