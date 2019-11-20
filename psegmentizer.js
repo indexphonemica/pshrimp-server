@@ -1,7 +1,12 @@
 const segment_info = require('./psegment_info');
 
 module.exports = function (segments) {
-    var mapped = segments.map(x => segment_info(x));
+    var mapped = segments.map(function (x) {
+        let info = segment_info(x);
+        info.marginal = x.hasOwnProperty('marginal') ? x.marginal : null;
+        info.loan     = x.hasOwnProperty('loan')     ? x.loan     : null;
+        return info;
+    });
     
     var consonants = [];
     var clicks = []; // Yes, these are consonants, but they need a separate table. Like lanthanides and actinides.
@@ -81,6 +86,8 @@ class SegmentInventory {
 // ------------------------------------
 
 function get_name(x) { return x.name };
+
+function build_seg_obj(x) { return {'segment': x.phoneme, 'marginal': x.marginal, 'loan': x.loan} };
 
 function PhonemeMatrix(phonemes, phoneme_klass) {
     var ys = new Set();
@@ -186,7 +193,7 @@ PhonemeMatrix.prototype.to_json = function () {
         var row = [];
         for (let x of y_contents.entries()) {
             var [x_header, x_contents] = x;
-            row.push(x_contents.sort(this.order.bind(this)).map(i => i.phoneme));
+            row.push(x_contents.sort(this.order.bind(this)).map(build_seg_obj));
         }
         tmp.push(row);
     }
@@ -251,7 +258,7 @@ PhonemeArray.prototype.size = function () {
     return this.phonemes.length;
 }
 PhonemeArray.prototype.flatten = function () {
-    return this.phonemes.map(i => i.phoneme).sort(lexicographic_order);
+    return this.phonemes.sort((a, b) => lexicographic_order(a.phoneme, b.phoneme));
 }
 
 function order_segments(a, b, feature_order) {
