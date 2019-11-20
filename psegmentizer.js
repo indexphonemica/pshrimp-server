@@ -258,7 +258,7 @@ PhonemeArray.prototype.size = function () {
     return this.phonemes.length;
 }
 PhonemeArray.prototype.flatten = function () {
-    return this.phonemes.sort((a, b) => lexicographic_order(a.phoneme, b.phoneme));
+    return this.phonemes.sort((a, b) => lexicographic_order(a.phoneme, b.phoneme)).map(build_seg_obj);
 }
 
 function order_segments(a, b, feature_order) {
