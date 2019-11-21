@@ -21,7 +21,7 @@ router.get('/', function (req, res) {
 
 router.get('/languages', wrapAsync(async function (req, res) {
 	try {
-		var results = await client.query('SELECT * FROM languages');
+		var results = await client.query('SELECT * FROM languages ORDER BY name ASC');
 	} catch (err) {
 		res.status(500).render('Error');
 		console.error(err);
@@ -36,7 +36,8 @@ router.get('/languages/:glottocode', wrapAsync(async function (req, res) {
 			`SELECT * 
 			 FROM languages
 			 JOIN doculects ON languages.glottocode = doculects.glottocode
-			 WHERE languages.glottocode = $1::text`, 
+			 WHERE languages.glottocode = $1::text
+			 ORDER BY LENGTH(doculects.inventory_id), doculects.inventory_id`, 
 			 [req.params.glottocode]
 		);
 	} catch (err) {
