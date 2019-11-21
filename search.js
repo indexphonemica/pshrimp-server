@@ -20,21 +20,25 @@ exports.build_sql = function(qtree) {
     }
 
     // This is a little lazy, but it means we have to make sure segments.id doesn't overlap with doculect.id.
-    var do_segments = 'segments.*';
+    var do_segments = 'segments.*, doculect_segments.marginal';
     if (is_negative(qtree)) do_segments = false;
 
-    // IPHON and PHOIBLE store sources differently.
     if (!!(+process.env.IS_IPHON)) {
+        // IPHON and PHOIBLE store sources differently.
         var sources = `doculects.source_bibkey, doculects.source_url, doculects.source_author,
                        doculects.source_title, doculects.source_year`;
+
+        // Unification isn't quite done yet; should fix eventually. TODO
         var name    = 'languages.name';
+
+        // IPHON stores doculect info.
+        var dialect = `doculects.dialect, doculects.dialect_name,`;
+
+        // IPHON stores information on whether a segment is a loan.
+        if (do_segments) do_segments += ', doculect_segments.loan'
     } else {
         var sources = 'doculects.source';
         var name    = 'doculects.language_name';
-    }
-    if (!!(+process.env.IS_IPHON)) {
-        var dialect = `doculects.dialect, doculects.dialect_name,`;
-    } else {
         var dialect = '';
     }
 
@@ -74,11 +78,19 @@ exports.process_results = function(results) {
         return a
     });
 
+
+    /** Splits a DB result row into segment properties and language properties.
+    *   We use db_info here to see what's a segment property,
+    *   but I'm not sure if marginal and loan belong in db_info.
+    *   So we'll special-case them for now.
+    *   Note that if we don't do this, we can't display marginal and loan info
+    *   in the search results table.
+    */
     function destructure(row) {
         var segment = {};
         var lang = {};
         for (let i in row) {
-            if (db_info.columns.segments.has(i)) {
+            if (db_info.columns.segments.has(i) || i === 'marginal' || i === 'loan') {
                 segment[i] = row[i];
             } else if (i === 'doculect_id') {
                 lang['id'] = row[i];
