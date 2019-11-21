@@ -139,7 +139,7 @@ if (!!(+process.env.IS_IPHON)) {
 }
 
 exports.inventory_sql = `
-    SELECT segments.*, doculect_segments.marginal, doculect_segments.loan
+    SELECT segments.*, doculect_segments.marginal${!!(+process.env.IS_IPHON) ? ', doculect_segments.loan' : ''}
     FROM doculects 
     JOIN doculect_segments ON doculects.id = doculect_segments.doculect_id
     JOIN segments ON doculect_segments.segment_id = segments.id
