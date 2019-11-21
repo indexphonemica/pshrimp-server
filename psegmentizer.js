@@ -240,7 +240,7 @@ PhonemeMatrix.prototype.flatten = function () {
         for (let x of y_contents) {
             var [x_header, x_contents] = x;
 
-            tmp = tmp.concat(x_contents.sort(this.order.bind(this)).map(i => i.phoneme));
+            tmp = tmp.concat(x_contents.sort(this.order.bind(this)).map(build_seg_obj));
         }
     }
 
