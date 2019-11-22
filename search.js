@@ -258,7 +258,8 @@ function handle_marginal_loan(include_marginal, include_loan, is_does_not_contai
 }
 
 function prop_query(term) {
-    // TODO: this duplicates the `not_a_property` regex...
+    // TODO: this duplicates the `not_a_property` regex... (2019-11-22: does it? added 0-9 for glottocodes)
+    // DOI and URL matching aren't exact but this shouldn't be a problem in practice
     return `
         doculects.id ${term.contains ? '' : 'NOT'} IN (
             SELECT doculects.id 
@@ -266,8 +267,8 @@ function prop_query(term) {
             JOIN languages ON doculects.glottocode = languages.glottocode
             JOIN languages_countries ON languages.id = languages_countries.language_id
             JOIN countries ON languages_countries.country_id = countries.id
-            WHERE UPPER(REGEXP_REPLACE(${term.table}.${term.column}, '[^A-Za-z_]', '', 'g')) = 
-                UPPER(REGEXP_REPLACE('${term.value}', '[^A-Za-z_]', '', 'g'))
+            WHERE UPPER(REGEXP_REPLACE(${term.table}.${term.column}, '[^A-Za-z0-9]', '', 'g')) = 
+                UPPER(REGEXP_REPLACE('${term.value}', '[^A-Za-z0-9]', '', 'g'))
         )`;
 }
 
