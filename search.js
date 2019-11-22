@@ -204,7 +204,7 @@ function segment_condition(term) {
     }
 }
 
-function contains_query(term, ignore_marginal, ignore_loan, num = null, gtlt = '=') {
+function contains_query(term, include_marginal, include_loan, num = null, gtlt = '=') {
     var term_cond = segment_condition(term);
     var num_cond = '';
 
@@ -218,13 +218,13 @@ function contains_query(term, ignore_marginal, ignore_loan, num = null, gtlt = '
             FROM doculects
                 JOIN doculect_segments ON doculects.id = doculect_segments.doculect_id
                 JOIN segments ON doculect_segments.segment_id = segments.id
-            WHERE ${term_cond} ${handle_marginal_loan(ignore_marginal, ignore_loan)}
+            WHERE ${term_cond} ${handle_marginal_loan(include_marginal, include_loan)}
             GROUP BY doculects.id
             ${num_cond}
         )`;
 }
 
-function does_not_contain_query(term, ignore_marginal, ignore_loan) {
+function does_not_contain_query(term, include_marginal, include_loan) {
     var term_cond = segment_condition(term);
 
     return `
@@ -233,17 +233,26 @@ function does_not_contain_query(term, ignore_marginal, ignore_loan) {
             FROM doculects
                 JOIN doculect_segments ON doculects.id = doculect_segments.doculect_id
                 JOIN segments ON doculect_segments.segment_id = segments.id
-            WHERE ${term_cond} ${handle_marginal_loan(ignore_marginal, ignore_loan)}
+            WHERE ${term_cond} ${handle_marginal_loan(include_marginal, include_loan, true)}
             GROUP BY doculects.id
         )`;
 }
 
-function handle_marginal_loan(ignore_marginal, ignore_loan) {
-    var marginal_cond = 'AND doculect_segments.marginal <> TRUE';
-    var loan_cond     = 'AND doculect_segments.loan <> TRUE';
-    
-    if (ignore_marginal) marginal_cond = '';
-    if (ignore_loan || !(+process.env.IS_IPHON)) loan_cond = ''; // one bang - PHOIBLE doesn't store loan info
+function handle_marginal_loan(include_marginal, include_loan, is_does_not_contain = false) {
+    var marginal_cond = '', loan_cond = ''; 
+
+    // PHOIBLE doesn't store loan info, so -l is a nop if we're running on that.
+    if (!(+process.env.IS_IPHON)) include_loan = true;
+
+    if (!include_marginal) marginal_cond = 'AND doculect_segments.marginal = FALSE';
+
+    if (!include_loan) loan_cond = 'AND doculect_segments.loan = FALSE';
+
+    // If it's a does_not_contain query, you also have to test for nulls.
+    if (is_does_not_contain) {
+        if (!include_marginal) marginal_cond += ' OR doculect_segments.marginal IS NULL';
+        if (!include_loan)     loan_cond     += ' OR doculect_segments.loan IS NULL';
+    }
 
     return `${marginal_cond} ${loan_cond}`;
 }
@@ -268,9 +277,9 @@ function get_sql(q) {
     }
     if (q.kind === 'query') {
         if (is_contains(q)) {
-            return contains_query(q.term, q.ignore_marginal, q.ignore_loan, q.num, q.gtlt);
+            return contains_query(q.term, q.include_marginal, q.include_loan, q.num, q.gtlt);
         } else {
-            return does_not_contain_query(q.term, q.ignore_marginal, q.ignore_loan);
+            return does_not_contain_query(q.term, q.include_marginal, q.include_loan);
         }
     }
     if (q.kind === 'propertyquery') {

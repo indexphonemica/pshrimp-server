@@ -44,6 +44,13 @@ exports.parse = function parse(s) {
 			,	props.table(prop_name)
 			,	contains
 			));
+		} else if (is_filter(curr)) {
+			var last = query_stack.pop();
+			if (!(last.kind === 'query')) throw new ParserError(`Filter ${curr} applied to non-query`)
+			var filter_mapping = {'-m': 'marginal', '-l': 'loan'};
+			last['include_' + filter_mapping[tokens.peek()]] = false;
+			query_stack.push(last);
+			tokens.next();
 		} else {
 			throw new ParserError(`Invalid token ${curr}`);
 		}
@@ -93,6 +100,10 @@ function is_phoneme(s) {
 }
 function is_conjunction(s) {
 	if (s === 'and' || s === 'or' || s === '&' || s === '|') return true;
+	return false;
+}
+function is_filter(s) {
+	if (s === '-m' || s === '-l') return true;
 	return false;
 }
 
