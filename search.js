@@ -204,7 +204,7 @@ function segment_condition(term) {
     }
 }
 
-function contains_query(term, num = null, gtlt = '=') {
+function contains_query(term, ignore_marginal, ignore_loan, num = null, gtlt = '=') {
     var term_cond = segment_condition(term);
     var num_cond = '';
 
@@ -212,28 +212,40 @@ function contains_query(term, num = null, gtlt = '=') {
         num_cond = `HAVING count(*) ${gtlt} ${num}`;
     }
 
-    return `doculects.id IN (
-        SELECT doculects.id
-        FROM doculects
-            JOIN doculect_segments ON doculects.id = doculect_segments.doculect_id
-            JOIN segments ON doculect_segments.segment_id = segments.id
-            WHERE ${term_cond}
+    return `
+        doculects.id IN (
+            SELECT doculects.id
+            FROM doculects
+                JOIN doculect_segments ON doculects.id = doculect_segments.doculect_id
+                JOIN segments ON doculect_segments.segment_id = segments.id
+            WHERE ${term_cond} ${handle_marginal_loan(ignore_marginal, ignore_loan)}
             GROUP BY doculects.id
             ${num_cond}
         )`;
 }
 
-function does_not_contain_query(term) {
+function does_not_contain_query(term, ignore_marginal, ignore_loan) {
     var term_cond = segment_condition(term);
+
     return `
-        doculects.id NOT IN
-        (SELECT doculects.id
-        FROM doculects
-            JOIN doculect_segments ON doculects.id = doculect_segments.doculect_id
-            JOIN segments ON doculect_segments.segment_id = segments.id
-        WHERE ${term_cond}
-        GROUP BY doculects.id
+        doculects.id NOT IN (
+            SELECT doculects.id
+            FROM doculects
+                JOIN doculect_segments ON doculects.id = doculect_segments.doculect_id
+                JOIN segments ON doculect_segments.segment_id = segments.id
+            WHERE ${term_cond} ${handle_marginal_loan(ignore_marginal, ignore_loan)}
+            GROUP BY doculects.id
         )`;
+}
+
+function handle_marginal_loan(ignore_marginal, ignore_loan) {
+    var marginal_cond = 'AND doculect_segments.marginal <> TRUE';
+    var loan_cond     = 'AND doculect_segments.loan <> TRUE';
+    
+    if (ignore_marginal) marginal_cond = '';
+    if (ignore_loan || !(+process.env.IS_IPHON)) loan_cond = ''; // one bang - PHOIBLE doesn't store loan info
+
+    return `${marginal_cond} ${loan_cond}`;
 }
 
 function prop_query(term) {
@@ -256,9 +268,9 @@ function get_sql(q) {
     }
     if (q.kind === 'query') {
         if (is_contains(q)) {
-            return contains_query(q.term, q.num, q.gtlt);
+            return contains_query(q.term, q.ignore_marginal, q.ignore_loan, q.num, q.gtlt);
         } else {
-            return does_not_contain_query(q.term);
+            return does_not_contain_query(q.term, q.ignore_marginal, q.ignore_loan);
         }
     }
     if (q.kind === 'propertyquery') {

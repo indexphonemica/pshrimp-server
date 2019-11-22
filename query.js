@@ -4,6 +4,8 @@ exports.Query = function(contains=true, term='', num=null, gtlt='=') {
     this.num = num;
     this.gtlt = gtlt;
     this.kind = 'query';
+    this.ignore_marginal = true; // pass these in later
+    this.ignore_loan     = true;
 }
 
 exports.QueryTree = function (left, relation, right) {
