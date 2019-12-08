@@ -11,9 +11,25 @@ const utils = require('./utils'), wrapAsync = utils.wrapAsync;
 //      cermati/route-label hasn't been updated in three years
 //      alubbe/named-routes doesn't play nicely with separate routes files
 
-router.get('/', function (req, res) {
-	res.render('index')
-})
+router.get('/', wrapAsync(async function (req, res) {
+	const languages  = await client.query('SELECT COUNT(DISTINCT glottocode) FROM languages');
+	const doculects  = await client.query('SELECT COUNT(DISTINCT inventory_id) FROM doculects');
+	const segments   = await client.query(`SELECT COUNT(DISTINCT segments.id) FROM segments
+		                                   JOIN doculect_segments ON doculect_segments.segment_id = segments.id`)
+	// const total_segs = await client.query('SELECT COUNT(DISTINCT id) FROM segments');
+	const rules      = await client.query('SELECT COUNT(*) FROM allophones');
+
+	// For segments, we want to exclude the ones that only appear as allophones.
+	// This is a little arbitrary, but I think it makes sense.
+
+	get_count = x => x.rows[0].count
+
+	res.render('index', { languages:  get_count(languages)
+						, doculects:  get_count(doculects)
+						, segments:   get_count(segments)
+	//					, total_segs: get_count(total_segs)
+						, rules:      get_count(rules)})
+}));
 
 // ---------------
 // -- Languages --

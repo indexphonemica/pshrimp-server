@@ -3,9 +3,80 @@
 <head>
 	<title>Index Phonemica</title>
 	<%- include partials/head %>
+
+	<style type='text/css'>
+		h1 {
+			font-size: 28px;
+		}
+		main {
+			width: 75%;
+			float: left;
+		}
+		#stats {
+			width: 20%;
+			float: right;
+			border: 1px solid #e7e7e7;
+			border-radius: 4px;
+			padding-left: 5px;
+			padding-top: 3px;
+			background-color: #f8f8f8;
+			color: #777;
+		}
+		#stats > p {
+			margin: 0px;
+		}
+	</style>
 </head>
 <body>
 	<%- include partials/header %>
-	Welcome to Index Phonemica v0.1!
+	
+	<main>
+		<p>Index Phonemica (IPHON) is a database of phoneme inventories and allophonic rules extracted from source documents, focusing primarily on linguistic areas underrepresented in existing databases such as <a href="https://phoible.org">PHOIBLE</a>, <a href="https://wals.info">WALS</a>, and <a href="https://pbase.phon.chass.ncsu.edu/">PBase</a>. As a consequence of this focus, no recycling of existing databases is undertaken.</p>
+
+		<p>The current version, v<%- global.IPHON_VERSION %>, contains <%- doculects %> entries, representing data from <%- languages %> languages. These entries contain a total of <%- segments %> distinct segments, each of which is mapped to a set of features. (This mapping currently uses a modified version of PHOIBLE's featuralization code and feature set, but this will change before v1.0.)</p>
+
+		<p>For the name, cf. <a href="https://chridd.nfshost.com/diachronica/">Index Diachronica</a>.</p>
+
+		<h1>Using the Index</h1>
+
+		<p>The Index can be browsed by language, doculect, or segment view, or searched with <a href="https://indexphonemica.github.io/pshrimp-client">Pshrimp</a>.</p>
+
+		<p>The Index makes no attempt at <em>representative</em> sampling of languages, and thus should not be used to establish overall statistical patterns.</p>
+
+		<h1>Languages and doculects</h1>
+
+		<p>The distinction between 'language' and 'doculect' is largely borrowed from PHOIBLE; however, the Index uses <a href="https://glottolog.org">Glottocodes</a> rather than ISO codes to uniquely identify languages. In the Index, a language is simply a language-level glottocode, although dialect-level glottocodes are assigned in the <tt>dialect_name</tt> field when available. Language metadata, such as language family, latitude, and longitude, are imported from Glottolog.</p>
+
+		<p>A doculect in the Index corresponds to a single source. As a result, there may be many different doculect entries for one language. Doculects are uniquely identified by IPHON IDs, which consist of the Glottocode of the associated language and a chronologically incremented index, separated by a hyphen. (Chronological incrementing allows for unambiguous reference to specific entries in source documents that contain multiple inventories for the same language.)</p>
+
+		<h1>Segmental transcription</h1>
+
+		<p>The Index uses a slightly modified version of IPA. The differences are as follows:</p>
+
+		<p><ul>
+			<li>We use the Sinological <tt>ɿ</tt> for the 'apical vowel', as well as for the 'fricated /i/' of other languages. (See <a href="http://www.mambila.info/Connell/ACAL28/ACAL28paper.html">Connell 1997</a> and <a href="http://linguistics.berkeley.edu/phonlab/documents/2014/Faytak-HighVowel.pdf">Faytak 2014</a>.) <tt>ʮ</tt> and <tt>ʅ</tt> are also used with their Sinological meanings. We also introduce the symbol <tt>ꭒ</tt>, for a 'fricated /u/' or IPA [v̩].</li>
+			<li>We use the full set of alveolo-palatal consonant characters, including <tt>ȶ ȡ ȵ ȴ</tt>.</li>
+			<li>For typographic reasons, we use <tt>ʵ</tt> instead of the IPA rhotic hook.</li>
+			<li>Prenasalized consonants are written with preceding <tt>ⁿ</tt>. Postnasalized consonants are written with following <tt>ⁿ</tt>. Prenasalized trills are currently assumed to have a plosive element, although this will probably be changed before v1.0.</li>
+			<li>In cases where Cr or Cl sequences are given as units, we write the liquid element with a subscript. (So there is a difference between <tt>gʟ</tt> and <tt>gˡ</tt>: the former is completely velar, whereas the latter is presumably realized as a velar plosive followed by a coronal lateral.)</li>
+			<li>Breathy-voiced consonants or 'voiced aspirates' are written with following <tt>ʱ</tt>.</li>
+			<li>Super-high 66 tones are written <tt>˥́</tt>, i.e. high tone with combining acute.</li>
+			<li>The retraction diacritic on vowels or tones is used to indicate laryngealization or tense voice, following the Tibeto-Burman convention.</li>
+		</ul></p>
+
+		<h1>Using the data</h1>
+
+		<p>The data repository is <a href="https://github.com/indexphonemica/data">here</a>. To report an error in the data, file an <a href="https://github.com/indexphonemica/data/issues">issue</a>.</p>
+    </main>
+
+    <div id='stats'>
+    	<p>Release:    
+    		<a href="https://github.com/indexphonemica/data/releases/tag/<%- global.IPHON_VERSION %>">v<%- global.IPHON_VERSION %> (<%- global.IPHON_VERSION_RELEASE_DATE %>)</a> </p>
+    	<p>Languages:  <%- languages %>   </p>
+    	<p>Doculects:  <%- doculects %>   </p>
+    	<p>Segments:   <%- segments  %>   </p>
+    	<p>Allophonic rules: <%- rules %> </p>
+    </div>
+
 </body>
 </html>

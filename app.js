@@ -20,6 +20,12 @@ app.use(function(req, res, next) {
 const utils = require('./utils');
 const wrapAsync = utils.wrapAsync;
 
+// so we don't have to rewrite the views every time
+if (!!(+process.env.IS_IPHON)) {
+	global.IPHON_VERSION = '0.3.0';
+	global.IPHON_VERSION_RELEASE_DATE = '2019-11-24';
+}
+
 // Import web routes
 app.set('view engine', 'ejs');
 if (!!(+process.env.IS_IPHON)) app.use('/', web_routes); // PHOIBLE has its own site
