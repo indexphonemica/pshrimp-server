@@ -23,3 +23,11 @@ exports.PropertyQuery = function(prop_name, prop_value, table_name, contains=tru
     this.contains = contains;
     this.kind = 'propertyquery';
 }
+
+exports.AllophoneQuery = function(left, right, strict=false) {
+    // We don't support strictness yet.
+    this.left = left;
+    this.right = right;
+    this.strict = strict;
+    this.kind = 'allophonequery';
+}

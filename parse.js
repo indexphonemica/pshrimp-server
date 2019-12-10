@@ -9,6 +9,7 @@ exports.parse = function parse(s) {
 
 	while (!tokens.eof()) {
 		var curr = tokens.peek();
+
 		if (is_qualifier(curr)) {
 			var [gtlt, num] = parse_qualifier(tokens.next());
 			if (is_qualificand(tokens.peek())) {
@@ -29,7 +30,17 @@ exports.parse = function parse(s) {
 				throw new ParserError(`Qualifier ${curr} followed by non-qualificand/phoneme ${tokens.peek()}`);
 			}
 		} else if (is_phoneme(curr)) {
-			query_stack.push(new query.Query(true, parse_phoneme(tokens.next())));
+			// Look ahead to see if this is an allophone query.
+			var phoneme = parse_phoneme(tokens.next());
+
+			if (is_allophone_divider(tokens.peek())) {
+				// I really don't want to have to do subroutines.
+				// So instead, we have a top-level if check for this, and we push half-formed allophone queries
+				// and pop them later.
+				query_stack.push(new query.AllophoneQuery(phoneme, null));
+			} else {
+				query_stack.push(new query.Query(true, phoneme));
+			}
 		} else if (is_conjunction(curr)) {
 			var r = query_stack.pop();
 			var l = query_stack.pop();
@@ -45,16 +56,56 @@ exports.parse = function parse(s) {
 			,	contains
 			));
 		} else if (is_filter(curr)) {
+			// If we're supposed to exclude marginal/loan phonemes in the last query,
+			// pop it off the query stack and mutate the properties as needed.
 			var last = query_stack.pop();
 			if (!(last.kind === 'query')) throw new ParserError(`Filter ${curr} applied to non-query`)
 			var filter_mapping = {'-m': 'marginal', '-l': 'loan'};
 			last['include_' + filter_mapping[tokens.peek()]] = false;
 			query_stack.push(last);
 			tokens.next();
+		} else if (is_qualificand(curr)) {
+			// Currently, the only situation where we should hit this is if there's an allophone query
+			// that begins with a qualificand (= a feature bundle).
+			// This is a little confusing, but damned if I can think of a better way to do it,
+			// at least without complicating the parser much more than I care to.
+			// But allophone expressions really ought to be infix, parser difficulty be damned,
+			// because everyone uses the a > b / _c format anyway.
+			var qualificand = parse_qualificand(tokens.next());
+			if (!is_allophone_divider(tokens.peek())) {
+				throw new ParserError(`Expected allophone divider in place of ${tokens.peek()}`);
+			}
+			query_stack.push(new query.AllophoneQuery(qualificand, null));
+		} else if (is_allophone_divider(curr)) {
+			var last = query_stack.pop();
+			if (!(last.kind === 'allophonequery')) {
+				throw new ParserError(`Expected allophone divider in place of ${curr}`);
+			}
+
+			// discard
+			tokens.next();
+
+			// see if we can make a valid allophone query
+			var right;
+			curr = tokens.peek();
+
+			if (is_phoneme(curr)) {
+				right = parse_phoneme(curr);
+			} else if (is_qualificand(curr)) {
+				right = parse_qualificand(curr);
+			} else {
+				throw new ParserError(`Expected phoneme or qualificand in place of ${tokens.peek()}`);
+			}
+
+			last.right = right;
+			query_stack.push(last);
+			tokens.next();
 		} else {
 			throw new ParserError(`Invalid token ${curr}`);
 		}
 	}
+	// TODO: should have error checking here, query stack length should always be 1
+	// maybe not necessary? but what the hell, just in case
 	return query_stack[0]
 }
 
@@ -105,6 +156,9 @@ function is_conjunction(s) {
 function is_filter(s) {
 	if (s === '-m' || s === '-l') return true;
 	return false;
+}
+function is_allophone_divider(s) {
+	return s === '>';
 }
 
 // sanitization stuff - hopefully this works. also replace IPA lookalikes so you can search for /g/ instead of the ridiculous one-story ɡ
