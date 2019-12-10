@@ -92,6 +92,9 @@ exports.parse = function parse(s) {
 			if (is_phoneme(curr)) {
 				right = parse_phoneme(curr);
 			} else if (is_qualificand(curr)) {
+				if (!(+process.env.IS_IPHON)) {
+					throw new ParserError(`Right-hand feature bundles in PHOIBLE allophonic rule queries are unsupported (at ${curr})`);
+				}
 				right = parse_qualificand(curr);
 			} else {
 				throw new ParserError(`Expected phoneme or qualificand in place of ${tokens.peek()}`);

@@ -14,6 +14,13 @@ exports.build_sql = function(qtree) {
     function is_negative(q) {
         if (q.kind === 'tree') {
             return is_negative(q.left) && is_negative(q.right);
+        } else if (q.kind === 'allophonequery') {
+            // Not really sure how this should be handled. Probably want to return the *allophones* later.
+            // Technically we don't even need this, because is_contains(q) will return false...
+            // ...since allophone queries don't *have* `contains` or `gtlt` properties.
+            // But for clarity, we'll include it here for now.
+            // TODO
+            return true;
         } else {
             return !is_contains(q);
         }
@@ -151,7 +158,8 @@ exports.language_sql = `
     JOIN languages ON doculects.glottocode = languages.glottocode
     WHERE ${id_col} = $1;`;
 
-// TODO: allophone search for PHOIBLE?
+// TODO: allophone display for PHOIBLE?
+// This is used to get allophone data for detail display.
 if (!!(+process.env.IS_IPHON)) {
     exports.allophone_sql = `
         SELECT allophones.variation, allophones.compound, allophones.environment, 
@@ -179,6 +187,8 @@ function build_segment_conditions(qtree) {
             }
         } else if (node.kind === 'propertyquery') {
             // do nothing
+        } else if (node.kind === 'allophonequery') {
+            // do nothing here too
         } else {
             throw new SearchError(`Bad query tree term ${node}`);
         }
@@ -190,15 +200,15 @@ function build_segment_conditions(qtree) {
     return contains_queries.join(' OR ');
 }
 
-function segment_condition(term) {
+function segment_condition(term, table='segments', col='phoneme') {
     if (typeof(term) === 'object') {
         var arr = [];
         for (let k in term) {
-            arr.push(`segments.${k} = '${term[k]}'`);
+            arr.push(`${table}.${k} = '${term[k]}'`);
         }
         return arr.join(' AND ');
     } else if (typeof(term) === 'string') {
-        return `segments.phoneme LIKE '${term}'`;
+        return `${table}.${col} LIKE '${term}'`;
     } else {
         throw new SearchError(`Bad segment condition ${term}`);
     }
@@ -272,6 +282,38 @@ function prop_query(term) {
         )`;
 }
 
+function allophone_query(term) {
+    // Our copy of PHOIBLE data stores allophones as fkey doculect_segment_id, string allophone.
+    // IPHON, otoh, stores allophones as fkey doculect_segment_id, fkey(segments) allophone_id.
+    // As a consequence, right-hand feature bundles aren't supported for PHOIBLE.
+    // And we need separate handling for realizations for PHOIBLE vs. IPHON.
+
+    var left_term, right_term;
+
+    left_term = segment_condition(term.left, 'underlying_segments');
+    if (!!(+process.env.IS_IPHON)) {
+        right_term = segment_condition(term.right, 'realization_segments');
+    } else {
+        right_term = segment_condition(term.right, 'allophones', 'allophone');
+    }
+
+    var realization_term = '';
+    if (!!(+process.env.IS_IPHON)) {
+        realization_term = 'JOIN segments realization_segments ON realization_segments.id = allophones.allophone_id';
+    }
+
+    return `
+        doculects.id IN (
+            SELECT doculects.id
+            FROM doculects
+            JOIN doculect_segments ON doculect_segments.doculect_id = doculects.id
+            JOIN allophones ON allophones.doculect_segment_id = doculect_segments.id
+            JOIN segments underlying_segments ON underlying_segments.id = doculect_segments.segment_id
+            ${realization_term}
+            WHERE ${left_term} AND ${right_term}
+        )`;
+}
+
 function get_sql(q) {
     if (q.kind === 'tree') {
         return `(${get_sql(q.left)} ${q.relation} ${get_sql(q.right)})`;
@@ -285,6 +327,9 @@ function get_sql(q) {
     }
     if (q.kind === 'propertyquery') {
         return prop_query(q);
+    }
+    if (q.kind === 'allophonequery') {
+        return allophone_query(q);
     }
 }
 
