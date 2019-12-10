@@ -171,6 +171,14 @@ if (!!(+process.env.IS_IPHON)) {
         JOIN segments AS phonemes ON doculect_segments.segment_id = phonemes.id
         JOIN segments AS realizations ON allophones.allophone_id = realizations.id
         WHERE doculects.inventory_id = $1;`;
+} else {
+    exports.allophone_sql = `
+        SELECT allophones.allophone, segments.*
+        FROM allophones
+        JOIN doculect_segments ON allophones.doculect_segment_id = doculect_segments.id
+        JOIN segments ON doculect_segments.segment_id = segments.id
+        JOIN doculects ON doculect_segments.doculect_id = doculects.id
+        WHERE doculects.id = $1;`
 }
 
 function build_segment_conditions(qtree) {

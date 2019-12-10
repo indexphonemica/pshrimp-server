@@ -38,9 +38,7 @@ module.exports.get_doculect = async function (client, doculect_id) {
     try {
         var segments = await client.query(psherlock.inventory_sql, [doculect_id]);
         var language_data = await client.query(psherlock.language_sql, [doculect_id]);
-        if (!!(+process.env.IS_IPHON)) {
-            var allophone_data = await client.query(psherlock.allophone_sql, [doculect_id]);
-        }
+        var allophone_data = await client.query(psherlock.allophone_sql, [doculect_id]);
     } catch (err) {
         throw err; // rethrow and catch later
     }
@@ -51,6 +49,8 @@ module.exports.get_doculect = async function (client, doculect_id) {
         let res = Object.assign(segcharts, language_data.rows[0]);
         if (!!(+process.env.IS_IPHON)) {
             res['allophonic_rules'] = process_allophones(allophone_data.rows);
+        } else {
+            res['allophonic_rules'] = process_allophones_phoible(allophone_data.rows);
         }
         return res;
     } else {
@@ -67,6 +67,8 @@ module.exports.get_doculect = async function (client, doculect_id) {
 // but it's consistent: order is from top left to bottom right of the chart. 
 // To change this, PhonemeMatrix#flatten() would need to be
 // made aware of what kind of segment it contains.
+
+// TODO: Absolutely incomprehensible. Rewrite.
 function process_allophones(rows) {
     // Build an ordering of all phonemes that appear in allophonic rules
     var unique_segments = {};
@@ -105,6 +107,40 @@ function process_allophones(rows) {
         }
         return a.length - b.length;
     })
+
+    return unique_rules;
+}
+
+function process_allophones_phoible(rows) {
+    var phonemes_to_allophones = {};
+    
+    // PHOIBLE doesn't featuralize allophones, so we can't sort them. Oh well.
+    // Can still sort the underlying segments.
+    rows.forEach(function (row) {
+        let allophone = row.allophone;
+        let phoneme = row.phoneme;
+
+        if (!phonemes_to_allophones.hasOwnProperty(phoneme)) phonemes_to_allophones[phoneme] = [];
+
+        phonemes_to_allophones[phoneme].push(allophone);
+    })
+
+    // Discard things with only one allophone - less clutter.
+    Object.keys(phonemes_to_allophones).forEach(function (k) {
+        let v = phonemes_to_allophones[k];
+        if (v.length < 2) {
+            delete phonemes_to_allophones[k];
+        }
+    });
+
+    const underlying_phonemes = psegmentize(rows);
+
+    const orders = underlying_phonemes.flatten().reduce(function (acc, cur, i) {
+        acc[cur.segment] = i;
+        return acc;
+    }, {});
+
+    const unique_rules = Object.entries(phonemes_to_allophones).sort((a, b) => orders[a[0]] - orders[b[0]]);
 
     return unique_rules;
 }
