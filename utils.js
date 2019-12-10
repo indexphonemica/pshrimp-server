@@ -59,7 +59,7 @@ module.exports.get_doculect = async function (client, doculect_id) {
 }
 
 // Helper function for get_doculect, to stitch compound rules back together.
-// Also impose a linguistically aware sort order; 
+// Also sort the allophonic rules in a linguistically-aware manner; 
 // unfortunately we don't have a way to do this that doesn't rely on PhonemeArray 
 // and featuralization. (Yet?) So it has to be done here.
 
@@ -80,7 +80,7 @@ function process_allophones(rows) {
     // `orders` is a mapping of segments to numeric orders
     const psegmentized = psegmentize(Object.values(unique_segments));
     const orders = psegmentized.flatten().reduce(function (acc, cur, i) {
-        acc[cur] = i;
+        acc[cur.segment] = i;
         return acc;
     }, {})
 
