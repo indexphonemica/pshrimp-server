@@ -13,8 +13,7 @@ router.get('/query/:query', wrapAsync(async function (req, res) {
 
 	try {
 		const query = psentence.parse(query_text);
-		const query_sql = psherlock.build_sql(query);
-		var results = await client.query(query_sql);
+		var results = await psherlock.search(query, client.query.bind(client));
 	} catch (err) {
 		res.status(500).json({"error": err.toString()});
 		console.error(err);

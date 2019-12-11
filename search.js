@@ -15,13 +15,16 @@ class SearchError extends Error {};
     - one to build the matching-segment inventories for those doculects
     - one to build the matching-allophonic-rule inventories for those doculects
 */
-exports.search = async function (qtree, query_func) {
-
+exports.search = async function (qtree, run_query_fn) {
+    // TODO: make sure any errors generated here are handled somewhere!
+    const doculect_sql = build_sql(qtree);
+    const doculect_results = await run_query_fn(doculect_sql);
+    return doculect_results;
 }
 
 
 
-exports.build_sql = function(qtree) {
+function build_sql(qtree) {
     // We go through the query tree twice - first to pull all the contains queries
     // so we can display the segments, and then to generate the actual SQL.
     // The actual SQL is generated in get_sql().
