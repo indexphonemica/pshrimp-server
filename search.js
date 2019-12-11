@@ -3,6 +3,24 @@ const db_info = require('./db_info');
 
 class SearchError extends Error {};
 
+/** Returns a set of search results, and maps the raw DB results to an array of JS objects,
+    each object representing a doculect and containing, where appropriate:
+    - a table (flattened SegmentInventory) of segments matched by the search result
+    - an array of allophonic rules matched by the search result
+
+    Unlike in previous iterations of PHOIBLE, this handles the actual DB querying.
+    This is necessary, because we're no longer running one simple DB query that returns everything.
+    Instead, we're running up to three separate DB queries:
+    - one to build the list of doculects containing matches to the search
+    - one to build the matching-segment inventories for those doculects
+    - one to build the matching-allophonic-rule inventories for those doculects
+*/
+exports.search = async function (qtree, query_func) {
+
+}
+
+
+
 exports.build_sql = function(qtree) {
     // We go through the query tree twice - first to pull all the contains queries
     // so we can display the segments, and then to generate the actual SQL.
@@ -52,18 +70,17 @@ exports.build_sql = function(qtree) {
 
     // For sources: for now, only pull author+title+year and bibkey + url.
     // TODO: we should figure out a good format for source citation.
-    return `
+    var res =  `
         SELECT doculects.id AS doculect_id, doculects.inventory_id,
         doculects.language_name, ${dialect}
-        languages.glottocode${do_segments ? ', ' + do_segments : ''},
-        ${sources}, ${name}, languages.latitude, languages.longitude
+        languages.glottocode, ${sources}, ${name}, languages.latitude, languages.longitude
         FROM doculects
-        ${do_segments ? `JOIN doculect_segments ON doculects.id = doculect_segments.doculect_id
-        JOIN segments ON doculect_segments.segment_id = segments.id` : ''}
         JOIN languages ON doculects.glottocode = languages.glottocode
-        WHERE ${get_sql(qtree)} ${segment_conditions && do_segments ? 'AND (' + segment_conditions + ')' : ''}
+        WHERE ${get_sql(qtree)}
         ORDER BY doculects.id
         ;`;
+    
+    return res;
 }
 
 /** Processes raw SQL results into something suitable for returning.

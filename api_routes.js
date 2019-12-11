@@ -21,7 +21,7 @@ router.get('/query/:query', wrapAsync(async function (req, res) {
 		return;
 	}
 
-	const new_results = psherlock.process_results(results);
+	const new_results = results.rows; // psherlock.process_results(results);
 
 	res.json(new_results);
 }))
