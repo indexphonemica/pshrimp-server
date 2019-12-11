@@ -25,28 +25,28 @@ exports.build_sql = function(qtree) {
     // We go through the query tree twice - first to pull all the contains queries
     // so we can display the segments, and then to generate the actual SQL.
     // The actual SQL is generated in get_sql().
-    var segment_conditions = build_segment_conditions(qtree);
+    // var segment_conditions = build_segment_conditions(qtree);
 
-    // Special case: don't return any segments if it's an entirely negative query
-    // (because otherwise you're returning the entire inventory of the doculect)
-    function is_negative(q) {
-        if (q.kind === 'tree') {
-            return is_negative(q.left) && is_negative(q.right);
-        } else if (q.kind === 'allophonequery') {
-            // Not really sure how this should be handled. Probably want to return the *allophones* later.
-            // Technically we don't even need this, because is_contains(q) will return false...
-            // ...since allophone queries don't *have* `contains` or `gtlt` properties.
-            // But for clarity, we'll include it here for now.
-            // TODO
-            return true;
-        } else {
-            return !is_contains(q);
-        }
-    }
+    // // Special case: don't return any segments if it's an entirely negative query
+    // // (because otherwise you're returning the entire inventory of the doculect)
+    // function is_negative(q) {
+    //     if (q.kind === 'tree') {
+    //         return is_negative(q.left) && is_negative(q.right);
+    //     } else if (q.kind === 'allophonequery') {
+    //         // Not really sure how this should be handled. Probably want to return the *allophones* later.
+    //         // Technically we don't even need this, because is_contains(q) will return false...
+    //         // ...since allophone queries don't *have* `contains` or `gtlt` properties.
+    //         // But for clarity, we'll include it here for now.
+    //         // TODO
+    //         return true;
+    //     } else {
+    //         return !is_contains(q);
+    //     }
+    // }
 
-    // This is a little lazy, but it means we have to make sure segments.id doesn't overlap with doculect.id.
-    var do_segments = 'segments.*, doculect_segments.marginal';
-    if (is_negative(qtree)) do_segments = false;
+    // // This is a little lazy, but it means we have to make sure segments.id doesn't overlap with doculect.id.
+    // var do_segments = 'segments.*, doculect_segments.marginal';
+    // if (is_negative(qtree)) do_segments = false;
 
     if (!!(+process.env.IS_IPHON)) {
         // IPHON and PHOIBLE store sources differently.
@@ -60,7 +60,7 @@ exports.build_sql = function(qtree) {
         var dialect = `doculects.dialect, doculects.dialect_name,`;
 
         // IPHON stores information on whether a segment is a loan.
-        if (do_segments) do_segments += ', doculect_segments.loan'
+        // if (do_segments) do_segments += ', doculect_segments.loan'
     } else {
         var sources = 'doculects.source';
         var name    = 'doculects.language_name';
