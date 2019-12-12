@@ -14,17 +14,100 @@ class SearchError extends Error {};
     - one to build the list of doculects containing matches to the search
     - one to build the matching-segment inventories for those doculects
     - one to build the matching-allophonic-rule inventories for those doculects
+
+    *** If you're messing with the innards of this, use maps instead of objects in most cases.
+        doculects_by_id is a map with integer keys, and trying to look up the value of a string
+        (such as a string you might get by iterating over the keys of an object) will fail.     ***
 */
 exports.search = async function (qtree, run_query_fn) {
     // TODO: make sure any errors generated here are handled somewhere!
-    const doculect_sql = build_sql(qtree);
+    const doculect_sql = build_doculect_sql(qtree);
     const doculect_results = await run_query_fn(doculect_sql);
-    return doculect_results;
+
+    // If we don't have any results, we can save a lot of time and effort here...
+    const drows = doculect_results.rows;
+    if (drows.length === 0) return [];
+
+    // Make a map of doculects to result objects
+    var doculects_by_id = new Map();
+    for (let row of drows) {
+        doculects_by_id.set(+row.doculect_id, row);
+    }
+
+    // Collect matching doculect PKs for validity checking later (prob not necessary but may as well be paranoid)
+    const doculect_pks = new Set(doculects_by_id.keys());
+
+    // See if we need to collect segments
+    const skip_segments = q => (q.kind === 'tree') ? 
+        (skip_segments(q.left) && skip_segments(q.right)) : 
+        (!is_contains(q));
+    // If so, query the DB for them
+    if (!skip_segments(qtree)) {
+        const segment_sql = build_segment_sql(qtree);
+        const segment_results = await run_query_fn(segment_sql);
+        const segment_rows = segment_results.rows;
+
+        // Collate segments
+        // This has to be a map, because doculects_by_id is...
+        // ...and that has to be a map in order to preserve the DB's ordering.
+        // Since doculects_by_id is a map, its keys are ints.
+        // And JS doesn't do automatic casting here. Surprise!
+        var d_seg_collation = new Map();
+        for (let row of segment_rows) {
+            let d_id = row.doculect_id;
+            if (!d_seg_collation.has(d_id)) d_seg_collation.set(d_id, []);
+            d_seg_collation.get(d_id).push(row);
+        }
+        // Make sure the doculects we have here match up with the doculect results
+        const seg_doculect_pks = new Set(d_seg_collation.keys());
+        
+        if (!setEq(seg_doculect_pks, doculect_pks)) { // this should never happen
+            console.error('Doculect/segment mismatch');
+            console.error(seg_doculect_pks);
+            console.error(doculect_pks);
+            console.error(qtree);
+            throw new SearchError("Something has gone very wrong (doculect/segment mismatch) - please file an issue in the tracker");
+        }
+
+        // Now generate the tables and add them to the results
+        for (let d_id of d_seg_collation.keys()) {
+            doculects_by_id.get(d_id).phonemes = psegmentize(d_seg_collation.get(d_id)).flatten();
+        }
+
+    }
+
+    return [...doculects_by_id.values()];
 }
 
+// https://stackoverflow.com/questions/31128855/comparing-ecma6-sets-for-equality
+function setEq(a, b) {
+    return a.size === b.size && [...a].every(value => b.has(value));
+}
 
+function build_segment_sql(qtree) {
+    // Here we rerun get_sql. Could cache this instead, but probably unnecessary.
+    // Note that we don't use the doculect pks here - we shouldn't need to.
 
-function build_sql(qtree) {
+    var segment_conditions = build_segment_conditions(qtree);
+
+    return `
+      SELECT 
+        segments.*,
+        doculect_segments.marginal,
+        ${!!(+process.env.IS_IPHON) ? 'doculect_segments.loan, ' : ''}
+        doculect_segments.doculect_id AS doculect_id
+      FROM
+        doculects
+        JOIN doculect_segments ON doculect_segments.doculect_id = doculects.id
+        JOIN segments ON segments.id = doculect_segments.segment_id
+      WHERE
+        ${get_sql(qtree)} AND (${segment_conditions})
+      ORDER BY
+        doculect_id
+      ;`;
+}
+
+function build_doculect_sql(qtree) {
     // We go through the query tree twice - first to pull all the contains queries
     // so we can display the segments, and then to generate the actual SQL.
     // The actual SQL is generated in get_sql().

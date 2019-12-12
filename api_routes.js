@@ -20,9 +20,7 @@ router.get('/query/:query', wrapAsync(async function (req, res) {
 		return;
 	}
 
-	const new_results = results.rows; // psherlock.process_results(results);
-
-	res.json(new_results);
+	res.json(results);
 }))
 
 router.get('/language/:language', wrapAsync(async function (req, res) {
