@@ -41,8 +41,8 @@ exports.search = async function (qtree, run_query_fn) {
     const skip_segments = q => (q.kind === 'tree') ? 
         (skip_segments(q.left) && skip_segments(q.right)) : 
         (!is_contains(q));
-    // If so, query the DB for them
     if (!skip_segments(qtree)) {
+        // Query the DB for segments
         const segment_sql = build_segment_sql(qtree);
         const segment_results = await run_query_fn(segment_sql);
         const segment_rows = segment_results.rows;
@@ -66,17 +66,73 @@ exports.search = async function (qtree, run_query_fn) {
             console.error(seg_doculect_pks);
             console.error(doculect_pks);
             console.error(qtree);
-            throw new SearchError("Something has gone very wrong (doculect/segment mismatch) - please file an issue in the tracker");
+            throw new SearchError("Something has gone very wrong (doculect/segment mismatch)");
         }
 
         // Now generate the tables and add them to the results
         for (let d_id of d_seg_collation.keys()) {
             doculects_by_id.get(d_id).phonemes = psegmentize(d_seg_collation.get(d_id)).flatten();
         }
+    }
 
+    // See if we need to collect allophonic rules
+    const do_allophones = q => (q.kind === 'tree') ?
+        (do_allophones(q.left) || do_allophones(q.right)) :
+        (q.kind === 'allophonequery');
+    if (do_allophones(qtree)) {
+
+        // Query the DB for allophones
+        const allophone_sql = build_allophone_sql(qtree);
+        const allophone_results = await run_query_fn(allophone_sql);
+        const allophone_rows = allophone_results.rows;
+        
+        // Collate allophones - as above, this has to be a map
+        let d_allo_collation = new Map();
+        for (let row of allophone_rows) {
+            let d_id = row.doculect_id;
+            if (!d_allo_collation.has(d_id)) d_allo_collation.set(d_id, []);
+            d_allo_collation.get(d_id).push(row);
+        }
+        const allo_doculect_pks = new Set(d_allo_collation.keys());
+        if (!setEq(allo_doculect_pks, doculect_pks)) { // this should never happen
+            console.error('Something has gone very wrong (doculect/rule mismatch)');
+            console.error(allo_doculect_pks);
+            console.error(doculect_pks);
+            console.error(qtree);
+            throw new SearchError("Something has gone very wrong (doculect/rule mismatch)");
+        }
+
+        // Now generate the tables and add them to the results... same as above, TODO DRY
+        // variable naming here is also a little weird and inconsistent, d_allo 
+        for (let d_id of d_allo_collation.keys()) {
+            doculects_by_id.get(d_id).allophones = d_allo_collation.get(d_id);
+        }
     }
 
     return [...doculects_by_id.values()];
+}
+
+function build_allophone_sql(qtree) {
+    // Here we rerun get_sql. Could cache this instead, but probably unnecessary.
+    // Note that we don't use the doculect pks here - we shouldn't need to.
+
+    var allophone_conditions = build_allophone_conditions(qtree);
+
+    return `
+        SELECT
+          allophones.*, phonemes.phoneme AS phoneme, realizations.phoneme AS realization,
+          doculect_segments.doculect_id AS doculect_id
+        FROM
+          doculects
+          JOIN doculect_segments ON doculect_segments.doculect_id = doculects.id
+          JOIN allophones ON allophones.doculect_segment_id = doculect_segments.id
+          JOIN segments phonemes ON phonemes.id = doculect_segments.segment_id
+          ${realization_term()}
+        WHERE
+          ${get_sql(qtree)} AND (${allophone_conditions})
+        ORDER BY
+          doculect_id
+    ;`;
 }
 
 // https://stackoverflow.com/questions/31128855/comparing-ecma6-sets-for-equality
@@ -284,11 +340,30 @@ if (!!(+process.env.IS_IPHON)) {
         WHERE doculects.id = $1;`
 }
 
+function build_allophone_conditions(qtree) {
+    var query_stack = [];
+    var allophone_queries = [];
+
+    var process_node = function (node) {
+        if (node.kind === 'tree') {
+            query_stack.push(node.left);
+            query_stack.push(node.right);
+        } else if (node.kind === 'allophonequery') {
+            allophone_queries.push(allophone_condition(node));
+        }
+    }
+    process_node(qtree);
+    while (query_stack.length > 0) {
+        process_node(query_stack.pop());
+    }
+    return allophone_queries.join(' OR ');
+}
+
 function build_segment_conditions(qtree) {
     var query_stack = [];
     var contains_queries = [];
 
-    function process_node(node) {
+    var process_node = function (node) {
         if (node.kind === 'tree') {
             query_stack.push(node.left);
             query_stack.push(node.right);
@@ -393,7 +468,7 @@ function prop_query(term) {
         )`;
 }
 
-function allophone_query(term) {
+function allophone_condition(term) {
     // Our copy of PHOIBLE data stores allophones as fkey doculect_segment_id, string allophone.
     // IPHON, otoh, stores allophones as fkey doculect_segment_id, fkey(segments) allophone_id.
     // As a consequence, right-hand feature bundles aren't supported for PHOIBLE.
@@ -401,27 +476,33 @@ function allophone_query(term) {
 
     var left_term, right_term;
 
-    left_term = segment_condition(term.left, 'underlying_segments');
+    left_term = segment_condition(term.left, 'phonemes');
     if (!!(+process.env.IS_IPHON)) {
-        right_term = segment_condition(term.right, 'realization_segments');
+        right_term = segment_condition(term.right, 'realizations');
     } else {
         right_term = segment_condition(term.right, 'allophones', 'allophone');
     }
+    return `(${left_term} AND ${right_term})`
+}
 
-    var realization_term = '';
+function realization_term() {
     if (!!(+process.env.IS_IPHON)) {
-        realization_term = 'JOIN segments realization_segments ON realization_segments.id = allophones.allophone_id';
+        return 'JOIN segments realizations ON realizations.id = allophones.allophone_id';
     }
+    return '';
+}
 
+
+function allophone_query(term) {
     return `
         doculects.id IN (
             SELECT doculects.id
             FROM doculects
             JOIN doculect_segments ON doculect_segments.doculect_id = doculects.id
             JOIN allophones ON allophones.doculect_segment_id = doculect_segments.id
-            JOIN segments underlying_segments ON underlying_segments.id = doculect_segments.segment_id
-            ${realization_term}
-            WHERE ${left_term} AND ${right_term}
+            JOIN segments phonemes ON phonemes.id = doculect_segments.segment_id
+            ${realization_term()}
+            WHERE ${allophone_condition(term)}
         )`;
 }
 
