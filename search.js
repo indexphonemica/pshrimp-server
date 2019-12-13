@@ -54,12 +54,7 @@ exports.search = async function (qtree, run_query_fn) {
         // ...and that has to be a map in order to preserve the DB's ordering.
         // Since doculects_by_id is a map, its keys are ints.
         // And JS doesn't do automatic casting here. Surprise!
-        var d_seg_collation = new Map();
-        for (let row of segment_rows) {
-            let d_id = row.doculect_id;
-            if (!d_seg_collation.has(d_id)) d_seg_collation.set(d_id, []);
-            d_seg_collation.get(d_id).push(row);
-        }
+        let d_seg_collation = collate(segment_rows);
         // Make sure the doculects we have here match up with the doculect results
         const seg_doculect_pks = new Set(d_seg_collation.keys());
         
@@ -79,19 +74,13 @@ exports.search = async function (qtree, run_query_fn) {
 
     // See if we need to collect allophonic rules
     if (any_in_tree(qtree, q => q.kind === 'allophonequery')) {
-
         // Query the DB for allophones
         const allophone_sql = build_allophone_sql(qtree);
         const allophone_results = await run_query_fn(allophone_sql);
         const allophone_rows = allophone_results.rows;
         
         // Collate allophones - as above, this has to be a map
-        let d_allo_collation = new Map();
-        for (let row of allophone_rows) {
-            let d_id = row.doculect_id;
-            if (!d_allo_collation.has(d_id)) d_allo_collation.set(d_id, []);
-            d_allo_collation.get(d_id).push(row);
-        }
+        let d_allo_collation = collate(allophone_rows);
         const allo_doculect_pks = new Set(d_allo_collation.keys());
         if (!setEq(allo_doculect_pks, doculect_pks)) { // this should never happen
             console.error('Something has gone very wrong (doculect/rule mismatch)');
@@ -132,6 +121,16 @@ function build_allophone_sql(qtree) {
         ORDER BY
           doculect_id
     ;`;
+}
+
+function collate(rows) {
+    let collation = new Map();
+    for (let row of rows) {
+        let d_id = row.doculect_id;
+        if (!collation.has(d_id)) collation.set(d_id, []);
+        collation.get(d_id).push(row);
+    }
+    return collation;
 }
 
 // https://stackoverflow.com/questions/31128855/comparing-ecma6-sets-for-equality
