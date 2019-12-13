@@ -1,5 +1,7 @@
-const psegmentize = require('./psegmentizer'); // for process_results()
-const db_info = require('./db_info');
+const psegmentize = require('./psegmentizer');
+const db_info = require('./db_info'); // we don't use this anymore; delete later (TODO)
+                                      // but we probably should
+const utils = require('./utils'); // we need process_allophones
 
 class SearchError extends Error {};
 
@@ -19,27 +21,6 @@ class SearchError extends Error {};
         doculects_by_id is a map with integer keys, and trying to look up the value of a string
         (such as a string you might get by iterating over the keys of an object) will fail.     ***
 */
-
-function any_in_tree(node, func) {
-    return (node.kind === 'tree') ? (any_in_tree(node.left, func) || any_in_tree(node.right, func)) : func(node);
-}
-
-/** Makes absolutely sure that there's no mismatch between results.
-    There never should be, and this check is probably unnecessary.
-    But it can't hurt.
-
-    collation :: Map, doculect_pks :: Map, name_of_collated_thing :: str
-*/
-function be_paranoid(collation, doculect_pks, name_of_collated_thing) {
-    const collation_pks = new Set(collation.keys());
-    if (!setEq(collation_pks, doculect_pks)) {
-        console.error('Doculect/segment mismatch');
-        console.error(collation_pks);
-        console.error(doculect_pks);
-        console.error(qtree);
-        throw new SearchError(`Something has gone very wrong (doculect/${name_of_collated_thing} mismatch)`);
-    }
-}
 
 exports.search = async function (qtree, run_query_fn) {
     // TODO: make sure any errors generated here are handled somewhere!
@@ -71,12 +52,12 @@ exports.search = async function (qtree, run_query_fn) {
         // ...and that has to be a map in order to preserve the DB's ordering.
         // Since doculects_by_id is a map, its keys are ints.
         // And JS doesn't do automatic casting here. Surprise!
-        let d_seg_collation = collate(segment_rows);
-        be_paranoid(d_seg_collation, doculect_pks, 'segment');
+        let segments = collate(segment_rows);
+        be_paranoid(segments, doculect_pks, 'segment');
 
         // Now generate the tables and add them to the results
-        for (let d_id of d_seg_collation.keys()) {
-            doculects_by_id.get(d_id).phonemes = psegmentize(d_seg_collation.get(d_id)).flatten();
+        for (let d_id of segments.keys()) {
+            doculects_by_id.get(d_id).phonemes = psegmentize(segments.get(d_id)).flatten();
         }
     }
 
@@ -88,18 +69,120 @@ exports.search = async function (qtree, run_query_fn) {
         const allophone_rows = allophone_results.rows;
         
         // Collate allophones - as above, this has to be a map
-        let d_allo_collation = collate(allophone_rows);
-        be_paranoid(d_allo_collation, doculect_pks, 'allophone');
+        let allophones = collate(allophone_rows);
+        be_paranoid(allophones, doculect_pks, 'allophone');
 
-        // Now generate the tables and add them to the results... same as above, TODO DRY
-        // variable naming here is also a little weird and inconsistent, d_allo 
-        for (let d_id of d_allo_collation.keys()) {
-            doculects_by_id.get(d_id).allophones = d_allo_collation.get(d_id);
+        // Lame hack - TODO: fix this 
+        // Really we should be thinking in terms of input and output...
+        // Also should DRY all the rule object-relational stuff
+        function handle_compounds(rule) {
+            if (rule.compound) rule.phoneme = rule.compound;
+            return rule;
+        }
+
+        // Now generate the tables and add them to the results
+        for (let d_id of allophones.keys()) {
+            doculects_by_id.get(d_id).allophones = allophones.get(d_id).map(handle_compounds);
         }
     }
 
     return [...doculects_by_id.values()];
 }
+
+// *****************************
+// *** SQL exports for utils ***
+// *****************************
+
+// For IPHON we use the inventory_id for everything.
+// For PHOIBLE we use the DB ID, for now.
+// TODO: unify on inventory_id
+
+if (!!(+process.env.IS_IPHON)) {
+    var id_col = 'doculects.inventory_id';
+} else {
+    var id_col = 'doculects.id';
+}
+
+exports.inventory_sql = `
+    SELECT segments.*, doculect_segments.marginal${!!(+process.env.IS_IPHON) ? ', doculect_segments.loan' : ''}
+    FROM doculects 
+    JOIN doculect_segments ON doculects.id = doculect_segments.doculect_id
+    JOIN segments ON doculect_segments.segment_id = segments.id
+    WHERE ${id_col} = $1;`;
+
+exports.language_sql = `
+    SELECT doculects.*, languages.*
+    FROM doculects
+    JOIN languages ON doculects.glottocode = languages.glottocode
+    WHERE ${id_col} = $1;`;
+
+// TODO: allophone display for PHOIBLE?
+// This is used to get allophone data for detail display.
+if (!!(+process.env.IS_IPHON)) {
+    exports.allophone_sql = `
+        SELECT allophones.variation, allophones.compound, allophones.environment, 
+            phonemes.phoneme AS phoneme, realizations.phoneme AS realization,
+            phonemes.*
+        FROM allophones
+        JOIN doculect_segments ON allophones.doculect_segment_id = doculect_segments.id
+        JOIN doculects ON doculect_segments.doculect_id = doculects.id
+        JOIN segments AS phonemes ON doculect_segments.segment_id = phonemes.id
+        JOIN segments AS realizations ON allophones.allophone_id = realizations.id
+        WHERE doculects.inventory_id = $1;`;
+} else {
+    exports.allophone_sql = `
+        SELECT allophones.allophone, segments.*
+        FROM allophones
+        JOIN doculect_segments ON allophones.doculect_segment_id = doculect_segments.id
+        JOIN segments ON doculect_segments.segment_id = segments.id
+        JOIN doculects ON doculect_segments.doculect_id = doculects.id
+        WHERE doculects.id = $1;`
+}
+
+
+// ***************************
+// *** Collation utilities ***
+// ***************************
+
+function collate(rows) {
+    let collation = new Map();
+    for (let row of rows) {
+        let d_id = row.doculect_id;
+        if (!collation.has(d_id)) collation.set(d_id, []);
+        collation.get(d_id).push(row);
+    }
+    return collation;
+}
+
+// https://stackoverflow.com/questions/31128855/comparing-ecma6-sets-for-equality
+function setEq(a, b) {
+    return a.size === b.size && [...a].every(value => b.has(value));
+}
+
+function any_in_tree(node, func) {
+    return (node.kind === 'tree') ? (any_in_tree(node.left, func) || any_in_tree(node.right, func)) : func(node);
+}
+
+/** Makes absolutely sure that there's no mismatch between results.
+    There never should be, and this check is probably unnecessary.
+    But it can't hurt.
+
+    collation :: Map, doculect_pks :: Map, name_of_collated_thing :: str
+*/
+function be_paranoid(collation, doculect_pks, name_of_collated_thing) {
+    const collation_pks = new Set(collation.keys());
+    if (!setEq(collation_pks, doculect_pks)) {
+        console.error('Doculect/segment mismatch');
+        console.error(collation_pks);
+        console.error(doculect_pks);
+        console.error(qtree);
+        throw new SearchError(`Something has gone very wrong (doculect/${name_of_collated_thing} mismatch)`);
+    }
+}
+
+// ********************
+// *** SQL builders ***
+// ********************
 
 function build_allophone_sql(qtree) {
     // Here we rerun get_sql. Could cache this instead, but probably unnecessary.
@@ -122,21 +205,6 @@ function build_allophone_sql(qtree) {
         ORDER BY
           doculect_id
     ;`;
-}
-
-function collate(rows) {
-    let collation = new Map();
-    for (let row of rows) {
-        let d_id = row.doculect_id;
-        if (!collation.has(d_id)) collation.set(d_id, []);
-        collation.get(d_id).push(row);
-    }
-    return collation;
-}
-
-// https://stackoverflow.com/questions/31128855/comparing-ecma6-sets-for-equality
-function setEq(a, b) {
-    return a.size === b.size && [...a].every(value => b.has(value));
 }
 
 function build_segment_sql(qtree) {
@@ -222,52 +290,6 @@ function build_doculect_sql(qtree) {
         ;`;
     
     return res;
-}
-
-// For IPHON we use the inventory_id for everything.
-// For PHOIBLE we use the DB ID, for now.
-// TODO: unify on inventory_id
-
-if (!!(+process.env.IS_IPHON)) {
-    var id_col = 'doculects.inventory_id';
-} else {
-    var id_col = 'doculects.id';
-}
-
-exports.inventory_sql = `
-    SELECT segments.*, doculect_segments.marginal${!!(+process.env.IS_IPHON) ? ', doculect_segments.loan' : ''}
-    FROM doculects 
-    JOIN doculect_segments ON doculects.id = doculect_segments.doculect_id
-    JOIN segments ON doculect_segments.segment_id = segments.id
-    WHERE ${id_col} = $1;`;
-
-exports.language_sql = `
-    SELECT doculects.*, languages.*
-    FROM doculects
-    JOIN languages ON doculects.glottocode = languages.glottocode
-    WHERE ${id_col} = $1;`;
-
-// TODO: allophone display for PHOIBLE?
-// This is used to get allophone data for detail display.
-if (!!(+process.env.IS_IPHON)) {
-    exports.allophone_sql = `
-        SELECT allophones.variation, allophones.compound, allophones.environment, 
-            phonemes.phoneme AS phoneme, realizations.phoneme AS realization,
-            phonemes.*
-        FROM allophones
-        JOIN doculect_segments ON allophones.doculect_segment_id = doculect_segments.id
-        JOIN doculects ON doculect_segments.doculect_id = doculects.id
-        JOIN segments AS phonemes ON doculect_segments.segment_id = phonemes.id
-        JOIN segments AS realizations ON allophones.allophone_id = realizations.id
-        WHERE doculects.inventory_id = $1;`;
-} else {
-    exports.allophone_sql = `
-        SELECT allophones.allophone, segments.*
-        FROM allophones
-        JOIN doculect_segments ON allophones.doculect_segment_id = doculect_segments.id
-        JOIN segments ON doculect_segments.segment_id = segments.id
-        JOIN doculects ON doculect_segments.doculect_id = doculects.id
-        WHERE doculects.id = $1;`
 }
 
 function build_allophone_conditions(qtree) {
