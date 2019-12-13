@@ -23,7 +23,7 @@ class SearchError extends Error {};
 exports.search = async function (qtree, run_query_fn) {
     // TODO: make sure any errors generated here are handled somewhere!
     const doculect_sql = build_doculect_sql(qtree);
-    const doculect_results = await run_query_fn(doculect_sql);
+    const doculect_results = await try_run(doculect_sql, run_query_fn);
 
     // If we don't have any results, we can save a lot of time and effort here...
     const drows = doculect_results.rows;
@@ -42,7 +42,7 @@ exports.search = async function (qtree, run_query_fn) {
     if (any_in_tree(qtree, is_contains)) {
         // Query the DB for segments
         const segment_sql = build_segment_sql(qtree);
-        const segment_results = await run_query_fn(segment_sql);
+        const segment_results = await try_run(segment_sql, run_query_fn);
         const segment_rows = segment_results.rows;
 
         // Collate segments
@@ -63,7 +63,7 @@ exports.search = async function (qtree, run_query_fn) {
     if (any_in_tree(qtree, q => q.kind === 'allophonequery')) {
         // Query the DB for allophones
         const allophone_sql = build_allophone_sql(qtree);
-        const allophone_results = await run_query_fn(allophone_sql);
+        const allophone_results = await try_run(allophone_sql, run_query_fn);
         const allophone_rows = allophone_results.rows;
         
         // Collate allophones - as above, this has to be a map
@@ -85,6 +85,17 @@ exports.search = async function (qtree, run_query_fn) {
     }
 
     return [...doculects_by_id.values()];
+}
+
+async function try_run(sql, run_query_fn) {
+    try {
+        const res = await run_query_fn(sql);
+        return res;
+    } catch (e) {
+        console.error(e);
+        console.error(sql);
+        throw e;
+    }
 }
 
 // *****************************
