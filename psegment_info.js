@@ -82,7 +82,8 @@ module.exports = function segment_info(segment) {
         }
     }
 
-    if (segment.phoneme === 'qʲʼ' || segment.phoneme === 'χʲ' || segment.phoneme === 'ʁʲ') {
+    if (segment.phoneme === 'qʲ' || segment.phoneme === 'qʲʼ' || 
+        segment.phoneme === 'χʲ' || segment.phoneme === 'ʁʲ') {
         let tmp = consonant_info(segment);
         tmp.place = get_by_name('place', 'palatalized uvular');
         return tmp;
