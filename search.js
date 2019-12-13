@@ -19,6 +19,7 @@ class SearchError extends Error {};
         doculects_by_id is a map with integer keys, and trying to look up the value of a string
         (such as a string you might get by iterating over the keys of an object) will fail.     ***
 */
+
 exports.search = async function (qtree, run_query_fn) {
     // TODO: make sure any errors generated here are handled somewhere!
     const doculect_sql = build_doculect_sql(qtree);
@@ -38,10 +39,10 @@ exports.search = async function (qtree, run_query_fn) {
     const doculect_pks = new Set(doculects_by_id.keys());
 
     // See if we need to collect segments
-    const skip_segments = q => (q.kind === 'tree') ? 
-        (skip_segments(q.left) && skip_segments(q.right)) : 
-        (!is_contains(q));
-    if (!skip_segments(qtree)) {
+    const do_segments = q => (q.kind === 'tree') ? 
+        (do_segments(q.left) || do_segments(q.right)) : 
+        (is_contains(q));
+    if (do_segments(qtree)) {
         // Query the DB for segments
         const segment_sql = build_segment_sql(qtree);
         const segment_results = await run_query_fn(segment_sql);
