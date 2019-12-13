@@ -69,6 +69,8 @@ module.exports.get_doculect = async function (client, doculect_id) {
 // made aware of what kind of segment it contains.
 
 // TODO: Absolutely incomprehensible. Rewrite.
+// See https://github.com/indexphonemica/data/issues/14
+// When that's done, some of this can be simplified.
 function process_allophones(rows) {
     // Build an ordering of all phonemes that appear in allophonic rules
     var unique_segments = {};
@@ -88,18 +90,35 @@ function process_allophones(rows) {
 
     // Filter the allophonic rules so compounds aren't duplicated
     var unique_rules_unsorted = {};
+    var done_compounds = new Set();
     rows.forEach(function (row) {
         var phonemes = (row.compound || row.phoneme).split('+');
-        unique_rules_unsorted[phonemes] = {
-            phonemes:    phonemes
-        ,   realization: row.realization
-        ,   environment: row.environment
-        ,   variation:   row.variation
+        if (!unique_rules_unsorted.hasOwnProperty(phonemes)) unique_rules_unsorted[phonemes] = [];
+
+        if (row.compound) {
+            if (!done_compounds.has(row.compound + row.realization + row.environment)) {
+                unique_rules_unsorted[phonemes].push({
+                    phonemes:    phonemes
+                ,   realization: row.realization
+                ,   environment: row.environment
+                ,   variation:   row.variation
+                });
+                done_compounds.add(row.compound + row.realization + row.environment);
+            }
+        } else {
+            unique_rules_unsorted[phonemes].push({
+                phonemes:    phonemes
+            ,   realization: row.realization
+            ,   environment: row.environment
+            ,   variation:   row.variation
+            });
         }
     });
 
     // Then sort those
-    const unique_rules = Object.values(unique_rules_unsorted).sort(function (a_rule, b_rule) {
+    // The reduce statement is just a single-level flatten; I don't have Array#flat() yet
+    // See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/flat
+    const unique_rules = Object.values(unique_rules_unsorted).reduce((acc, val) => acc.concat(val), []).sort(function (a_rule, b_rule) {
         var i = 0, a = a_rule.phonemes, b = b_rule.phonemes;
         while (i < a.length && i < b.length) {
             if (orders[a[i]] != orders[b[i]]) return orders[a[i]] - orders[b[i]];
@@ -111,6 +130,7 @@ function process_allophones(rows) {
     return unique_rules;
 }
 
+// TODO test this
 function process_allophones_phoible(rows) {
     var phonemes_to_allophones = {};
     
@@ -143,4 +163,10 @@ function process_allophones_phoible(rows) {
     const unique_rules = Object.entries(phonemes_to_allophones).sort((a, b) => orders[a[0]] - orders[b[0]]);
 
     return unique_rules;
+}
+
+if (!!(+process.env.IS_IPHON)) {
+    module.exports.process_allophones = process_allophones;
+} else {
+    module.exports.process_allophones = process_allophones_phoible;
 }
