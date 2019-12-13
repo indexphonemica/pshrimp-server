@@ -20,6 +20,10 @@ class SearchError extends Error {};
         (such as a string you might get by iterating over the keys of an object) will fail.     ***
 */
 
+function any_in_tree(node, func) {
+    return (node.kind === 'tree') ? (any_in_tree(node.left, func) || any_in_tree(node.right, func)) : func(node);
+}
+
 exports.search = async function (qtree, run_query_fn) {
     // TODO: make sure any errors generated here are handled somewhere!
     const doculect_sql = build_doculect_sql(qtree);
@@ -39,10 +43,7 @@ exports.search = async function (qtree, run_query_fn) {
     const doculect_pks = new Set(doculects_by_id.keys());
 
     // See if we need to collect segments
-    const do_segments = q => (q.kind === 'tree') ? 
-        (do_segments(q.left) || do_segments(q.right)) : 
-        (is_contains(q));
-    if (do_segments(qtree)) {
+    if (any_in_tree(qtree, is_contains)) {
         // Query the DB for segments
         const segment_sql = build_segment_sql(qtree);
         const segment_results = await run_query_fn(segment_sql);
@@ -77,10 +78,7 @@ exports.search = async function (qtree, run_query_fn) {
     }
 
     // See if we need to collect allophonic rules
-    const do_allophones = q => (q.kind === 'tree') ?
-        (do_allophones(q.left) || do_allophones(q.right)) :
-        (q.kind === 'allophonequery');
-    if (do_allophones(qtree)) {
+    if (any_in_tree(qtree, q => q.kind === 'allophonequery')) {
 
         // Query the DB for allophones
         const allophone_sql = build_allophone_sql(qtree);
