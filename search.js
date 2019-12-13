@@ -292,25 +292,6 @@ function build_doculect_sql(qtree) {
     return res;
 }
 
-function build_allophone_conditions(qtree) {
-    var query_stack = [];
-    var allophone_queries = [];
-
-    var process_node = function (node) {
-        if (node.kind === 'tree') {
-            query_stack.push(node.left);
-            query_stack.push(node.right);
-        } else if (node.kind === 'allophonequery') {
-            allophone_queries.push(allophone_condition(node));
-        }
-    }
-    process_node(qtree);
-    while (query_stack.length > 0) {
-        process_node(query_stack.pop());
-    }
-    return allophone_queries.join(' OR ');
-}
-
 function build_segment_conditions(qtree) {
     var query_stack = [];
     var contains_queries = [];
@@ -338,6 +319,25 @@ function build_segment_conditions(qtree) {
     return contains_queries.join(' OR ');
 }
 
+function build_allophone_conditions(qtree) {
+    var query_stack = [];
+    var allophone_queries = [];
+
+    var process_node = function (node) {
+        if (node.kind === 'tree') {
+            query_stack.push(node.left);
+            query_stack.push(node.right);
+        } else if (node.kind === 'allophonequery') {
+            allophone_queries.push(allophone_condition(node));
+        }
+    }
+    process_node(qtree);
+    while (query_stack.length > 0) {
+        process_node(query_stack.pop());
+    }
+    return allophone_queries.join(' OR ');
+}
+
 function segment_condition(term, table='segments', col='phoneme') {
     if (typeof(term) === 'object') {
         var arr = [];
@@ -351,6 +351,24 @@ function segment_condition(term, table='segments', col='phoneme') {
         throw new SearchError(`Bad segment condition ${term}`);
     }
 }
+
+function allophone_condition(term) {
+    // Our copy of PHOIBLE data stores allophones as fkey doculect_segment_id, string allophone.
+    // IPHON, otoh, stores allophones as fkey doculect_segment_id, fkey(segments) allophone_id.
+    // As a consequence, right-hand feature bundles aren't supported for PHOIBLE.
+    // And we need separate handling for realizations for PHOIBLE vs. IPHON.
+
+    var left_term, right_term;
+
+    left_term = segment_condition(term.left, 'phonemes');
+    if (!!(+process.env.IS_IPHON)) {
+        right_term = segment_condition(term.right, 'realizations');
+    } else {
+        right_term = segment_condition(term.right, 'allophones', 'allophone');
+    }
+    return `(${left_term} AND ${right_term})`
+}
+
 
 function contains_query(term, include_marginal, include_loan, num = null, gtlt = '=') {
     var term_cond = segment_condition(term);
@@ -420,31 +438,6 @@ function prop_query(term) {
         )`;
 }
 
-function allophone_condition(term) {
-    // Our copy of PHOIBLE data stores allophones as fkey doculect_segment_id, string allophone.
-    // IPHON, otoh, stores allophones as fkey doculect_segment_id, fkey(segments) allophone_id.
-    // As a consequence, right-hand feature bundles aren't supported for PHOIBLE.
-    // And we need separate handling for realizations for PHOIBLE vs. IPHON.
-
-    var left_term, right_term;
-
-    left_term = segment_condition(term.left, 'phonemes');
-    if (!!(+process.env.IS_IPHON)) {
-        right_term = segment_condition(term.right, 'realizations');
-    } else {
-        right_term = segment_condition(term.right, 'allophones', 'allophone');
-    }
-    return `(${left_term} AND ${right_term})`
-}
-
-function realization_term() {
-    if (!!(+process.env.IS_IPHON)) {
-        return 'JOIN segments realizations ON realizations.id = allophones.allophone_id';
-    }
-    return '';
-}
-
-
 function allophone_query(term) {
     return `
         doculects.id IN (
@@ -456,6 +449,12 @@ function allophone_query(term) {
             ${realization_term()}
             WHERE ${allophone_condition(term)}
         )`;
+}
+function realization_term() {
+    if (!!(+process.env.IS_IPHON)) {
+        return 'JOIN segments realizations ON realizations.id = allophones.allophone_id';
+    }
+    return '';
 }
 
 function get_sql(q) {
