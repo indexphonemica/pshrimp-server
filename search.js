@@ -24,6 +24,23 @@ function any_in_tree(node, func) {
     return (node.kind === 'tree') ? (any_in_tree(node.left, func) || any_in_tree(node.right, func)) : func(node);
 }
 
+/** Makes absolutely sure that there's no mismatch between results.
+    There never should be, and this check is probably unnecessary.
+    But it can't hurt.
+
+    collation :: Map, doculect_pks :: Map, name_of_collated_thing :: str
+*/
+function be_paranoid(collation, doculect_pks, name_of_collated_thing) {
+    const collation_pks = new Set(collation.keys());
+    if (!setEq(collation_pks, doculect_pks)) {
+        console.error('Doculect/segment mismatch');
+        console.error(collation_pks);
+        console.error(doculect_pks);
+        console.error(qtree);
+        throw new SearchError(`Something has gone very wrong (doculect/${name_of_collated_thing} mismatch)`);
+    }
+}
+
 exports.search = async function (qtree, run_query_fn) {
     // TODO: make sure any errors generated here are handled somewhere!
     const doculect_sql = build_doculect_sql(qtree);
@@ -55,16 +72,7 @@ exports.search = async function (qtree, run_query_fn) {
         // Since doculects_by_id is a map, its keys are ints.
         // And JS doesn't do automatic casting here. Surprise!
         let d_seg_collation = collate(segment_rows);
-        // Make sure the doculects we have here match up with the doculect results
-        const seg_doculect_pks = new Set(d_seg_collation.keys());
-        
-        if (!setEq(seg_doculect_pks, doculect_pks)) { // this should never happen
-            console.error('Doculect/segment mismatch');
-            console.error(seg_doculect_pks);
-            console.error(doculect_pks);
-            console.error(qtree);
-            throw new SearchError("Something has gone very wrong (doculect/segment mismatch)");
-        }
+        be_paranoid(d_seg_collation, doculect_pks, 'segment');
 
         // Now generate the tables and add them to the results
         for (let d_id of d_seg_collation.keys()) {
@@ -81,14 +89,7 @@ exports.search = async function (qtree, run_query_fn) {
         
         // Collate allophones - as above, this has to be a map
         let d_allo_collation = collate(allophone_rows);
-        const allo_doculect_pks = new Set(d_allo_collation.keys());
-        if (!setEq(allo_doculect_pks, doculect_pks)) { // this should never happen
-            console.error('Something has gone very wrong (doculect/rule mismatch)');
-            console.error(allo_doculect_pks);
-            console.error(doculect_pks);
-            console.error(qtree);
-            throw new SearchError("Something has gone very wrong (doculect/rule mismatch)");
-        }
+        be_paranoid(d_allo_collation, doculect_pks, 'allophone');
 
         // Now generate the tables and add them to the results... same as above, TODO DRY
         // variable naming here is also a little weird and inconsistent, d_allo 
