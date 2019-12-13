@@ -39,7 +39,7 @@ exports.search = async function (qtree, run_query_fn) {
     const doculect_pks = new Set(doculects_by_id.keys());
 
     // See if we need to collect segments
-    if (any_in_tree(qtree, is_contains)) {
+    if (any_in_tree(qtree, n => n.kind === 'query' && is_contains(n))) {
         // Query the DB for segments
         const segment_sql = build_segment_sql(qtree);
         const segment_results = await try_run(segment_sql, run_query_fn);
