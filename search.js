@@ -1,7 +1,6 @@
 const psegmentize = require('./psegmentizer');
 const db_info = require('./db_info'); // we don't use this anymore; delete later (TODO)
                                       // but we probably should
-const utils = require('./utils'); // we need process_allophones
 
 class SearchError extends Error {};
 
@@ -21,7 +20,6 @@ class SearchError extends Error {};
         doculects_by_id is a map with integer keys, and trying to look up the value of a string
         (such as a string you might get by iterating over the keys of an object) will fail.     ***
 */
-
 exports.search = async function (qtree, run_query_fn) {
     // TODO: make sure any errors generated here are handled somewhere!
     const doculect_sql = build_doculect_sql(qtree);
@@ -116,7 +114,6 @@ exports.language_sql = `
     JOIN languages ON doculects.glottocode = languages.glottocode
     WHERE ${id_col} = $1;`;
 
-// TODO: allophone display for PHOIBLE?
 // This is used to get allophone data for detail display.
 if (!!(+process.env.IS_IPHON)) {
     exports.allophone_sql = `
@@ -184,78 +181,10 @@ function be_paranoid(collation, doculect_pks, name_of_collated_thing) {
 // *** SQL builders ***
 // ********************
 
-function build_allophone_sql(qtree) {
-    // Here we rerun get_sql. Could cache this instead, but probably unnecessary.
-    // Note that we don't use the doculect pks here - we shouldn't need to.
-
-    var allophone_conditions = build_allophone_conditions(qtree);
-
-    return `
-        SELECT
-          allophones.*, phonemes.phoneme AS phoneme, realizations.phoneme AS realization,
-          doculect_segments.doculect_id AS doculect_id
-        FROM
-          doculects
-          JOIN doculect_segments ON doculect_segments.doculect_id = doculects.id
-          JOIN allophones ON allophones.doculect_segment_id = doculect_segments.id
-          JOIN segments phonemes ON phonemes.id = doculect_segments.segment_id
-          ${realization_term()}
-        WHERE
-          ${get_sql(qtree)} AND (${allophone_conditions})
-        ORDER BY
-          doculect_id
-    ;`;
-}
-
-function build_segment_sql(qtree) {
-    // Here we rerun get_sql. Could cache this instead, but probably unnecessary.
-    // Note that we don't use the doculect pks here - we shouldn't need to.
-
-    var segment_conditions = build_segment_conditions(qtree);
-
-    return `
-      SELECT 
-        segments.*,
-        doculect_segments.marginal,
-        ${!!(+process.env.IS_IPHON) ? 'doculect_segments.loan, ' : ''}
-        doculect_segments.doculect_id AS doculect_id
-      FROM
-        doculects
-        JOIN doculect_segments ON doculect_segments.doculect_id = doculects.id
-        JOIN segments ON segments.id = doculect_segments.segment_id
-      WHERE
-        ${get_sql(qtree)} AND (${segment_conditions})
-      ORDER BY
-        doculect_id
-      ;`;
-}
-
 function build_doculect_sql(qtree) {
     // We go through the query tree twice - first to pull all the contains queries
     // so we can display the segments, and then to generate the actual SQL.
     // The actual SQL is generated in get_sql().
-    // var segment_conditions = build_segment_conditions(qtree);
-
-    // // Special case: don't return any segments if it's an entirely negative query
-    // // (because otherwise you're returning the entire inventory of the doculect)
-    // function is_negative(q) {
-    //     if (q.kind === 'tree') {
-    //         return is_negative(q.left) && is_negative(q.right);
-    //     } else if (q.kind === 'allophonequery') {
-    //         // Not really sure how this should be handled. Probably want to return the *allophones* later.
-    //         // Technically we don't even need this, because is_contains(q) will return false...
-    //         // ...since allophone queries don't *have* `contains` or `gtlt` properties.
-    //         // But for clarity, we'll include it here for now.
-    //         // TODO
-    //         return true;
-    //     } else {
-    //         return !is_contains(q);
-    //     }
-    // }
-
-    // // This is a little lazy, but it means we have to make sure segments.id doesn't overlap with doculect.id.
-    // var do_segments = 'segments.*, doculect_segments.marginal';
-    // if (is_negative(qtree)) do_segments = false;
 
     if (!!(+process.env.IS_IPHON)) {
         // IPHON and PHOIBLE store sources differently.
@@ -290,6 +219,52 @@ function build_doculect_sql(qtree) {
         ;`;
     
     return res;
+}
+
+function build_segment_sql(qtree) {
+    // Here we rerun get_sql. Could cache this instead, but probably unnecessary.
+    // Note that we don't use the doculect pks here - we shouldn't need to.
+
+    var segment_conditions = build_segment_conditions(qtree);
+
+    return `
+      SELECT 
+        segments.*,
+        doculect_segments.marginal,
+        ${!!(+process.env.IS_IPHON) ? 'doculect_segments.loan, ' : ''}
+        doculect_segments.doculect_id AS doculect_id
+      FROM
+        doculects
+        JOIN doculect_segments ON doculect_segments.doculect_id = doculects.id
+        JOIN segments ON segments.id = doculect_segments.segment_id
+      WHERE
+        ${get_sql(qtree)} AND (${segment_conditions})
+      ORDER BY
+        doculect_id
+      ;`;
+}
+
+function build_allophone_sql(qtree) {
+    // Here we rerun get_sql. Could cache this instead, but probably unnecessary.
+    // Note that we don't use the doculect pks here - we shouldn't need to.
+
+    var allophone_conditions = build_allophone_conditions(qtree);
+
+    return `
+        SELECT
+          allophones.*, phonemes.phoneme AS phoneme, realizations.phoneme AS realization,
+          doculect_segments.doculect_id AS doculect_id
+        FROM
+          doculects
+          JOIN doculect_segments ON doculect_segments.doculect_id = doculects.id
+          JOIN allophones ON allophones.doculect_segment_id = doculect_segments.id
+          JOIN segments phonemes ON phonemes.id = doculect_segments.segment_id
+          ${realization_term()}
+        WHERE
+          ${get_sql(qtree)} AND (${allophone_conditions})
+        ORDER BY
+          doculect_id
+    ;`;
 }
 
 function build_segment_conditions(qtree) {
