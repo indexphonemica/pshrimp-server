@@ -46,8 +46,8 @@
 		</div>
 	<% } %>
 
-	<% if (doculect.allophonic_rules) { %>
-		<h4>Allophones</h4>
+	<% if (doculect.allophonic_rules && doculect.allophonic_rules.length > 0) { %>
+		<h4>Allophonic rules</h4>
 		<ul class='allophonic-rules'>
 			<% doculect.allophonic_rules.forEach(function (rule) { %>
 				<li><%= rule.phonemes.join('·') %> &gt;<%= rule.variation ? '~' : '' %> 
