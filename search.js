@@ -364,7 +364,7 @@ function contains_query(term, include_marginal, include_loan, num = null, gtlt =
         num_cond = `HAVING count(*) ${gtlt} ${num}`;
     }
 
-    return `
+    var res = `
         doculects.id IN (
             SELECT doculects.id
             FROM doculects
@@ -374,6 +374,19 @@ function contains_query(term, include_marginal, include_loan, num = null, gtlt =
             GROUP BY doculects.id
             ${num_cond}
         )`;
+
+    // zero is less than any positive integer but needs to be handled separately
+    if (gtlt === '<') {
+        res = `(${res} OR doculects.id NOT IN (
+            SELECT doculects.id
+            FROM doculects
+              JOIN doculect_segments ON doculects.id = doculect_segments.doculect_id
+              JOIN segments ON doculect_segments.segment_id = segments.id
+            WHERE ${term_cond} ${handle_marginal_loan(include_marginal, include_loan)}
+            GROUP BY doculects.id
+        ))`;
+    }
+    return res;
 }
 
 function does_not_contain_query(term, include_marginal, include_loan) {
