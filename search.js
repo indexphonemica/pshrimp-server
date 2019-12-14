@@ -297,7 +297,8 @@ function build_segment_conditions(qtree) {
             query_stack.push(node.right);
         } else if (node.kind === 'query') {
             if (is_contains(node)) {
-                contains_queries.push(segment_condition(node.term));
+                contains_queries.push(`(${segment_condition(node.term)}
+                    ${handle_marginal_loan(node.include_marginal, node.include_loan)})`);
             }
         } else if (node.kind === 'propertyquery') {
             // do nothing
@@ -333,6 +334,7 @@ function build_allophone_conditions(qtree) {
     return allophone_queries.join(' OR ');
 }
 
+// TODO: zhengming - this is really just 'condition' now
 function segment_condition(term, table='segments', col='phoneme') {
     if (typeof(term) === 'object') {
         var arr = [];
