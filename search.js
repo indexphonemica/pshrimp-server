@@ -51,7 +51,16 @@ exports.search = async function (qtree, run_query_fn) {
         // Since doculects_by_id is a map, its keys are ints.
         // And JS doesn't do automatic casting here. Surprise!
         let segments = collate(segment_rows);
-        be_paranoid(segments, doculect_pks, 'segment', qtree);
+        
+        // There's one case here where there might be a mismatch: if you have a search term like <n
+        // and there are results with no such segments.
+        if (any_in_tree(qtree, n => n.gtlt === '<')) {
+            for (let pk of doculect_pks.keys()) {
+                if (!segments.has(pk)) segments.set(pk, []);
+            }
+        } else {
+            be_paranoid(segments, doculect_pks, 'segment', qtree);
+        }
 
         // Now generate the tables and add them to the results
         for (let d_id of segments.keys()) {
