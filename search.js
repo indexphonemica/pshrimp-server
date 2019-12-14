@@ -51,7 +51,7 @@ exports.search = async function (qtree, run_query_fn) {
         // Since doculects_by_id is a map, its keys are ints.
         // And JS doesn't do automatic casting here. Surprise!
         let segments = collate(segment_rows);
-        be_paranoid(segments, doculect_pks, 'segment');
+        be_paranoid(segments, doculect_pks, 'segment', qtree);
 
         // Now generate the tables and add them to the results
         for (let d_id of segments.keys()) {
@@ -68,7 +68,7 @@ exports.search = async function (qtree, run_query_fn) {
         
         // Collate allophones - as above, this has to be a map
         let allophones = collate(allophone_rows);
-        be_paranoid(allophones, doculect_pks, 'allophone');
+        be_paranoid(allophones, doculect_pks, 'allophone', qtree);
 
         // Lame hack - TODO: fix this 
         // Really we should be thinking in terms of input and output...
@@ -177,7 +177,7 @@ function any_in_tree(node, func) {
 
     collation :: Map, doculect_pks :: Map, name_of_collated_thing :: str
 */
-function be_paranoid(collation, doculect_pks, name_of_collated_thing) {
+function be_paranoid(collation, doculect_pks, name_of_collated_thing, qtree) {
     const collation_pks = new Set(collation.keys());
     if (!setEq(collation_pks, doculect_pks)) {
         console.error('Doculect/segment mismatch');
