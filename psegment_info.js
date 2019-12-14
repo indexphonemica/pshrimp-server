@@ -248,7 +248,7 @@ const ERRATA = {
     ,   'ɲcʲ': 'palatal'
     ,   'j̟':   'palatal'
     ,   'ẅ':   'rounded palatal'
-    ,   'w̜ʲ':  'rounded palatalized velar'
+    ,   'w̜ʲ':  'rounded palatal'
     ,   'nɡ':  'velar'
     ,   'w̜':   'rounded velar' // only appears in Khalkha, and it sounds rounded to me
     ,   'w˞':   'rounded velar'
