@@ -74,11 +74,10 @@ exports.search = async function (qtree, run_query_fn) {
         const allophone_sql = build_allophone_sql(qtree);
         const allophone_results = await try_run(allophone_sql, run_query_fn);
         const allophone_rows = allophone_results.rows;
-        
+
         // Collate allophones - as above, this has to be a map
         let allophones = collate(allophone_rows);
         be_paranoid(allophones, doculect_pks, 'allophone', qtree);
-
         // Lame hack - TODO: fix this 
         // Really we should be thinking in terms of input and output...
         // Also should DRY all the rule object-relational stuff
@@ -272,7 +271,8 @@ function build_allophone_sql(qtree) {
 
     return `
         SELECT
-          allophones.*, phonemes.phoneme AS phoneme, realizations.phoneme AS realization,
+          allophones.*, phonemes.phoneme AS phoneme, 
+          ${!!(+process.env.IS_IPHON) ? 'realizations.phoneme AS realization' : 'allophones.allophone AS realization'},
           doculect_segments.doculect_id AS doculect_id
         FROM
           doculects
