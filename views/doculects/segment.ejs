@@ -1,1 +1,1 @@
-<a href="/segments/<%= segment.segment %>"><% if (segment.marginal) { %>(<%}%><% if (segment.loan) { %>{<%}%><%= segment.segment %><% if ( segment.marginal) { %>)<%}%><% if (segment.loan) { %>}<% } %></a>
+<a href="/segments/<%= segment.segment %>"><% if (segment.marginal) { %>(<%}%><% if (segment.loan) { %>{<%}%><%= segment.segment %><% if (segment.loan) { %>}<% } %><% if ( segment.marginal) { %>)<%}%></a>
