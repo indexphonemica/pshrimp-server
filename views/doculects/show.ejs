@@ -7,6 +7,16 @@
 <body>
 	<%- include ../partials/header %>
 	<h1><%= doculect.language_name %> (<a class='quiet-link' href='https://glottolog.org/resource/languoid/id/<%= doculect.glottocode %>'><%= doculect.inventory_id %></a>)</h1>
+	<% if (doculect.dialect_name) { %>
+		Dialect: 
+			<% if (doculect.dialect) {%>
+				<a href='https://glottolog.org/resource/languoid/id/<%= doculect.dialect %>'>
+					<%= doculect.dialect_name %>
+				</a>
+			<% } else { %>
+				<%= doculect.dialect_name %>
+			<% } %> 
+	<% } %>
 
 	<div class='source'>
 		<p>
