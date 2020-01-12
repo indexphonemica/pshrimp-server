@@ -22,8 +22,8 @@ const wrapAsync = utils.wrapAsync;
 
 // so we don't have to rewrite the views every time
 if (!!(+process.env.IS_IPHON)) {
-	global.IPHON_VERSION = '0.3.0';
-	global.IPHON_VERSION_RELEASE_DATE = '2019-11-24';
+	global.IPHON_VERSION = '0.4.0';
+	global.IPHON_VERSION_RELEASE_DATE = '2020-01-12';
 }
 
 // Import web routes
