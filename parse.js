@@ -42,10 +42,7 @@ exports.parse = function parse(s) {
 				query_stack.push(new query.Query(true, phoneme));
 			}
 		} else if (is_conjunction(curr)) {
-			var r = query_stack.pop();
-			var l = query_stack.pop();
-			var relation = {'AND': 'AND', '&': 'AND', 'OR': 'OR', '|': 'OR'}[curr.toUpperCase()];
-			query_stack.push(new query.QueryTree(l, relation, r));
+			add_conjunction(query_stack, curr);
 			tokens.next();
 		} else if (is_property(tokens.peek())) {
 			var [prop_name, prop_value, contains] = parse_property(tokens.next());
@@ -109,6 +106,9 @@ exports.parse = function parse(s) {
 	}
 	// TODO: should have error checking here, query stack length should always be 1
 	// maybe not necessary? but what the hell, just in case
+	while (query_stack.length > 1) {
+		add_conjunction(query_stack, "AND");
+	}
 	return query_stack[0]
 }
 
@@ -224,4 +224,12 @@ function parse_property(s) {
 	} else {
 		throw new ParserError(`Invalid property ${s}`);
 	}
+}
+
+function add_conjunction(stack, conj) {
+	var r = stack.pop();
+	var l = stack.pop();
+	var relation = {'AND': 'AND', '&': 'AND', 'OR': 'OR', '|': 'OR'}[conj.toUpperCase()];
+	stack.push(new query.QueryTree(l, relation, r));
+	return stack;
 }
