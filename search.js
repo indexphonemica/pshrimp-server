@@ -234,7 +234,7 @@ function build_doculect_sql(qtree) {
         FROM doculects
         JOIN languages ON doculects.glottocode = languages.glottocode
         WHERE ${get_sql(qtree)}
-        ORDER BY doculects.id
+        ORDER BY ${!!(+process.env.IS_IPHON) ? 'doculect_id' : 'doculects.glottocode, doculect_id'}
         ;`;
     
     return res;
@@ -259,7 +259,7 @@ function build_segment_sql(qtree) {
       WHERE
         ${get_sql(qtree)} AND (${segment_conditions})
       ORDER BY
-        doculect_id
+        doculects.id
       ;`;
 }
 
