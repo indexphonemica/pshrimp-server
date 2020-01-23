@@ -70,6 +70,33 @@ router.get('/languages/:glottocode', wrapAsync(async function (req, res) {
 	res.render('languages/show', {language: result.rows});
 }));
 
+// seg is lazy: /l/abau -> /languages/abau1245
+router.get('/l/:langname', wrapAsync(async function (req, res) {
+	try {
+		var result = await client.query(
+			`SELECT languages.glottocode
+             FROM languages
+             WHERE UPPER(REGEXP_REPLACE(languages.name, '[^A-Za-z]', '', 'g')) =
+                   UPPER(REGEXP_REPLACE($1,             '[^A-Za-z]', '', 'g'));`,
+             [req.params.langname]
+		);
+	} catch (err) {
+		res.status(500).send(err.toString());
+		console.error(err);
+		return;
+	}
+
+	if (result.rows.length === 0) {
+		res.status(404).render('404');
+		console.error(`404: /l/${req.params.langname}`);
+		return;
+	} else if (result.rows.length > 1) {
+		// deal with this case later
+	}
+	lang_glottocode = result.rows[0].glottocode;
+	res.redirect('/languages/' + lang_glottocode);
+}));
+
 // ---------------
 // -- Doculects --
 // ---------------
