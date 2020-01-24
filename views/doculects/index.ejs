@@ -7,55 +7,53 @@
 </head>
 <body>
 	<%- include ../partials/header %>
-	<ul>
-		<table class='sortable'>
-			<thead>
+	<table class='sortable'>
+		<thead>
+			<tr>
+				<th>Doculect ID</th>
+				<th>Language</th>
+				<th>Dialect</th>
+				<th>Consonants</th>
+				<th>Vowels</th>
+				<th>Tones</th>
+				<th>Source</th>
+				<!-- TODO: consonant/vowel/tone count? include syllabic consonants in vowels obv -->
+				<!-- we might want to precompute this in the import scripts -->
+			</tr>
+		</thead>
+		<tbody>
+			<% doculects.forEach(function (doculect) { %>
 				<tr>
-					<th>Doculect ID</th>
-					<th>Language</th>
-					<th>Dialect</th>
-					<th>Consonants</th>
-					<th>Vowels</th>
-					<th>Tones</th>
-					<th>Source</th>
-					<!-- TODO: consonant/vowel/tone count? include syllabic consonants in vowels obv -->
-					<!-- we might want to precompute this in the import scripts -->
+					<td>
+						<a href="/doculects/<%= doculect.inventory_id %>">
+							<%= doculect.inventory_id %>
+						</a>
+					</td>
+					<td>
+						<a href="/languages/<%= doculect.glottocode %>">
+							<%= doculect.language_name %>
+						</a>
+					</td>
+					<td>
+						<a href="/doculects/<%= doculect.inventory_id %>">
+						   <%= doculect.dialect_name %>
+						</a>
+					</td>
+					<td>
+						<%= doculect.consonants %>
+					</td>
+					<td>
+						<%= doculect.vowels %>
+					</td>
+					<td>
+						<%= doculect.tones %>
+					</td>
+					<td>
+						<%- include('../partials/source', {doculect: doculect}) %>
+					</td>
 				</tr>
-			</thead>
-			<tbody>
-				<% doculects.forEach(function (doculect) { %>
-					<tr>
-						<td>
-							<a href="/doculects/<%= doculect.inventory_id %>">
-								<%= doculect.inventory_id %>
-							</a>
-						</td>
-						<td>
-							<a href="/languages/<%= doculect.glottocode %>">
-								<%= doculect.language_name %>
-							</a>
-						</td>
-						<td>
-							<a href="/doculects/<%= doculect.inventory_id %>">
-							   <%= doculect.dialect_name %>
-							</a>
-						</td>
-						<td>
-							<%= doculect.consonants %>
-						</td>
-						<td>
-							<%= doculect.vowels %>
-						</td>
-						<td>
-							<%= doculect.tones %>
-						</td>
-						<td>
-							<%- include('../partials/source', {doculect: doculect}) %>
-						</td>
-					</tr>
-				<% }) %>
-			</tbody>
-		</table>
-	</ul>
+			<% }) %>
+		</tbody>
+	</table>
 </body>
 </html>
