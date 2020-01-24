@@ -3,17 +3,41 @@
 <head>
 	<title>Languages - Index Phonemica</title>
 	<%- include ../partials/head %>
+	<script src='https://cdn.jsdelivr.net/npm/sorttable@1.0.2/sorttable.min.js'></script>
 </head>
 <body>
 	<%- include ../partials/header %>
-	<ul>
-		<% languages.forEach(function (language) { %>
-			<li>
-				<a href="/languages/<%= language.glottocode %>">
-					<%= language.name %>
-				</a>
-			</li>
-		<% }) %>
-	</ul>
+	<table class='sortable'>
+		<thead>
+			<tr>
+				<th>Glottocode</th>
+				<th>Name</th>
+				<th>ISO code</th>
+				<th>Family</th>
+				<th>Genus</th>
+				<th>Macroarea</th>
+				<!-- TODO: consonant/vowel/tone count? include syllabic consonants in vowels obv -->
+				<!-- we might want to precompute this in the import scripts -->
+			</tr>
+		</thead>
+		<tbody>
+			<% languages.forEach(function (language) { %>
+				<tr>
+					<td>
+						<a href="/languages/<%= language.glottocode %>">
+							<%= language.glottocode %>
+						</a>
+					</td>
+					<td>
+						<a href="/languages/<%= language.glottocode %>">
+							<%= language.name %>
+						</a>
+					</td>
+					<td><%= language.iso6393 %></td>
+					<td><%= language.family %></td>
+					<td><%= language.genus %></td>
+					<td><%= language.macroarea %></td>
+				</tr>
+			<% }) %>
 </body>
 </html>
