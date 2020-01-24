@@ -37,7 +37,13 @@ router.get('/', wrapAsync(async function (req, res) {
 
 router.get('/languages', wrapAsync(async function (req, res) {
 	try {
-		var results = await client.query('SELECT * FROM languages ORDER BY name ASC');
+		var results = await client.query(
+			`SELECT languages.*, COUNT(doculects.id) AS doculect_count
+			 FROM languages 
+			 JOIN doculects ON languages.glottocode = doculects.glottocode
+			 GROUP BY languages.id
+			 ORDER BY name ASC;
+			`);
 	} catch (err) {
 		res.status(500).render('Error');
 		console.error(err);
