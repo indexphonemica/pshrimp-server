@@ -6,14 +6,38 @@
 </head>
 <body>
 	<%- include ../partials/header %>
-	<ul>
-		<% language.forEach(function (lang) { %>
-			<li>
-				<a href="/doculects/<%= lang.inventory_id %>">
-					<%= lang.inventory_id %>
-				</a>
-			</li>
-		<% }) %>
-	</ul>
+	<table>
+		<thead>
+			<tr>
+				<th>Inventory ID</th>
+				<th>Name</th>
+				<th>Dialect</th>
+				<th>Source</th>
+				<th>Bibkey</th>
+		</thead>
+		<tbody>
+			<% language.forEach(function (doculect) { %>
+				<tr>
+					<td>
+						<a href="/doculects/<%= doculect.inventory_id %>">
+							<%= doculect.inventory_id %>
+						</a>
+					</td>
+					<td>
+						<%= doculect.name %>
+					</td>
+					<td>
+						<%= doculect.dialect_name %>
+					</td>
+					<td>
+						<%- include('../partials/source_short', {doculect: doculect}) %>
+					</td>
+					<td>
+						<%- include('../partials/source_bibkey', {doculect: doculect}) %>
+					</td>
+				</tr>
+			<% }) %>
+		</tbody>
+	</table>
 </body>
 </html>

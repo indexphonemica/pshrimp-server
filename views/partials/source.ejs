@@ -9,8 +9,4 @@
 	<%= doculect.source_title  %>.
 	<%= doculect.source_year   %>.
 <% } %>
-<% if (doculect.source_bibkey) { %>
-	<a href="https://glottolog.org/resource/reference/id/<%= doculect.source_bibkey %>">
-		<%= doculect.source_bibkey %>
-	</a>
-<% } %>
+<%- include('source_bibkey', {doculect: doculect}) %>

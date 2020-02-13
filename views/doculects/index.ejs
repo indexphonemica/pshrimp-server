@@ -17,8 +17,7 @@
 				<th>Vowels</th>
 				<th>Tones</th>
 				<th>Source</th>
-				<!-- TODO: consonant/vowel/tone count? include syllabic consonants in vowels obv -->
-				<!-- we might want to precompute this in the import scripts -->
+				<th>Bibkey</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -49,7 +48,10 @@
 						<%= doculect.tones %>
 					</td>
 					<td>
-						<%- include('../partials/source', {doculect: doculect}) %>
+						<%- include('../partials/source_short', {doculect: doculect}) %>
+					</td>
+					<td>
+						<%- include('../partials/source_bibkey', {doculect: doculect}) %>
 					</td>
 				</tr>
 			<% }) %>

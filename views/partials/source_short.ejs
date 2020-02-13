@@ -1,0 +1,7 @@
+<% if (doculect.source_url) { %>
+	<a href="<%= doculect.source_url %>">
+		<%= format_author_list(doculect.source_author) %> <%= doculect.source_year %>
+	</a>
+<% } else { %>
+	<%= format_author_list(doculect.source_author) %> <%= doculect.source_year %>
+<% } %>

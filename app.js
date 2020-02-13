@@ -9,7 +9,21 @@ const psherlock = require('./search');
 const psegmentize = require('./psegmentizer');
 
 const web_routes = require('./web_routes');
-const api_routes = require('./api_routes')
+const api_routes = require('./api_routes');
+
+// helpers
+app.locals.format_author_list = function (author_list_str) {
+	// split into list of surnames
+	// technically we should et al. on length > 3, but that takes up too much space
+	const author_list_arr = author_list_str.split(';').map(s => s.split(',')[0].trim());
+	if (author_list_arr.length > 2) {
+		return `${author_list_arr[0]} et al.`;
+	} else if (author_list_arr.length === 2) {
+		return `${author_list_arr[0]} & ${author_list_arr[1]}`
+	} else {
+		return author_list_arr[0]
+	}
+}
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
