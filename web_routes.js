@@ -78,12 +78,16 @@ router.get('/languages/:glottocode', wrapAsync(async function (req, res) {
 
 // seg is lazy: /l/abau -> /languages/abau1245
 router.get('/l/:langname', wrapAsync(async function (req, res) {
+	// get Xârâcùù from xaracuu in addition to xrc
+
 	try {
 		var result = await client.query(
 			`SELECT languages.glottocode
              FROM languages
              WHERE UPPER(REGEXP_REPLACE(languages.name, '[^A-Za-z]', '', 'g')) =
-                   UPPER(REGEXP_REPLACE($1,             '[^A-Za-z]', '', 'g'));`,
+                   UPPER(REGEXP_REPLACE($1,             '[^A-Za-z]', '', 'g'))
+             OR    UPPER(REGEXP_REPLACE(unaccent(languages.name), '[^A-Za-z]', '', 'g')) =
+                   UPPER(REGEXP_REPLACE($1,                       '[^A-Za-z]', '', 'g'));`,
              [req.params.langname]
 		);
 	} catch (err) {

@@ -17,9 +17,9 @@
   },
   "homepage": "https://github.com/defseg/pshrimp#readme",
   "dependencies": {
+    "ejs": "^2.5.5",
     "express": "^4.16.4",
-    "pg": "^7.9.0",
-    "ejs": "^2.5.5"
+    "pg": "^7.9.0"
   },
   "engines": {
     "node": "10.15.0"
