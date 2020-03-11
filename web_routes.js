@@ -62,6 +62,7 @@ router.get('/languages/:glottocode', wrapAsync(async function (req, res) {
 			 ORDER BY LENGTH(doculects.inventory_id), doculects.inventory_id`, 
 			 [req.params.glottocode]
 		);
+
 	} catch (err) {
 		res.status(500).send(err.toString()); // TODO better errors
 		console.error(err);
@@ -73,7 +74,10 @@ router.get('/languages/:glottocode', wrapAsync(async function (req, res) {
 		console.error(`404: /languages/${req.params.glottocode}`)
 		return;
 	}
-	res.render('languages/show', {language: result.rows});
+	
+	// send a separate language var in case we want to do some object-relational munging later
+	var language = result.rows[0];
+	res.render('languages/show', {language: language, doculects: result.rows});
 }));
 
 // seg is lazy: /l/abau -> /languages/abau1245

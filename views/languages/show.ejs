@@ -6,6 +6,11 @@
 </head>
 <body>
 	<%- include ../partials/header %>
+
+	<h1><%= language.name %> (<%- include('../partials/glottocode', {glottocode: language.glottocode}) %>)</h1>
+	<p>Family: <%= language.family %> (<%= language.genus %>)<br>
+	ISO 639-3: <%- include('../partials/iso6393', {iso6393: language.iso6393}) %></p>
+
 	<table>
 		<thead>
 			<tr>
@@ -16,7 +21,7 @@
 				<th>Bibkey</th>
 		</thead>
 		<tbody>
-			<% language.forEach(function (doculect) { %>
+			<% doculects.forEach(function (doculect) { %>
 				<tr>
 					<td>
 						<a href="/doculects/<%= doculect.inventory_id %>">
