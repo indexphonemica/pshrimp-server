@@ -55,12 +55,45 @@ router.get('/languages', wrapAsync(async function (req, res) {
 router.get('/languages/:glottocode', wrapAsync(async function (req, res) {
 	try {
 		var result = await client.query(
-			`SELECT * 
-			 FROM languages
-			 JOIN doculects ON languages.glottocode = doculects.glottocode
-			 WHERE languages.glottocode = $1::text
-			 ORDER BY LENGTH(doculects.inventory_id), doculects.inventory_id`, 
-			 [req.params.glottocode]
+			`SELECT languages.*, d.*,
+			  (
+			    SELECT 
+			      COUNT(segments.id) AS consonants
+			    FROM
+			      segments
+			      JOIN doculect_segments ON segments.id = doculect_segments.segment_id
+			      JOIN doculects ON doculect_segments.doculect_id = doculects.id
+			    WHERE
+			      doculects.id = d.id
+			      AND segments.segment_class = 'consonant'
+			  ),
+			  (
+			    SELECT 
+			      COUNT(segments.id) AS vowels
+			    FROM
+			      segments
+			      JOIN doculect_segments ON segments.id = doculect_segments.segment_id
+			      JOIN doculects ON doculect_segments.doculect_id = doculects.id
+			    WHERE
+			      doculects.id = d.id
+			      AND segments.segment_class = 'vowel'
+			  ),
+			  (
+			    SELECT 
+			      COUNT(segments.id) AS tones
+			    FROM
+			      segments
+			      JOIN doculect_segments ON segments.id = doculect_segments.segment_id
+			      JOIN doculects ON doculect_segments.doculect_id = doculects.id
+			    WHERE
+			      doculects.id = d.id
+			      AND segments.segment_class = 'tone'
+			  )
+			FROM languages
+			JOIN doculects AS d ON languages.glottocode = d.glottocode
+			WHERE languages.glottocode = $1::text
+			ORDER BY LENGTH(d.inventory_id), d.inventory_id`, 
+			[req.params.glottocode]
 		);
 
 	} catch (err) {

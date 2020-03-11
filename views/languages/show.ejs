@@ -17,6 +17,9 @@
 				<th>Inventory ID</th>
 				<th>Name</th>
 				<th>Dialect</th>
+				<th>Consonants</th>
+				<th>Vowels</th>
+				<th>Tones</th>
 				<th>Source</th>
 				<th>Bibkey</th>
 		</thead>
@@ -33,6 +36,15 @@
 					</td>
 					<td>
 						<%= doculect.dialect_name %>
+					</td>
+					<td>
+						<%= doculect.consonants %>
+					</td>
+					<td>
+						<%= doculect.vowels %>
+					</td>
+					<td>
+						<%= doculect.tones %>
 					</td>
 					<td>
 						<%- include('../partials/source_short', {doculect: doculect}) %>
