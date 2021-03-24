@@ -3,6 +3,9 @@ const { Client } = require('pg');
 if (process.env.NODE_ENV === 'production') {
 	var client_props = {
 		connectionString: process.env.DATABASE_URL,
+		ssl: {
+			rejectUnauthorized: false
+		}
 	}
 } else { // presumably it's dev
 	var client_props = {
