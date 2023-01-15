@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
 	<title><%= doculect.language_name %> (<%= doculect.inventory_id %>) - Index Phonemica</title>
-	<%- include ../partials/head %>
+	<%- include("../partials/head") %>
 </head>
 <body>
-	<%- include ../partials/header %>
+	<%- include("../partials/header") %>
 	<h1><%= doculect.language_name %> (<a class='quiet-link' href='https://glottolog.org/resource/languoid/id/<%= doculect.glottocode %>'><%= doculect.inventory_id %></a>)</h1>
 	<% if (doculect.dialect_name) { %>
 		Dialect: 

@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
 	<title>Languages - Index Phonemica</title>
-	<%- include ../partials/head %>
+	<%- include("../partials/head") %>
 </head>
 <body>
-	<%- include ../partials/header %>
+	<%- include("../partials/header") %>
 
 	<h1><%= language.name %> (<%- include('../partials/glottocode', {glottocode: language.glottocode}) %>)</h1>
 	<p>Family: <%= language.family %> (<%= language.genus %>)<br>
