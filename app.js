@@ -4,10 +4,6 @@ const port = process.env.PORT || 1337;
 
 const client = require('./db_client');
 
-const psentence = require('./parse');
-const psherlock = require('./search');
-const psegmentize = require('./psegmentizer');
-
 const web_routes = require('./web_routes');
 const api_routes = require('./api_routes');
 
@@ -25,14 +21,11 @@ app.locals.format_author_list = function (author_list_str) {
 	}
 }
 
-app.use(function(req, res, next) {
+app.use(function(_req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
-
-const utils = require('./utils');
-const wrapAsync = utils.wrapAsync;
 
 // so we don't have to rewrite the views every time
 if (!!(+process.env.IS_IPHON)) {
@@ -50,7 +43,7 @@ if (!!(+process.env.IS_IPHON)) {
 }
 
 // 404
-app.use(function (req, res, next) {
+app.use(function (_req, res, _next) {
 	res.status(404).render('404');
 })
 
