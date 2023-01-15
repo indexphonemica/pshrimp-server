@@ -113,7 +113,7 @@ router.get('/languages/:glottocode', wrapAsync(async function (req, res) {
 	res.render('languages/show', {language: language, doculects: result.rows});
 }));
 
-// seg is lazy: /l/abau -> /languages/abau1245
+// /l/abau -> /languages/abau1245
 router.get('/l/:langname', wrapAsync(async function (req, res) {
 	// get Xârâcùù from xaracuu in addition to xrc
 
@@ -133,14 +133,17 @@ router.get('/l/:langname', wrapAsync(async function (req, res) {
 		return;
 	}
 
+	let lang_glottocode = '';
 	if (result.rows.length === 0) {
 		res.status(404).render('404');
 		console.error(`404: /l/${req.params.langname}`);
 		return;
-	} else if (result.rows.length > 1) {
-		// deal with this case later
+	} else if (result.rows.length === 1) {
+		lang_glottocode = result.rows[0].glottocode;
+	} else {
+		// TODO: deal with this case
+		// for now we'll redirect to the main languages page
 	}
-	lang_glottocode = result.rows[0].glottocode;
 	res.redirect('/languages/' + lang_glottocode);
 }));
 
