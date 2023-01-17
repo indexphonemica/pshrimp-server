@@ -5,6 +5,8 @@ const express = require('express'), router = express.Router();
 const client = require('./db_client');
 const utils = require('./utils'), wrapAsync = utils.wrapAsync;
 
+const logging = require('./logging');
+
 // TODO: we should probably have an API for this stuff too
 // TODO: get helper funcs for routes to stuff so we don't have to hardcode the paths
 //   \_ I'm not sure if there's a good way to do this
@@ -36,6 +38,7 @@ router.get('/', wrapAsync(async function (req, res) {
 // ---------------
 
 router.get('/languages', wrapAsync(async function (req, res) {
+	logging.log_request("/languages", req);
 	try {
 		var results = await client.query(
 			`SELECT languages.*, COUNT(doculects.id) AS doculect_count
@@ -53,6 +56,7 @@ router.get('/languages', wrapAsync(async function (req, res) {
 }));
 
 router.get('/languages/:glottocode', wrapAsync(async function (req, res) {
+	logging.log_request("/languages/:glottocode", req);
 	try {
 		var result = await client.query(
 			`SELECT languages.*, d.*,
@@ -98,13 +102,13 @@ router.get('/languages/:glottocode', wrapAsync(async function (req, res) {
 
 	} catch (err) {
 		res.status(500).send(err.toString()); // TODO better errors
-		console.error(err);
+		logging.error(err);
 		return;
 	}
 
 	if (result.rows.length === 0) { // TODO write a get_or_404
 		res.status(404).render('404');
-		console.error(`404: /languages/${req.params.glottocode}`)
+		logging.error(`404: /languages/${req.params.glottocode}`)
 		return;
 	}
 	
@@ -116,6 +120,7 @@ router.get('/languages/:glottocode', wrapAsync(async function (req, res) {
 // /l/abau -> /languages/abau1245
 router.get('/l/:langname', wrapAsync(async function (req, res) {
 	// get Xârâcùù from xaracuu in addition to xrc
+	logging.log_request("/l/:langname", req)
 
 	try {
 		var result = await client.query(
@@ -129,14 +134,14 @@ router.get('/l/:langname', wrapAsync(async function (req, res) {
 		);
 	} catch (err) {
 		res.status(500).send(err.toString());
-		console.error(err);
+		logging.error(err);
 		return;
 	}
 
 	let lang_glottocode = '';
 	if (result.rows.length === 0) {
 		res.status(404).render('404');
-		console.error(`404: /l/${req.params.langname}`);
+		logging.error(`404: /l/${req.params.langname}`);
 		return;
 	} else if (result.rows.length === 1) {
 		lang_glottocode = result.rows[0].glottocode;
@@ -151,7 +156,8 @@ router.get('/l/:langname', wrapAsync(async function (req, res) {
 // -- Doculects --
 // ---------------
 
-router.get('/doculects', wrapAsync(async function (req, res){ 
+router.get('/doculects', wrapAsync(async function (req, res) {
+	logging.log_request("/doculects", req)
 	try {
 		var result = await client.query(`
 			SELECT languages.*, d.*,
@@ -192,13 +198,13 @@ router.get('/doculects', wrapAsync(async function (req, res){
 			JOIN doculects AS d ON languages.glottocode = d.glottocode`)
 	} catch (err) {
 		res.status(500).send(err.toString());
-		console.error(err);
+		logging.error(err);
 		return;
 	}
 
 	if (result.rows.length === 0) {
 		res.status(404).render('404'); // TODO: write a get_or_404
-		console.error(`404: /doculects`)
+		logging.error(`404: /doculects`);
 		return;
 	}
 
@@ -209,12 +215,13 @@ router.get('/doculects', wrapAsync(async function (req, res){
 // as a server-side templating language - that way we don't have to duplicate any of this stuff
 // I don't really want the main site to use JS though - unnecessary JS is a little antisocial
 router.get('/doculects/:glottocode', wrapAsync(async function (req, res) {
+	logging.log_request("/doculects/:glottocode", req);
 	try {
 		var doculect = await utils.get_doculect(client, req.params.glottocode);
 	} catch (err) {
 		if (err.message === 'No such language') { // TODO: this is bad
 			res.status(404).render('404');
-			console.error(`404: /doculects/${req.params.glottocode}`)
+			logging.error(err)
 			return;
 		}
 		res.status(500).send(err.toString());
@@ -230,6 +237,7 @@ router.get('/doculects/:glottocode', wrapAsync(async function (req, res) {
 // --------------
 
 router.get('/segments', wrapAsync(async function (req, res) {
+	logging.log_request("/segments", req);
 	try {
 		var result = await client.query(`
 			SELECT segments.phoneme AS segment, COUNT(doculects.id) AS frequency
@@ -249,6 +257,7 @@ router.get('/segments', wrapAsync(async function (req, res) {
 }))
 
 router.get('/segments/:segment', wrapAsync(async function (req, res) {
+	logging.log_request("/segments/:segment", req);
 	try {
 		var result = await client.query(`
 			SELECT segments.phoneme AS segment, segments.*, doculects.inventory_id
@@ -258,13 +267,13 @@ router.get('/segments/:segment', wrapAsync(async function (req, res) {
 			WHERE segments.phoneme = $1::text`, [req.params.segment]);
 	} catch (err) {
 		res.status(500).send(err.toString());
-		console.error(err);
+		logging.error(err);
 		return;
 	}
 
 	if (result.rows.length === 0) { // TODO: write a get_or_404
 		res.status(404).render('404');
-		console.error(`404: /segments/${req.params.segment}`)
+		logging.error(`404: /segments/${req.params.segment}`)
 		return;
 	}
 
