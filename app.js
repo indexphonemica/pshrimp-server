@@ -29,7 +29,7 @@ app.use(function(_req, res, next) {
 
 // so we don't have to rewrite the views every time
 if (!!(+process.env.IS_IPHON)) {
-	global.IPHON_VERSION = '0.5.0';
+	global.IPHON_VERSION = '0.5.1';
 	global.IPHON_VERSION_RELEASE_DATE = '2020-05-30';
 }
 
