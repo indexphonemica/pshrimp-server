@@ -7,7 +7,7 @@ module.exports.log = function log(msg) {
 }
 
 module.exports.log_request = function log_request(msg, req) {
-    console.error(format_log_message(msg + " " + JSON.stringify(req.params), "LOG")) // req is circular
+    console.error(format_log_message(msg + " " + JSON.stringify(req?.params), "LOG")) // req is circular
 }
 
 module.exports.error = function log_error(msg) {

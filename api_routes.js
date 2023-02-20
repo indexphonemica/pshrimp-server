@@ -13,7 +13,7 @@ const express = require('express'), router = express.Router();
 router.get('/query/:query', wrapAsync(async function (req, res) {
 	const query_text = decode(req.params.query).replace(/lateral/g, 'lateralis'); // Postgres reserved keyword workaround
 
-	logging.log_req("/query/:query");
+	logging.log_request("/query/:query", req);
 
 	try {
 		const query = psentence.parse(query_text);
