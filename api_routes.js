@@ -15,6 +15,8 @@ router.get('/query/:query', wrapAsync(async function (req, res) {
 
 	logging.log_request("/query/:query", req);
 
+	res.set({'Access-Control-Allow-Origin': '*'}) // TODO CORS middleware if we ever need it
+
 	try {
 		const query = psentence.parse(query_text);
 		var results = await psherlock.search(query, client.query.bind(client));
@@ -29,6 +31,8 @@ router.get('/query/:query', wrapAsync(async function (req, res) {
 
 router.get('/language/:language', wrapAsync(async function (req, res) {
 	logging.log_request("/language/:language", req)
+
+	res.set({'Access-Control-Allow-Origin': '*'})
 
 	try {
 		var doculect = await utils.get_doculect(client, req.params.language);
